@@ -1,0 +1,8 @@
+# Docker files
+*.log
+*.swp
+**/.docker/
+**/build/
+**/out/
+.gradle/
+*.iml
