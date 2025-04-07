@@ -2,7 +2,6 @@
 *.log
 *.swp
 **/.docker/
-docker-compose.yml
 **/build/
 **/out/
 .gradle/
