@@ -1,9 +1,9 @@
 // screen_index.dart
 import 'package:flutter/material.dart';
-import 'package:longevity_table/tabs/tab_shop.dart';
-import 'package:longevity_table/tabs/tab_home.dart';
-import 'package:longevity_table/tabs/tab_info.dart';
-import 'package:longevity_table/tabs/tab_setting.dart';
+import 'package:frontend/tabs/tab_shop.dart';
+import 'package:frontend/tabs/tab_home.dart';
+import 'package:frontend/tabs/tab_info.dart';
+import 'package:frontend/tabs/tab_setting.dart';
 
 class IndexScreen extends StatefulWidget {
   @override

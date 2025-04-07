@@ -1,6 +1,6 @@
 // screen_register.dart
 import 'package:flutter/material.dart';
-import 'package:longevity_table/services/api_service.dart';
+import 'package:frontend/services/api_service.dart';
 import 'dart:convert';
 
 class RegisterScreen extends StatefulWidget {
