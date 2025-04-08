@@ -1,6 +1,6 @@
 // screen_login.dart
 import 'package:flutter/material.dart';
-import 'package:longevity_table/services/api_service.dart';
+import 'package:frontend/services/service_auth.dart';
 import 'dart:convert';
 
 
@@ -10,6 +10,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController idController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   
@@ -24,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    final response = await ApiService.loginUser(id: id, password: password);
+    final response = await AuthService.loginUser(id: id, password: password);
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
@@ -45,25 +47,30 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: Text("로그인 화면")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: idController,
-              decoration: InputDecoration(labelText: '아이디'),
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(labelText: '비밀번호'),
-              obscureText: true,
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _login,
-              child: Text('로그인'),
-            ),
-          ],
-        ),
-      ),  
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: idController,
+                decoration: InputDecoration(labelText: '아이디'),
+                validator: (value) => value!.isEmpty ? '아이디를 입력하세요' : null,
+              ),
+              TextFormField(
+                controller: passwordController,
+                decoration: InputDecoration(labelText: '비밀번호'),
+                validator: (value) => value!.isEmpty ? '비밀번호를 입력하세요' : null,
+                obscureText: true,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _login,
+                child: Text('로그인'),
+              ),
+            ],
+          ),
+        ),  
+      ),    
     );
   }
 }
