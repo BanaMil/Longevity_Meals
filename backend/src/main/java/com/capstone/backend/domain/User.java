@@ -1,9 +1,10 @@
 package com.capstone.backend.domain;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.*;
 
-@Entity
+@Document(collection = "users") // MongoDB의 "users" 컬렉션에 매핑
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,12 +12,9 @@ import lombok.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false)
     private String password;
 }
