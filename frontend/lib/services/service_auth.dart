@@ -10,7 +10,7 @@ class AuthService {
     required String password,
     required String birthdate,
   }) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/api/signup');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/register');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

@@ -1,6 +1,7 @@
 // screen_login.dart
 import 'package:flutter/material.dart';
 import 'package:frontend/services/service_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 
@@ -30,6 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
+      final token = result['token'];
+
+      // 토큰 저장
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', token);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("로그인 성공: ${result['message']}")),
       );
