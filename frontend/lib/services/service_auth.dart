@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http; 
+import 'package:frontend/services/api_constants.dart';
 
-class ApiService {
-  static const String _baseUrl = 'http://10.0.2.2:8080';
-
+class AuthService {
   // 회원가입용 API
   static Future<http.Response> registerUser({
     required String username, 
@@ -11,7 +10,7 @@ class ApiService {
     required String password,
     required String birthdate,
   }) async {
-    final url = Uri.parse('$_baseUrl/api/signup');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/signup');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -30,7 +29,7 @@ class ApiService {
     required String id,
     required String password,
   }) async {
-    final url = Uri.parse('$_baseUrl/api/login'); // Spring Boot 로그인 엔드포인트
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/login'); // Spring Boot 로그인 엔드포인트
     final response = await http.post(
       url,
       headers: {"Content-Type": "application/json"},
@@ -43,8 +42,9 @@ class ApiService {
   }
 
   // 아이디 중복확인 API
+  // GET 방식으로 보냈고, 예시 URL: /api/check-id?id=test123
   static Future<http.Response> checkIdDuplicate(String id) async {
-    final url = Uri.parse('$_baseUrl/api/check-id');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/check-id');
     final response = await http.get(
       url.replace(queryParameters: {'id': id}),
       headers: {"Content-Type": "application/json"},
