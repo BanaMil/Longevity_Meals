@@ -1,5 +1,7 @@
 package com.capstone.backend.domain;
 
+import java.time.LocalDate;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.*;
@@ -17,4 +19,6 @@ public class User {
     private String username;
 
     private String password;
+
+    private LocalDate birthdate;
 }

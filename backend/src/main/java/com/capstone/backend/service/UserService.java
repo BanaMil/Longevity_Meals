@@ -1,5 +1,7 @@
 package com.capstone.backend.service;
 
+import java.time.LocalDate;
+
 import com.capstone.backend.domain.User;
 import com.capstone.backend.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,15 +17,19 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void register(String username, String password) {
+    public void register(String username, String id, String password, String birthdate) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
 
         String encodedPassword = encoder.encode(password);
+        LocalDate parsedBirthdate = LocalDate.parse(birthdate);
+
         User user = User.builder()
                         .username(username)
+                        .id(id)
                         .password(encodedPassword)
+                        .birthdate(parsedBirthdate)
                         .build();
         userRepository.save(user);
     }
