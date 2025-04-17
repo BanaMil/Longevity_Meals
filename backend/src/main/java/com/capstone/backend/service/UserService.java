@@ -39,4 +39,8 @@ public class UserService {
                 .map(user -> encoder.matches(password, user.getPassword()))
                 .orElse(false);
     }
+
+    public boolean isIdTaken(String id) {
+        return userRepository.existsById(id);
+    }
 }
