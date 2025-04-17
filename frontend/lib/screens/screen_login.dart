@@ -20,12 +20,14 @@ class _LoginScreenState extends State<LoginScreen> {
     final id = idController.text;
     final password = passwordController.text;
 
+    /*
     if (id.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("아이디와 비밀번호를 입력해주세요.")),
       );
       return;
     }
+    */
 
     final response = await AuthService.loginUser(id: id, password: password);
 
