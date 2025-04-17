@@ -42,6 +42,10 @@ RUN curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg --dearmor -o /usr/sh
 # 오류가 발생해도 설치 단계가 중단되지 않도록 하기 위함
 RUN flutter doctor || true
 
+# 로그인 셸 환경변수 설정 (.bashrc)
+RUN echo 'export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64' >> /root/.bashrc && \
+    echo 'export PATH=$JAVA_HOME/bin:/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:$PATH' >> /root/.bashrc
+
 # SSH 설치 및 설정
 RUN apt-get update && apt-get install -y openssh-server && \
     mkdir /var/run/sshd && \
