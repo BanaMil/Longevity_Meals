@@ -6,6 +6,8 @@ import 'screen_login.dart';
 import 'dart:convert';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -41,6 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final id = idController.text.trim();
 
     if (id.isEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("아이디를 입력해주세요.")),
       );
@@ -48,6 +51,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     final response = await AuthService.checkIdDuplicate(id);
+
+    if (!mounted) return;
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
@@ -76,6 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // 비밀번호 확인 검사
     if (password != confirmpassword) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("비밀번호가 일치하지 않습니다.")),
       );
@@ -84,6 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // 생년월일 선택 확인 검사
     if (birthdate == null) {
+      if(!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("생년월일을 선택해주세요.")),
       );
@@ -96,6 +103,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       password: password,
       birthdate: birthdate,
     );
+
+    if (!mounted) return;
   
     if (response.statusCode == 200) {
       final result = json.decode(response.body);

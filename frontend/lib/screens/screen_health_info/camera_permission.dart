@@ -9,7 +9,7 @@ class CameraPermissionScreen extends StatelessWidget {
 
   Future<void> _requestPermission(BuildContext context) async {
     final status = await Permission.camera.request();
-    if (status.isGrated) {
+    if (status.isGranted) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CameraScreen()), //카메라 화면 생성하기
@@ -34,7 +34,7 @@ class CameraPermissionScreen extends StatelessWidget {
               onPressed: () => _requestPermission(context),
               child: const Text("허용"),
             ),
-            OutlineButton(
+            OutlinedButton(
               onPressed: () => Navigator.pop(context),
               child: const Text("허용안함"),
             ),
