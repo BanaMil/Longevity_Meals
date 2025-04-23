@@ -1,3 +1,4 @@
+//user.dart
 class User {
   final String username;
   final String id;
