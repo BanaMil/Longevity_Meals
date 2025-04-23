@@ -10,6 +10,15 @@ RUN apt-get update && apt-get install -y \
     ca-certificates gnupg lsb-release software-properties-common \
     && apt-get clean
 
+# Flutter Linux 데스크탑 빌드를 위한 필수 라이브러리 추가
+RUN apt-get update && apt-get install -y \
+    cmake \
+    ninja-build \
+    clang \
+    libgtk-3-dev \
+    pkg-config \
+    && apt-get clean
+
 # Oracle Java 21.0.6 다운로드 및 설치
 RUN mkdir -p /usr/lib/jvm && \
     wget -O /tmp/jdk.tar.gz https://download.oracle.com/java/21/archive/jdk-21.0.6_linux-x64_bin.tar.gz && \

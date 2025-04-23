@@ -11,3 +11,9 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByUsername(String username);
     boolean existsById(String Id);
 }
+
+
+//docker exec -it capstone-container bash
+//cd /app/backend
+//./gradlew test
+//./gradlew boorRun 으로 서버 실행
