@@ -9,4 +9,5 @@ import java.lang.String;
 
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByUsername(String username);
+    boolean existsById(String Id);
 }
