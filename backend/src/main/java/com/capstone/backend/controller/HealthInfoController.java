@@ -6,8 +6,13 @@ import com.capstone.backend.service.HealthInfoService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.io.File;
+import java.io.IOException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/health")
@@ -20,6 +25,16 @@ public class HealthInfoController {
     public ResponseEntity<ApiResponse<Object>> submitHealthInfo(@Valid @RequestBody HealthInfoRequest request) {
         healthInfoService.saveHealthInfo(request);
         return ResponseEntity.ok(new ApiResponse<>(true, "건강 정보 저장 완료", null));
+    }
+    
+    @PostMapping("/upload")
+    public String uploadHealthImage(@RequestParam("userId") String userId,
+                                    @RequestParam("image") MultipartFile image) throws IOException {
+        File tempFile = File.createTempFile("healthscan", ".png");
+        image.transferTo(tempFile);
+
+        healthInfoService.extractAndSaveDiseasesFromImage(userId, tempFile);
+        return "질병 정보 저장 완료";
     }
 }
 

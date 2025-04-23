@@ -12,3 +12,7 @@ services:
       - .:/app                 # 프로젝트 폴더를 /app에 마운트
     ports:
       - "25223:22"             # SSH 접속용 포트 포워딩
+
+
+
+# docker exec -it capstone-container bash
