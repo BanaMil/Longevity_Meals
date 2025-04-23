@@ -31,7 +31,7 @@ public class UserService {
                         .password(encodedPassword)
                         .birthdate(parsedBirthdate)
                         .build();
-        userRepository.save(user);
+        userRepository.save(user); //MongoDB에 저장
     }
 
     public boolean login(String username, String password) {

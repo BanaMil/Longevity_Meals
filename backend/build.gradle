@@ -34,6 +34,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// OCR 관련
+    implementation 'net.sourceforge.tess4j:tess4j:5.4.0' // Tesseract Java wrapper
 }
 
 tasks.named('test') {
