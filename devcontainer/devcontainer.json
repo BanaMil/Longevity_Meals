@@ -1,21 +1,19 @@
 {
-    "name": "Capstone Dev Environment",
-    "build": {
-      "dockerfile": "Dockerfile"
-    },
-    "workspaceFolder": "/workspace",
-    "customizations": {
-      "vscode": {
-        "settings": {
-          "terminal.integrated.defaultProfile.linux": "bash"
-        },
-        "extensions": [
-          "vscjava.vscode-java-pack",
-          "mongodb.mongodb-vscode"
-        ]
-      }
-    },
-    "forwardPorts": [8080],
-    "postCreateCommand": "git clone https://github.com/BanaMil/Longevity_Meals.git ."
-  }
-  
+  "name": "team-dev-env",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "dart-code.flutter",
+        "vscjava.vscode-java-pack",
+        "mongodb.mongodb-vscode"
+      ]
+    }
+  },
+  "postCreateCommand": "cd backend && ./gradlew build"
+}

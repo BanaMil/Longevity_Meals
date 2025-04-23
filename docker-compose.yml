@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  dev:
+    container_name: capstone-container
+    build:
+      context: .               # Dockerfile이 있는 현재 디렉토리
+      dockerfile: devcontainer/Dockerfile  # Dockerfile 이름
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/app                 # 프로젝트 폴더를 /app에 마운트
+    ports:
+      - "25223:22"             # SSH 접속용 포트 포워딩

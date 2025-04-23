@@ -44,5 +44,3 @@ class CameraPermissionScreen extends StatelessWidget {
     );
   }  
 }
-
-
