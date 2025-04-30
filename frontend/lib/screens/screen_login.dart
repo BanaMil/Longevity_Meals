@@ -6,6 +6,8 @@ import 'dart:convert';
 
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -20,16 +22,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final id = idController.text;
     final password = passwordController.text;
 
-    /*
-    if (id.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("아이디와 비밀번호를 입력해주세요.")),
-      );
-      return;
-    }
-    */
-
     final response = await AuthService.loginUser(id: id, password: password);
+
+    if (!mounted) return;
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
@@ -38,6 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
       // 토큰 저장
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('jwt_token', token);
+
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("로그인 성공: ${result['message']}")),
@@ -83,4 +80,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

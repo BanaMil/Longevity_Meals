@@ -24,8 +24,9 @@ class ChoiceInfoScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // o버튼을 누르면 카메라 접근 요청 창으로 이동
                 ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pushNamed(context, '/camera_permission'),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   child: const Text("O"),
                 ),
@@ -49,4 +50,3 @@ class ChoiceInfoScreen extends StatelessWidget {
     );  
   }
 }
-

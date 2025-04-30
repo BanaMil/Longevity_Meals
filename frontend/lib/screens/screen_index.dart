@@ -1,19 +1,19 @@
 // screen_index.dart
 import 'package:flutter/material.dart';
-import 'package:frontend/tabs/tab_shop.dart';
 import 'package:frontend/tabs/tab_home.dart';
 import 'package:frontend/tabs/tab_info.dart';
 import 'package:frontend/tabs/tab_setting.dart';
 
 class IndexScreen extends StatefulWidget {
+  const IndexScreen({super.key});
+
   @override
-  _IndexScreenState createState() => _IndexScreenState();
+  IndexScreenState createState() => IndexScreenState();
 }
 
-class _IndexScreenState extends State<IndexScreen> {
+class IndexScreenState extends State<IndexScreen> {
   int _currentIndex = 0;
   final List<Widget> _tabs = [
-    ShopTab(),
     HomeTab(),
     InfoTab(),
     SettingTab(),
@@ -35,7 +35,6 @@ class _IndexScreenState extends State<IndexScreen> {
           });
         },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: '쇼핑'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: '건강정보'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: '설정'),
