@@ -18,6 +18,10 @@ public class DiseaseDictionary {
         return diseaseNameToId.get(name);
     }
 
+    public static Map<String, String> getAll() {
+        return diseaseNameToId;
+    }
+
     public static boolean contains(String name) {
         return diseaseNameToId.containsKey(name);
     }

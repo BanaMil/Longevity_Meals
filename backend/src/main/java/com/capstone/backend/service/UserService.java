@@ -17,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void register(String username, String id, String password, String birthdate) {
+    public void register(String username, String id, String password, String birthdate, String phone, String address) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
@@ -30,14 +30,16 @@ public class UserService {
                         .id(id)
                         .password(encodedPassword)
                         .birthdate(parsedBirthdate)
+                        .phone(phone)
+                        .address(address)
                         .build();
         userRepository.save(user); //MongoDB에 저장
     }
 
-    public boolean login(String username, String password) {
+    public User login(String username, String password) {
         return userRepository.findByUsername(username)
-                .map(user -> encoder.matches(password, user.getPassword()))
-                .orElse(false);
+                .filter(user -> encoder.matches(password, user.getPassword()))
+                .orElseThrow(() -> new RuntimeException("아이디 또는 비밀번호가 올바르지 않습니다."));
     }
 
     public boolean isIdTaken(String id) {

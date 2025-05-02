@@ -4,10 +4,11 @@ package com.capstone.backend.dto;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Builder;
 
 import java.util.List;
 
-@Getter @Setter
+@Getter @Setter @Builder
 public class HealthInfoRequest {
     
     @Positive

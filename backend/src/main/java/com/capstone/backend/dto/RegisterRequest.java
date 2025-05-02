@@ -9,4 +9,6 @@ public class RegisterRequest {
     private String id;
     private String password;
     private String birthdate;
+    private String phone;
+    private String address;
 }

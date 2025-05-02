@@ -2,10 +2,13 @@ package com.capstone.backend.controller;
 
 import java.util.Map;
 
+import com.capstone.backend.domain.User;
+import com.capstone.backend.dto.LoginResponse;
 import com.capstone.backend.dto.RegisterRequest;
 import com.capstone.backend.dto.LoginRequest;
 import com.capstone.backend.dto.ApiResponse;
 import com.capstone.backend.service.UserService;
+import com.capstone.backend.config.JwtTokenProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/register")
@@ -27,7 +32,9 @@ public class AuthController {
                 request.getUsername(),
                 request.getId(),
                 request.getPassword(),
-                request.getBirthdate()
+                request.getBirthdate(),
+                request.getPhone(),
+                request.getAddress()
             );
             return ResponseEntity.ok(new ApiResponse<>(true, "회원가입 성공", null));
         } catch (RuntimeException e){
@@ -38,15 +45,26 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest request) {
         try {
-            userService.login(
+            User user = userService.login(
                 request.getId(),
                 request.getPassword()
-                );
-            return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", null));
+            );
+
+            String token = jwtTokenProvider.createToken(user.getId());
+
+            LoginResponse responseData = new LoginResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getAddress(),
+                token
+            );
+
+            return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", responseData));
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
+
     @GetMapping("/check-id")
 public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkId(@RequestParam String id) {
     boolean available = !userService.isIdTaken(id);
