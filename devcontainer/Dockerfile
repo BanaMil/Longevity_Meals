@@ -47,6 +47,13 @@ RUN curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg --dearmor -o /usr/sh
     apt-get install -y mongodb-org && \
     apt-get clean
 
+# Tesseract OCR 설치 (한글 모델 포함)
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    tesseract-ocr-kor \
+    libtesseract-dev \
+    && apt-get clean
+
 # Flutter doctor 실행 (캐시 생성용)
 # 오류가 발생해도 설치 단계가 중단되지 않도록 하기 위함
 RUN flutter doctor || true
