@@ -40,12 +40,13 @@ RUN wget https://services.gradle.org/distributions/gradle-8.13-bin.zip -P /tmp &
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
 ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:$PATH"
 
-# MongoDB 서버 설치
+# MongoDB 서버 및 mongosh 설치
 RUN curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg && \
     echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list && \
     apt-get update && \
-    apt-get install -y mongodb-org && \
-    apt-get clean
+    apt-get install -y mongodb-org mongodb-mongosh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Tesseract OCR 설치 (한글 모델 포함)
 RUN apt-get update && apt-get install -y \
