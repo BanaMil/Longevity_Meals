@@ -4,6 +4,7 @@ import 'package:frontend/services/service_auth.dart';
 import 'package:frontend/utils/validators.dart';
 import 'screen_login.dart';
 import 'dart:convert';
+import 'package:frontend/services/user_storage.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -19,6 +20,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController idController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmpasswordController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  
 
   DateTime? _selectedBirthdate; // 생년월일 저장용
 
@@ -77,7 +81,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final id = idController.text;
     final password = passwordController.text;
     final confirmpassword = confirmpasswordController.text;
-    final birthdate = _selectedBirthdate?.toIso8601String(); // ISO 포맷으로 변환환
+    final birthdate = _selectedBirthdate?.toIso8601String(); // ISO 포맷으로 변환
+    final phone = phoneController.text.trim();
+    final address = addressController.text.trim();
 
     // 비밀번호 확인 검사
     if (password != confirmpassword) {
@@ -102,12 +108,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
       id: id,
       password: password,
       birthdate: birthdate,
+      phone: phone,
+      address: address,
     );
 
     if (!mounted) return;
   
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
+
+      // SharedPreferences에 저장
+      await UserStorage.saveUserInfo(
+        username: username, 
+        id: id, 
+        address: address,
+      );
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("회원가입 성공: ${result['message']}")),
       );
@@ -171,6 +187,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   child: Text(birthdateText),
                 ),        
+              ),
+              TextFormField(
+                controller: phoneController,
+                decoration: InputDecoration(labelText: '휴대폰 번호'),
+                keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '휴대폰 번호를 입력해주세요.';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: addressController,
+                decoration: InputDecoration(labelText: '주소'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '주소를 입력해주세요.';
+                  }
+                  return null;
+                },
               ),
               SizedBox(height: 20),
               ElevatedButton(

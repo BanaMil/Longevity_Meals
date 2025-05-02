@@ -1,6 +1,7 @@
 // screen_first.dart
 
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/screen_login.dart';
 
 class FirstScreen extends StatelessWidget {
   const FirstScreen({super.key});
@@ -16,7 +17,10 @@ class FirstScreen extends StatelessWidget {
             SizedBox(height: 60),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/screen_login');
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: (_) => LoginScreen())
+                );
+                // Navigator.pushNamed(context, '/screen_login');
               },
               child: Text('로그인'),
             ),

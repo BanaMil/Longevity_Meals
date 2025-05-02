@@ -4,11 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'camera.dart';
 
-class CameraPermissionScreen extends StatelessWidget {
+class CameraPermissionScreen extends StatefulWidget {
   const CameraPermissionScreen({super.key});
 
-  Future<void> _requestPermission(BuildContext context) async {
+  @override
+  State<CameraPermissionScreen> createState() => _CameraPermissionScreenState();
+}
+
+class _CameraPermissionScreenState extends State<CameraPermissionScreen> {
+  Future<void> _requestPermission() async {
     final status = await Permission.camera.request();
+    if (!mounted) return;
+
     if (status.isGranted) {
       Navigator.push(
         context,
@@ -28,10 +35,10 @@ class CameraPermissionScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("장수밥상에서 사진을 촬영하고 동영상을 녹화하도록 허용하시겠습니까?"),
+            const Text("장수밥상에서 사진을 촬영하도록 허용하시겠습니까?"),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _requestPermission(context),
+              onPressed: _requestPermission,
               child: const Text("허용"),
             ),
             OutlinedButton(

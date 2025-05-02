@@ -19,20 +19,29 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   
   void _login() async {
-    final id = idController.text;
+    final enteredId = idController.text;
     final password = passwordController.text;
 
-    final response = await AuthService.loginUser(id: id, password: password);
+    final response = await AuthService.loginUser(id: enteredId, password: password);
 
     if (!mounted) return;
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
-      final token = result['token'];
+      final data = result['data'];
+
+      final userId = data['id'];
+      final username = data['username'];
+      final address = data['address'];
+      final token = data['token'];
+
 
       // 토큰 저장
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('jwt_token', token);
+      await prefs.setString('username', username);
+      await prefs.setString('id', userId);  // 로그인한 사용자 ID 
+      await prefs.setString('address', address);
 
       if (!mounted) return;
 
