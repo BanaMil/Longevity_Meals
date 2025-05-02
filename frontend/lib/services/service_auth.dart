@@ -9,6 +9,8 @@ class AuthService {
     required String id,
     required String password,
     required String birthdate,
+    required String phone,
+    required String address,
   }) async {
     final url = Uri.parse('${ApiConstants.baseUrl}/api/auth/register');
     final response = await http.post(
@@ -19,6 +21,8 @@ class AuthService {
         'id': id,
         'password': password,
         'birthdate': birthdate,
+        'phone': phone,
+        'address': address,
       }),
     );
     return response;
