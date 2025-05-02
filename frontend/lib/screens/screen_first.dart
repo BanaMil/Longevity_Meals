@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/screen_login.dart';
+import 'package:frontend/screens/screen_register.dart';
 
 class FirstScreen extends StatelessWidget {
   const FirstScreen({super.key});
@@ -27,7 +28,10 @@ class FirstScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/screen_register');
+                Navigator.push(context, 
+                  MaterialPageRoute(builder: (_) => RegisterScreen())
+                );
+                // Navigator.pushNamed(context, '/screen_register');
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.teal[100]),
               child: Text('회원가입'),
