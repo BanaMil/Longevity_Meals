@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
 import 'package:frontend/screens/screen_first.dart';
@@ -24,6 +26,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
       home: FirstScreen(), //앱 시작 시 가장 먼저 보여줄 화면
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('ko'), // 한국어 
+        Locale('en'),
+      ],
     );
   }
 }

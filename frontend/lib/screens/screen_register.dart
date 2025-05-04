@@ -124,6 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         address: address,
       );
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("회원가입 성공: ${result['message']}")),
       );
@@ -132,6 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         MaterialPageRoute(builder: (_) => LoginScreen()),
       );
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("회원가입 실패: ${response.body}")),
       );
