@@ -18,7 +18,7 @@ public class UserService {
     }
 
     public void register(String username, String id, String password, String birthdate, String phone, String address) {
-        if (userRepository.findByUsername(username).isPresent()) {
+        if (userRepository.findById(id).isPresent()) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
 
@@ -36,11 +36,27 @@ public class UserService {
         userRepository.save(user); //MongoDB에 저장
     }
 
-    public User login(String username, String password) {
-        return userRepository.findByUsername(username)
-                .filter(user -> encoder.matches(password, user.getPassword()))
-                .orElseThrow(() -> new RuntimeException("아이디 또는 비밀번호가 올바르지 않습니다."));
-    }
+    public User login(String id, String password) {
+    System.out.println("🔐 로그인 시도: ID = " + id + ", 입력 PW = " + password);
+
+    return userRepository.findById(id)
+        .map(user -> {
+            System.out.println("✅ 사용자 찾음: " + user.getId());
+            boolean passwordMatches = encoder.matches(password, user.getPassword());
+            System.out.println("🔍 비밀번호 일치 여부: " + passwordMatches);
+
+            if (passwordMatches) {
+                return user;
+            } else {
+                throw new RuntimeException("아이디 또는 비밀번호가 올바르지 않습니다.");
+            }
+        })
+        .orElseThrow(() -> {
+            System.out.println("❌ 사용자 ID를 찾을 수 없음: " + id);
+            return new RuntimeException("아이디 또는 비밀번호가 올바르지 않습니다.");
+        });
+}
+
 
     public boolean isIdTaken(String id) {
         return userRepository.existsById(id);

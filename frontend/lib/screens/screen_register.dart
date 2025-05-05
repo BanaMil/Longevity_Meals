@@ -23,7 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController confirmpasswordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  
+
 
   DateTime? _selectedBirthdate; // 생년월일 저장용
 
@@ -82,8 +82,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = passwordController.text;
     final confirmpassword = confirmpasswordController.text;
     final birthdate = _selectedBirthdate == null
+<<<<<<< HEAD
       ? null
       : '${_selectedBirthdate!.year.toString().padLeft(4, '0')}-'
+=======
+        ? null
+        : '${_selectedBirthdate!.year.toString().padLeft(4, '0')}-'
+>>>>>>> ffb45a53f44ec64102cd1f7194c97914b739a597
         '${_selectedBirthdate!.month.toString().padLeft(2, '0')}-'
         '${_selectedBirthdate!.day.toString().padLeft(2, '0')}';
     final phone = phoneController.text.trim();
@@ -117,14 +122,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
 
     if (!mounted) return;
-  
+
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
 
       // SharedPreferences에 저장
       await UserStorage.saveUserInfo(
-        username: username, 
-        id: id, 
+        username: username,
+        id: id,
         address: address,
       );
 
@@ -133,7 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         SnackBar(content: Text("회원가입 성공: ${result['message']}")),
       );
       Navigator.pushReplacement(
-        context, 
+        context,
         MaterialPageRoute(builder: (_) => LoginScreen()),
       );
     } else {
@@ -159,7 +164,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             children: [
               TextFormField(
-                controller: usernameController, 
+                controller: usernameController,
                 decoration: InputDecoration(labelText: '이름'),
                 validator: Validators.validateUsername,
               ),
@@ -170,19 +175,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _checkIdDuplicate, 
+                onPressed: _checkIdDuplicate,
                 child: Text('아이디 중복 확인'),
               ),
               TextFormField(
-                controller: passwordController, 
+                controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(labelText: '비밀번호'),
                 validator: Validators.validatePassword,
               ),
               TextField(
-                controller: confirmpasswordController, 
-                obscureText: true,
-                decoration: InputDecoration(labelText: '비밀번호 확인')),
+                  controller: confirmpasswordController,
+                  obscureText: true,
+                  decoration: InputDecoration(labelText: '비밀번호 확인')),
               SizedBox(height: 12),
               InkWell(
                 onTap: _pickBirthdate,
@@ -192,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     border: OutlineInputBorder(),
                   ),
                   child: Text(birthdateText),
-                ),        
+                ),
               ),
               TextFormField(
                 controller: phoneController,

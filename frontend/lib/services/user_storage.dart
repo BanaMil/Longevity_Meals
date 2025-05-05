@@ -29,3 +29,4 @@ class UserStorage {
     await prefs.remove('address');
   }
 }
+

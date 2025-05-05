@@ -11,10 +11,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import java.util.Base64;
+
+
 @Component
 public class JwtTokenProvider {
 
-    private final String secretKey = "your-secret-key"; // 보통 환경변수로 관리
+    private final String secretKey = Base64.getEncoder().encodeToString("my-very-secure-and-long-secret-key-1234567890".getBytes());
     private final long validityInMilliseconds = 3600000; // 1시간
 
     private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));

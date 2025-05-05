@@ -6,13 +6,13 @@ import lombok.Getter;
 @Getter
 public class LoginResponse {
     private String id;
-    private String name;
+    private String username;
     private String address;
     private String token;
 
-    public LoginResponse(String id, String name, String address, String token) {
+    public LoginResponse(String id, String username, String address, String token) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.address = address;
         this.token = token;
     }
