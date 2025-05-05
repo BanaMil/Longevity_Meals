@@ -82,15 +82,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = passwordController.text;
     final confirmpassword = confirmpasswordController.text;
     final birthdate = _selectedBirthdate == null
-<<<<<<< HEAD
-      ? null
-      : '${_selectedBirthdate!.year.toString().padLeft(4, '0')}-'
-=======
         ? null
         : '${_selectedBirthdate!.year.toString().padLeft(4, '0')}-'
->>>>>>> ffb45a53f44ec64102cd1f7194c97914b739a597
-        '${_selectedBirthdate!.month.toString().padLeft(2, '0')}-'
-        '${_selectedBirthdate!.day.toString().padLeft(2, '0')}';
+          '${_selectedBirthdate!.month.toString().padLeft(2, '0')}-'
+          '${_selectedBirthdate!.day.toString().padLeft(2, '0')}';
     final phone = phoneController.text.trim();
     final address = addressController.text.trim();
 
