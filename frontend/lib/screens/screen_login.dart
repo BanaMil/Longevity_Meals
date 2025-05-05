@@ -1,7 +1,9 @@
 // screen_login.dart
+
 import 'package:flutter/material.dart';
 import 'package:frontend/services/service_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:frontend/screens/screen_health_info/choice_info.dart';
 import 'dart:convert';
 
 
@@ -79,7 +81,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _login,
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _login();
+                  }     
+                },
                 child: Text('로그인'),
               ),
             ],

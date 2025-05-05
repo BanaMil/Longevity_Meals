@@ -1,4 +1,5 @@
 // screen_register.dart
+
 import 'package:flutter/material.dart';
 import 'package:frontend/services/service_auth.dart';
 import 'package:frontend/utils/validators.dart';
@@ -65,7 +66,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() {
         isIdAvailable = available;
       });
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(available ? "사용 가능한 아이디입니다." : "이미 존재하는 아이디입니다.")),
       );
@@ -81,7 +81,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final id = idController.text;
     final password = passwordController.text;
     final confirmpassword = confirmpasswordController.text;
-    final birthdate = _selectedBirthdate?.toIso8601String(); // ISO 포맷으로 변환
+    final birthdate = _selectedBirthdate == null
+      ? null
+      : '${_selectedBirthdate!.year.toString().padLeft(4, '0')}-'
+        '${_selectedBirthdate!.month.toString().padLeft(2, '0')}-'
+        '${_selectedBirthdate!.day.toString().padLeft(2, '0')}';
     final phone = phoneController.text.trim();
     final address = addressController.text.trim();
 

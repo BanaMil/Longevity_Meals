@@ -1,4 +1,4 @@
-package com.example.longevity_table
+package com.example.frontend
 
 import io.flutter.embedding.android.FlutterActivity
 
