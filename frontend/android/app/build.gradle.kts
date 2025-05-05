@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.longevity_table"
+    namespace = "com.example.frontend"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
