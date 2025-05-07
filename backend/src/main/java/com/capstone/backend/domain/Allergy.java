@@ -15,5 +15,5 @@ public class Allergy {
     @Id
     private String id;
     private String name;
-    private List<String> symptoms;
+    private List<String> ingredientKeywords;
 }

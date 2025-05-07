@@ -16,4 +16,4 @@ public interface UserRepository extends MongoRepository<User, String> {
 //docker exec -it capstone-container bash
 //cd /app/backend
 //./gradlew test
-//./gradlew boorRun 으로 서버 실행
+//./gradlew bootRun 으로 서버 실행

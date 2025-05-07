@@ -15,7 +15,4 @@ public class Disease {
     @Id
     private String id;
     private String name;
-    private List<String> aliases;
-    private List<String> nutrientsToLimit;
-    private List<String> nutrientsToEncourage;
 }
