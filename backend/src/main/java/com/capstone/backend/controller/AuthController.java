@@ -56,7 +56,8 @@ public class AuthController {
                 user.getId(),
                 user.getUsername(),
                 user.getAddress(),
-                token
+                token,
+                user.isHealthInfoSubmitted()
             );
 
             return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", responseData));

@@ -9,11 +9,13 @@ public class LoginResponse {
     private String username;
     private String address;
     private String token;
+    private boolean healthInfoSubmitted;
 
-    public LoginResponse(String id, String username, String address, String token) {
+    public LoginResponse(String id, String username, String address, String token, boolean healthInfoSubmitted) {
         this.id = id;
         this.username = username;
         this.address = address;
         this.token = token;
+        this.healthInfoSubmitted = healthInfoSubmitted;
     }
 }

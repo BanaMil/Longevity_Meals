@@ -20,4 +20,12 @@ public class User {
     private LocalDate birthdate;
     private String phone;
     private String address;
+    
+    @Builder.Default
+    private boolean healthInfoSubmitted = false;
+
+    public boolean isHealthInfoSubmitted() {
+    return healthInfoSubmitted;
+}
+
 }
