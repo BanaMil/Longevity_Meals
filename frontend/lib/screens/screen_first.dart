@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/screen_login.dart';
 import 'package:frontend/screens/screen_register.dart';
+// import 'package:frontend/screens/screen_health_info/choice_info.dart';
 
 class FirstScreen extends StatelessWidget {
   const FirstScreen({super.key});

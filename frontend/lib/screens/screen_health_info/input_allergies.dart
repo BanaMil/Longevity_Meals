@@ -31,7 +31,7 @@ class InputAllergiesScreen extends StatelessWidget {
                     ),
                     Wrap(
                         children: allergyList.map((a) {
-                            final selected = provider.info.diseases.contains(a);
+                            final selected = provider.info.allergies.contains(a);
                             return SelectableButton(
                                 text: a,
                                 isSelected: selected,
