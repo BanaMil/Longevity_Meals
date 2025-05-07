@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
+import 'input_diseases.dart';
 
 
 class InputHeightWeightScreen extends StatefulWidget {
