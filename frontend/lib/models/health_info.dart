@@ -1,6 +1,7 @@
 // health_info.dart
 
 class HealthInfo {
+  String? id;
   double? height;
   double? weight;
   List<String> diseases = [];
@@ -9,6 +10,7 @@ class HealthInfo {
 
   Map<String, dynamic> toJson() {
     return {
+      'id' : id,
       'height': height,
       'weight': weight,
       'diseases': diseases,

@@ -5,12 +5,16 @@ class User {
   final String id;
   final String password;
   final DateTime birthdate;
+  final String phone;
+  final String address;
 
   User({
     required this.username,
     required this.id,
     required this.password,
     required this.birthdate,
+    required this.phone,
+    required this.address,
   });
 
   // JSON → User (서버에서 받은 데이터 파싱)
@@ -20,6 +24,8 @@ class User {
       id: json['id'] ?? '',
       password: json['password'] ?? '',
       birthdate: DateTime.parse(json['birthdate']),
+      phone: json['phone'] ?? '',
+      address: json['address'] ?? '',
     );
   }
 
@@ -30,6 +36,8 @@ class User {
       'id': id,
       'password': password,
       'birthdate': birthdate.toIso8601String(),
+      'phone': phone,
+      'address': address,
     };
   }
 }

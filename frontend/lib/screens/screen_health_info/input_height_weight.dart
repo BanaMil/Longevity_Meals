@@ -59,8 +59,11 @@ class _InputHeightWeightScreenState extends State<InputHeightWeightScreen> {
                                         if (h != null && w != null) {
                                             context.read<HealthInfoProvider>().setHeight(h);
                                             context.read<HealthInfoProvider>().setWeight(w);
-                                            Navigator.pushNamed(context, '/input_diseases');
-                                        }
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => const InputDiseasesScreen()), //카메라 화면 생성하기
+                                            );
+                                          }
                                     },
                                 ),
                             ],

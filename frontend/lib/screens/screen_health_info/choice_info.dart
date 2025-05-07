@@ -1,6 +1,7 @@
 // choice_info.dart
 
 import 'package:flutter/material.dart';
+import 'camera_permission.dart';
 import 'input_height_weight.dart';
 
 class ChoiceInfoScreen extends StatelessWidget {
@@ -26,7 +27,12 @@ class ChoiceInfoScreen extends StatelessWidget {
               children: [
                 // o버튼을 누르면 카메라 접근 요청 창으로 이동
                 ElevatedButton(
-                  onPressed: () => Navigator.pushNamed(context, '/camera_permission'),
+                  onPressed: () {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CameraPermissionScreen()),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   child: const Text("O"),
                 ),

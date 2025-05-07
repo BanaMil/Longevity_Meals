@@ -15,6 +15,11 @@ class HealthInfoProvider with ChangeNotifier {
   void toggleAllergy(String v) => _toggleList(_info.allergies, v);
   void toggleDislike(String v) => _toggleList(_info.dislikes, v);
 
+  void setUserId(String id) {
+    _info.id = id;
+    notifyListeners();
+  }
+
   // 비선호 음식은 정해진 리스트에서 선택하는 것이 아닌 사용자가 입력하는 것이기 때문에 중복확인을 따로 해야한다.
   void addDislike(String v) {
     if (!_info.dislikes.contains(v)) {

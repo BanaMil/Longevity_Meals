@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
-import 'loading_health_info.dart';
+import 'package:frontend/screens/screen_home.dart';
 
 class InputDislikesScreen extends StatefulWidget {
   const InputDislikesScreen({super.key});
@@ -70,31 +70,43 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                 IconButton(
                   icon: const Icon(Icons.check),
                   onPressed: () async {
-                    // 로딩 화면
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const LoadingHealthInfoScreen()),
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) => const AlertDialog(
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircularProgressIndicator(),
+                            SizedBox(height: 16),
+                            Text("입력 받은 건강정보를\n분석하는 중입니다.\n잠시만 기다려주세요."),
+                          ],
+                        ),
+                      )
                     );
 
                     try {
-                    // 백엔드에 전송
                       await context.read<HealthInfoProvider>().submitToServer();
 
-                    // 전송 후 로딩 화면 닫고 성공 메시지
                       if (context.mounted) {
-                        Navigator.of(context).pop(); //로딩 화면 pop
+                        Navigator.of(context).pop; // 로딩 다이얼로그 닫기
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('건강정보가 저장되었습니다.')),
-                        );                  
+                        );  
+                        // 홈화면으로 이동
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                        );
                       }
                     } catch (e) {
-                      // 에러 시 로딩 화면 닫고 에러 메시지
                       if (context.mounted) {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('저장 중 오류 발생: $e')),
                         );
                       }
-                    }
+                     }
                   },
                 ),
               ],
