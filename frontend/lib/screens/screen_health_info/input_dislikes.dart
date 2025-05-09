@@ -73,17 +73,82 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                     showDialog(
                       context: context,
                       barrierDismissible: false,
-                      builder: (_) => const AlertDialog(
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 16),
-                            Text("입력 받은 건강정보를\n분석하는 중입니다.\n잠시만 기다려주세요."),
-                          ],
+                      builder: (_) => StatefulBuilder(
+                        builder: (context, setState) => AlertDialog(
+                          titlePadding: const EdgeInsets.only(left: 16, top:16, right: 0),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('건강정보 분석 중'),
+                              IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context, 
+                                    builder: (_) => AlertDialog(
+                                      title: const Text('건강정보 분석을 중단하시겠습니까?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(),
+                                          child: const Text('아니오'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // 확인 다이얼로그 닫기 
+                                            Navigator.of(context).pop(); // 로딩 다이얼로그 닫기 
+                                          },
+                                          child: const Text('네'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(height: 16),
+                              Text(
+                                "입력 받은 건강정보를\n분석하는 중입니다.\n잠시만 기다려주세요.",
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
-                      )
+                      ),
                     );
+
+                    // 건강정보 분석과정 중 닫기 버튼 없음!
+                    /*
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.check),
+                        onPressed: () async {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) => const AlertDialog(
+                              content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(height: 16),
+                                Text("입력 받은 건강정보를\n분석하는 중입니다.\n잠시만 기다려주세요."),
+                              ],
+                            ),
+                          )
+                        );
+                    */
+
+
 
                     try {
                       await context.read<HealthInfoProvider>().submitToServer();

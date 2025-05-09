@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
 import 'package:frontend/screens/screen_first.dart';
 
+// import 'package:frontend/screens/screen_health_info/choice_info.dart';
+
+
 void main() {
   runApp(
     ChangeNotifierProvider(

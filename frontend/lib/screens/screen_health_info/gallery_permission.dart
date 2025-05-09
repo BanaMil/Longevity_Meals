@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:frontend/widgets/custom_button.dart';
 import 'gallery.dart';
 
 class GalleryPermissionScreen extends StatefulWidget {
@@ -38,13 +39,13 @@ class _GalleryPermissionScreen extends State<GalleryPermissionScreen> {
           children: [
             const Text("장수밥상에서 사진을 선택하도록 허용하시겠습니까?"),
             const SizedBox(height: 20),
-            ElevatedButton(
+            CustomButton(
+              text: '허용',
               onPressed: _requestPermission, 
-              child: const Text("허용"),
             ),
-            OutlinedButton(
+            CustomButton(
+              text: '허용안함',
               onPressed: () => Navigator.pop(context), 
-              child: const Text("허용안함"),
             ),
           ],
         ),

@@ -25,8 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final enteredId = idController.text.trim();
     final password = passwordController.text.trim();
 
-    print("🔐 Trying login with ID: '$enteredId', PW: '$password'");
-
     final response = await AuthService.loginUser(id: enteredId, password: password);
 
     if (!mounted) return;

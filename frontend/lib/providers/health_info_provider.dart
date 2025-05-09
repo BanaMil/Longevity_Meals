@@ -11,8 +11,6 @@ class HealthInfoProvider with ChangeNotifier {
 
   void setHeight(double h) { _info.height = h; notifyListeners(); }
   void setWeight(double w) { _info.weight = w; notifyListeners(); }
-  void toggleDisease(String v) => _toggleList(_info.diseases, v);
-  void toggleAllergy(String v) => _toggleList(_info.allergies, v);
   void toggleDislike(String v) => _toggleList(_info.dislikes, v);
 
   void setUserId(String id) {
@@ -34,6 +32,22 @@ class HealthInfoProvider with ChangeNotifier {
    
   void _toggleList(List<String> list, String v) {
     list.contains(v) ? list.remove(v) : list.add(v);
+    notifyListeners();
+  }
+
+  void toggleDiseaseAllergy(String v, List<String> targetList) {
+    if (v == '해당없음') {
+      targetList
+        ..clear()
+        ..add('해당없음');
+    } else {
+      if (targetList.contains(v)) {
+        targetList.remove(v);
+      } else {
+        targetList.remove('해당없음');
+        targetList.add(v);
+      }
+    }
     notifyListeners();
   }
 

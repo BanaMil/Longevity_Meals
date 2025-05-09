@@ -40,7 +40,7 @@ class InputDiseasesScreen extends StatelessWidget {
                             return SelectableButton(
                                 text: d,
                                 isSelected: selected,
-                                onTap: () => provider.toggleDisease(d),
+                                onTap: () => provider.toggleDiseaseAllergy(d, provider.info.diseases),
                             );
                         }).toList(),
                     ),
