@@ -15,7 +15,7 @@ class HealthInfoService {
     );
 
     if(response.statusCode != 200) {
-      throw Exception("서버 전송 실패");
+      throw Exception("서버 전송 실패: ${response.statusCode}");
     }
   }
 }

@@ -1,9 +1,10 @@
 // screen_index.dart
 
 import 'package:flutter/material.dart';
+import 'package:frontend/tabs/tab_search.dart';
 import 'package:frontend/tabs/tab_home.dart';
+import 'package:frontend/tabs/tab_delivery.dart';
 import 'package:frontend/tabs/tab_info.dart';
-import 'package:frontend/tabs/tab_setting.dart';
 
 class IndexScreen extends StatefulWidget {
   const IndexScreen({super.key});
@@ -15,9 +16,10 @@ class IndexScreen extends StatefulWidget {
 class IndexScreenState extends State<IndexScreen> {
   int _currentIndex = 0;
   final List<Widget> _tabs = [
+    SearchTab(),
     HomeTab(),
+    DeliveryTab(),
     InfoTab(),
-    SettingTab(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class IndexScreenState extends State<IndexScreen> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         iconSize: 30,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.green[200],
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: TextStyle(fontSize:12),
         currentIndex: _currentIndex,
@@ -36,9 +38,10 @@ class IndexScreenState extends State<IndexScreen> {
           });
         },
         items: [
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: '검색'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: '건강정보'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: '설정'),
+          BottomNavigationBarItem(icon: Icon(Icons.local_shipping), label: '배송'),
         ],
       ),
     body: _tabs[_currentIndex],

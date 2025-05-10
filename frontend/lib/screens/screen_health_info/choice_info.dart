@@ -32,9 +32,16 @@ class ChoiceInfoScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => showImageSourceDialog(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[400],
+                    backgroundColor: Colors.blue[300],
                     minimumSize: const Size(100, 70)),
-                  child: const Text("O"), 
+                  child: const Text(
+                    "O",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.black,
+                    ),
+                  ), 
                 ),
                 // X버튼 누르면 키, 몸무게 입력 창으로 이동
                 ElevatedButton(
@@ -45,9 +52,16 @@ class ChoiceInfoScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[400],
+                    backgroundColor: Colors.red[300],
                     minimumSize: const Size(100, 70)),
-                  child: const Text("X"),
+                  child: const Text(
+                    "X",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ],
             )
