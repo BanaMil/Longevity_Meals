@@ -3,9 +3,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
-import 'package:frontend/screens/screen_first.dart';
+// import 'package:frontend/screens/screen_first.dart';
 
-// import 'package:frontend/screens/screen_health_info/choice_info.dart';
+import 'package:frontend/screens/screen_health_info/choice_info.dart';
 
 
 void main() {
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: FirstScreen(), //앱 시작 시 가장 먼저 보여줄 화면
+      home: ChoiceInfoScreen(), //앱 시작 시 가장 먼저 보여줄 화면
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

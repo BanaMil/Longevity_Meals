@@ -9,7 +9,7 @@ class UserStorage {
     required String address,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('name', username);
+    await prefs.setString('username', username);
     await prefs.setString('id', id);
     await prefs.setString('address', address);
   }
@@ -17,7 +17,7 @@ class UserStorage {
   static Future<Map<String, String?>> loadUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
     return {
-      'name': prefs.getString('username'),
+      'username': prefs.getString('username'),
       'id': prefs.getString('id'),
       'address': prefs.getString('address'),
     };
@@ -25,7 +25,7 @@ class UserStorage {
 
   static Future<void> clearUserInfo() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('name');
+    await prefs.remove('username');
     await prefs.remove('id');
     await prefs.remove('address');
   }

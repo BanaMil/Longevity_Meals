@@ -3,26 +3,44 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/health_result.dart';
 import 'package:frontend/services/service_health_result.dart';
+import 'package:frontend/services/user_storage.dart';
 
 class HealthResultScreen extends StatefulWidget {
-  final String id;
-  const HealthResultScreen({super.key, required this.id});
+  const HealthResultScreen({super.key});
 
   @override
   State<HealthResultScreen> createState() => _HealthResultScreenState();
 }
 
 class _HealthResultScreenState extends State<HealthResultScreen> {
-  late Future<HealthResult> analysisFuture;
+  late Future<HealthResult>? analysisFuture;
 
   @override
   void initState() {
     super.initState();
-    analysisFuture = HealthResultService.fetchAnalysisResult(widget.id);
+    _loadUserIdAndFetch();
+  }
+
+  void _loadUserIdAndFetch() async {
+    final userInfo = await UserStorage.loadUserInfo();
+    final id = userInfo['id'];
+    if (id !=null && id.isNotEmpty) {
+      setState(() {
+        analysisFuture = HealthResultService.fetchAnalysisResult(id);
+      });
+    } else {
+      setState(() {
+        analysisFuture = Future.error('로그인 정보가 없습니다. \n다시 로그인 해주세요.');
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (analysisFuture == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return FutureBuilder<HealthResult>(
       future: analysisFuture,
       builder: (context, snapshot) {
