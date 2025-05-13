@@ -2,10 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/screen_health_result.dart';
+import 'package:frontend/screens/screen_first.dart';
+import 'package:frontend/services/user_storage.dart';
 
-class InfoTab extends StatelessWidget {
+class InfoTab extends StatefulWidget {
   const InfoTab({super.key});
 
+  @override
+  State<InfoTab> createState() => _InfoTabState();
+}
+
+class _InfoTabState extends State<InfoTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +55,36 @@ class InfoTab extends StatelessWidget {
 
             TextButton(
               onPressed: () {
-                // 로그아웃 처리 로직 
+                showDialog(
+                  context: context,
+                  builder: (BuildContext dialogContext) {
+                    return AlertDialog(
+                      title: const Text('로그아웃 확인'),
+                      content: const Text('로그아웃 하시겠습니까?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () async {
+                            await UserStorage.clearUserInfo();
+
+                            if (!context.mounted) return;
+
+                            Navigator.of(dialogContext).pop();
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const FirstScreen()),
+                            (route) => false,   // 모든 route 제거
+                            );
+                          },
+                          child: const Text('네'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop(); 
+                          },
+                          child: const Text('아니오'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               child: const Text(
                 '로그아웃',
