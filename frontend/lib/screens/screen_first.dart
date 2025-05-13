@@ -15,26 +15,39 @@ class FirstScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('장수밥상', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+            ClipOval(
+              child: Image.asset(
+              'assets/images/longevity_meals_logo.png',
+              width: 180,
+              height: 180,
+              fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text('장수밥상', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
             SizedBox(height: 60),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (_) => LoginScreen())
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen()));
                 // Navigator.pushNamed(context, '/screen_login');
               },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(200, 60),           // 버튼 높이 
+                textStyle: const TextStyle(color: Colors.black, fontSize: 20),   // 폰트 크기
+              ),
               child: Text('로그인'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, 
-                  MaterialPageRoute(builder: (_) => RegisterScreen())
-                );
+                Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterScreen()));
                 // Navigator.pushNamed(context, '/screen_register');
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal[100]),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal[100],
+                minimumSize: const Size(200, 60),           // 버튼 높이 
+                textStyle: const TextStyle(color: Colors.black, fontSize: 20),   // 폰트 크기
+                ),
               child: Text('회원가입'),
             ),
           ],

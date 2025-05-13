@@ -40,8 +40,8 @@ class IndexScreenState extends State<IndexScreen> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.search), label: '검색'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: '건강정보'),
           BottomNavigationBarItem(icon: Icon(Icons.local_shipping), label: '배송'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: '건강정보'),
         ],
       ),
     body: _tabs[_currentIndex],

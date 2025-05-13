@@ -163,6 +163,10 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _login,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(200, 60),           // 버튼 높이 
+                  textStyle: const TextStyle(fontSize: 20),   // 폰트 크기
+                ),
                 child: Text('로그인'),
               ),
             ],
