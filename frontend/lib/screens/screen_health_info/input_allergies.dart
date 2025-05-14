@@ -29,17 +29,25 @@ class InputAllergiesScreen extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Text('가지고 있는 알레르기가 있다면 선택해주세요.'),
           ),
-          Wrap(
-            children: allergyList.map((a) {
-              final selected = provider.info.allergies.contains(a);
-              return SelectableButton(
-                text: a,
-                isSelected: selected,
-                onTap: () => provider.toggleDiseaseAllergy(a, provider.info.allergies),
-              );
-            }).toList(),
+
+          Expanded(
+            child:  SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+    children: allergyList.map((a) {
+                  final selected = provider.info.allergies.contains(a);
+                  return SelectableButton(
+                    text: a,
+                    isSelected: selected,
+                    onTap: () => provider.toggleDiseaseAllergy(a, provider.info.allergies),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
-          const Spacer(),
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

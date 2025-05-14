@@ -13,7 +13,7 @@ class OcrService {
     final uri = Uri.parse('${ApiConstants.baseUrl}/ocr/upload');
 
     final request = http.MultipartRequest('POST', uri)
-      ..fields['userId'] = userId
+      ..fields['userid'] = userId
       ..files.add(await http.MultipartFile.fromPath(
         'image',
         imageFile.path,

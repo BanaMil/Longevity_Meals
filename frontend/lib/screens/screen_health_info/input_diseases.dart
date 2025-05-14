@@ -34,17 +34,25 @@ class InputDiseasesScreen extends StatelessWidget {
                         padding: EdgeInsets.all(16),
                         child: Text('질병을 선택해주세요.'),
                     ),
-                    Wrap(
-                        children: diseaseList.map((d) {
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: diseaseList.map((d) {
                             final selected = provider.info.diseases.contains(d);
                             return SelectableButton(
                                 text: d,
                                 isSelected: selected,
                                 onTap: () => provider.toggleDiseaseAllergy(d, provider.info.diseases),
                             );
-                        }).toList(),
+                          }).toList(),
+                        ),
+                      ),
                     ),
-                    const Spacer(),
+
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
