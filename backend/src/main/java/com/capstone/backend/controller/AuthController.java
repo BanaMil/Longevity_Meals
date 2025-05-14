@@ -30,7 +30,7 @@ public class AuthController {
           try {
             userService.register(
                 request.getUsername(),
-                request.getId(),
+                request.getUserid(),
                 request.getPassword(),
                 request.getBirthdate(),
                 request.getPhone(),
@@ -46,20 +46,20 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest request) {
         try {
             User user = userService.login(
-                request.getId(),
+                request.getUserid(),
                 request.getPassword()
             );
 
-            String token = jwtTokenProvider.createToken(user.getId());
+            String token = jwtTokenProvider.createToken(user.getUserid());
 
             LoginResponse responseData = new LoginResponse(
-                user.getId(),
+                user.getUserid(),
                 user.getUsername(),
                 user.getAddress(),
                 token,
                 user.isHealthInfoSubmitted()
             );
-
+            
             return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", responseData));
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, e.getMessage(), null));
@@ -67,8 +67,8 @@ public class AuthController {
     }
 
     @GetMapping("/check-id")
-public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkId(@RequestParam String id) {
-    boolean available = !userService.isIdTaken(id);
+public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkId(@RequestParam String userid) {
+    boolean available = !userService.isIdTaken(userid);
     Map<String, Boolean> result = Map.of("available", available);
     return ResponseEntity.ok(new ApiResponse<>(true, "아이디 중복 확인 완료", result));
 }
