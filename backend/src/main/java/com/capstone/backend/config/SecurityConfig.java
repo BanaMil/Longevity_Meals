@@ -22,8 +22,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth.
-                requestMatchers("/api/auth/**").permitAll() // 하늘 수정
+            .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/auth/**").permitAll() // 하늘 수정
+            .requestMatchers("/api/health/health_info").permitAll()
                 .anyRequest().authenticated()
             )
         .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
