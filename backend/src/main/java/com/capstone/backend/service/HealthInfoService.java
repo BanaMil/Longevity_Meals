@@ -32,7 +32,7 @@ public class HealthInfoService {
     private static final Logger logger = LoggerFactory.getLogger(HealthInfoService.class);
 
     private final HealthInfoRepository healthInfoRepository;
-    private DiseaseKeywordRepository diseaseKeywordRepository;
+    private final DiseaseKeywordRepository diseaseKeywordRepository;
 
 
     @Value("${tesseract.datapath}")
@@ -63,7 +63,7 @@ public class HealthInfoService {
         // 기존 사용자 정보가 있으면 업데이트, 없으면 새로 생성
         HealthInfo info = healthInfoRepository.findById(userId)
                 .orElse(HealthInfo.builder().id(userId).build());
-        info.setDiseases(diseaseIds);   
+        info.setDiseases(diseaseIds);
         healthInfoRepository.save(info);
     }
 
@@ -83,10 +83,15 @@ public class HealthInfoService {
 
     // 텍스트에서 질병명 추출 → 질병 ID 리스트로 변환
     private List<String> extractDiseaseIdsFromText(String text) {
+
+        text = text.replaceAll("[^ㄱ-ㅎ가-힣a-zA-Z0-9\\s]", ""); // 특수문자 제거거
+        text = text.replaceAll("\\s+", " "); // 공백 정규화
+
         Set<String> diseaseIdSet = new HashSet<>();
-        Set<String> words = Set.of(text.split("[\\s, \\n]+"));
+        List<String> words = List.of(text.split(" "));
 
         for (String word : words) {
+            if (word.isBlank()) continue;
             List<DiseaseKeywordMapping> mappings = diseaseKeywordRepository.findByKeywordContaining(word);
             for (DiseaseKeywordMapping mapping : mappings) {
                 diseaseIdSet.add(mapping.getDiseaseId());
