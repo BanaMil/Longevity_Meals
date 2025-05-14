@@ -17,8 +17,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void register(String username, String id, String password, String birthdate, String phone, String address) {
-        if (userRepository.findById(id).isPresent()) {
+    public void register(String username, String userid, String password, String birthdate, String phone, String address) {
+        if (userRepository.findById(userid).isPresent()) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
 
@@ -27,7 +27,7 @@ public class UserService {
 
         User user = User.builder()
                         .username(username)
-                        .id(id)
+                        .userid(userid)
                         .password(encodedPassword)
                         .birthdate(parsedBirthdate)
                         .phone(phone)
@@ -36,12 +36,12 @@ public class UserService {
         userRepository.save(user); //MongoDB에 저장
     }
 
-    public User login(String id, String password) {
-    System.out.println("🔐 로그인 시도: ID = " + id + ", 입력 PW = " + password);
+    public User login(String userid, String password) {
+    System.out.println("🔐 로그인 시도: ID = " + userid + ", 입력 PW = " + password);
 
-    return userRepository.findById(id)
+    return userRepository.findById(userid)
         .map(user -> {
-            System.out.println("✅ 사용자 찾음: " + user.getId());
+            System.out.println("✅ 사용자 찾음: " + user.getId);
             boolean passwordMatches = encoder.matches(password, user.getPassword());
             System.out.println("🔍 비밀번호 일치 여부: " + passwordMatches);
 
@@ -58,7 +58,7 @@ public class UserService {
 }
 
 
-    public boolean isIdTaken(String id) {
-        return userRepository.existsById(id);
+    public boolean isIdTaken(String userid) {
+        return userRepository.existsById(userid);
     }
 }
