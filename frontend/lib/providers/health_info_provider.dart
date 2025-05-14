@@ -13,8 +13,8 @@ class HealthInfoProvider with ChangeNotifier {
   void setWeight(double w) { _info.weight = w; notifyListeners(); }
   void toggleDislike(String v) => _toggleList(_info.dislikes, v);
 
-  void setUserId(String id) {
-    _info.id = id;
+  void setUserId(String userid) {
+    _info.userid = userid;
     notifyListeners();
   }
 

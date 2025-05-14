@@ -18,7 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController usernameController = TextEditingController();
-  final TextEditingController idController = TextEditingController();
+  final TextEditingController useridController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmpasswordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -45,9 +45,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool isIdAvailable = false; //ID 사용 가능 여부 상태
 
   void _checkIdDuplicate() async {
-    final id = idController.text.trim();
+    final userid = useridController.text.trim();
 
-    if (id.isEmpty) {
+    if (userid.isEmpty) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("아이디를 입력해주세요.")),
@@ -55,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    final response = await AuthService.checkIdDuplicate(id);
+    final response = await AuthService.checkIdDuplicate(userid);
 
     if (!mounted) return;
 
@@ -78,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _register() async {
     final username = usernameController.text;
-    final id = idController.text;
+    final userid = useridController.text;
     final password = passwordController.text;
     final confirmpassword = confirmpasswordController.text;
     final birthdate = _selectedBirthdate == null
@@ -109,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final response = await AuthService.registerUser(
       username: username,
-      id: id,
+      userid: userid,
       password: password,
       birthdate: birthdate,
       phone: phone,
@@ -124,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // SharedPreferences에 저장
       await UserStorage.saveUserInfo(
         username: username,
-        id: id,
+        userid: userid,
         address: address,
       );
 
@@ -164,7 +164,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 validator: Validators.validateUsername,
               ),
               TextFormField(
-                controller: idController,
+                controller: useridController,
                 decoration: InputDecoration(labelText: '아이디'),
                 validator: Validators.validateId,
               ),

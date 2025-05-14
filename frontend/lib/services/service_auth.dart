@@ -8,7 +8,7 @@ class AuthService {
   // 회원가입용 API
   static Future<http.Response> registerUser({
     required String username, 
-    required String id,
+    required String userid,
     required String password,
     required String birthdate,
     required String phone,
@@ -20,7 +20,7 @@ class AuthService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
-        'id': id,
+        'userid': userid,
         'password': password,
         'birthdate': birthdate,
         'phone': phone,
@@ -32,7 +32,7 @@ class AuthService {
 
   // 로그인용 API
   static Future<http.Response> loginUser({
-    required String id,
+    required String userid,
     required String password,
   }) async {
     final url = Uri.parse('${ApiConstants.baseUrl}/api/auth/login'); // Spring Boot 로그인 엔드포인트
@@ -40,7 +40,7 @@ class AuthService {
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        "id": id,
+        "userid": userid,
         "password": password,
       }),
     );
@@ -49,10 +49,10 @@ class AuthService {
 
   // 아이디 중복확인 API
   // GET 방식으로 보냈고, 예시 URL: /api/check-id?id=test123
-  static Future<http.Response> checkIdDuplicate(String id) async {
+  static Future<http.Response> checkIdDuplicate(String userid) async {
     final url = Uri.parse('${ApiConstants.baseUrl}/api/auth/check-id');
     final response = await http.get(
-      url.replace(queryParameters: {'id': id}),
+      url.replace(queryParameters: {'userid': userid}),
       headers: {"Content-Type": "application/json"},
     );
     return response;  

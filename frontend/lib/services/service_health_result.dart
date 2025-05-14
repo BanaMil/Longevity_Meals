@@ -6,8 +6,8 @@ import 'package:frontend/services/api_constants.dart';
 import 'package:frontend/models/health_result.dart';
 
 class HealthResultService {
-  static Future<HealthResult> fetchAnalysisResult(String id) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/api/analysis/$id'); //백엔드랑 맞추기!
+  static Future<HealthResult> fetchAnalysisResult(String userid) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/analysis/$userid'); //백엔드랑 맞추기!
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

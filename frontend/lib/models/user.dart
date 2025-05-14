@@ -2,7 +2,7 @@
 
 class User {
   final String username;
-  final String id;
+  final String userid;
   final String password;
   final DateTime birthdate;
   final String phone;
@@ -10,7 +10,7 @@ class User {
 
   User({
     required this.username,
-    required this.id,
+    required this.userid,
     required this.password,
     required this.birthdate,
     required this.phone,
@@ -21,7 +21,7 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       username: json['username'] ?? '',
-      id: json['id'] ?? '',
+      userid: json['userid'] ?? '',
       password: json['password'] ?? '',
       birthdate: DateTime.parse(json['birthdate']),
       phone: json['phone'] ?? '',
@@ -33,7 +33,7 @@ class User {
   Map<String, dynamic> toJson() {
     return {
       'username': username,
-      'id': id,
+      'userid': userid,
       'password': password,
       'birthdate': birthdate.toIso8601String(),
       'phone': phone,

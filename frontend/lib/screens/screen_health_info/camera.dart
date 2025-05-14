@@ -17,7 +17,7 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   final picker = ImagePicker();
   File? _capturedImage;
-  String? _id;
+  String? _userid;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _CameraScreenState extends State<CameraScreen> {
     }
     
     setState(() {
-      _id = storedId;
+      _userid = storedId;
     });
 
     _takePicture();
@@ -55,7 +55,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
       try {
         await OcrService.uploadImage(
-          userId: _id!, //
+          userId: _userid!, //
           imageFile: _capturedImage!,
         );
 

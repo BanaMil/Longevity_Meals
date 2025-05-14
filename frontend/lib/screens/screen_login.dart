@@ -19,7 +19,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController idController = TextEditingController();
+  final TextEditingController useridController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   
   /*void _login() async {
@@ -73,12 +73,12 @@ class _LoginScreenState extends State<LoginScreen> {
    */
 
   void _login() async { // GPT 코드
-    final enteredId = idController.text.trim();
+    final enteredId = useridController.text.trim();
     final password = passwordController.text.trim();
 
     print("🔐 Trying login with ID: '$enteredId', PW: '$password'");
 
-    final response = await AuthService.loginUser(id: enteredId, password: password);
+    final response = await AuthService.loginUser(userid: enteredId, password: password);
 
     if (!mounted) return;
 
@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.statusCode == 200 && result['success'] == true && result['data'] != null) {
         final data = result['data'];
-        final userId = data['id'];
+        final userId = data['userid'];
         final username = data['username'];
         final address = data['address'];
         final token = data['token'];
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', token);
         await prefs.setString('username', username);
-        await prefs.setString('id', userId);
+        await prefs.setString('userid', userId);
         await prefs.setString('address', address);
 
         if (!mounted) return;
@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               TextFormField(
-                controller: idController,
+                controller: useridController,
                 decoration: InputDecoration(labelText: '아이디'),
                 validator: (value) => value!.isEmpty ? '아이디를 입력하세요' : null,
               ),

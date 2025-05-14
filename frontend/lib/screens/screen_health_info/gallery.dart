@@ -17,7 +17,7 @@ class GalleryScreen extends StatefulWidget {
 class _GalleryScreenState extends State<GalleryScreen> {
   final picker = ImagePicker();
   File? _selectedImage;
-  String? _id;
+  String? _userid;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     }
 
     setState(() {
-      _id = storedId;
+      _userid = storedId;
     });
 
     _pickImageFromGallery();
@@ -55,7 +55,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
       try {
         await OcrService.uploadImage(
-          userId: _id!, 
+          userId: _userid!, 
           imageFile: _selectedImage!,
         );
 
