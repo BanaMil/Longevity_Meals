@@ -51,6 +51,17 @@ public class HealthInfoService {
         healthInfoRepository.save(healthInfo);
     }
 
+    private String preprocessText(String rawText) { // 텍스트 전처리 함수
+        String cleaned = rawText.replaceAll("[^ㄱ-ㅎ가-힣a-zA-Z0-9\\s]", "");
+        return cleaned.replaceAll("\\s+", " ").trim();
+    }
+
+    private List<String> extractWords(String text) { // 단어 추출 함수
+        return List.of(text.split(" "));
+    }
+
+
+
     public void extractAndSaveDiseasesFromImage(String userId, File imageFile) {
 
         if (!isValidImageFile(imageFile)) return;
@@ -59,10 +70,14 @@ public class HealthInfoService {
         if (text == null || text.isBlank()) return;
 
         List<String> diseaseIds = extractDiseaseIdsFromText(text);
+        if (diseaseIds == null || diseaseIds.isEmpty()) {
+        logger.debug("질병 추론 결과 없음. 저장 생략. userId: {}", userId);
+        return;
+    }
 
         // 기존 사용자 정보가 있으면 업데이트, 없으면 새로 생성
         HealthInfo info = healthInfoRepository.findById(userId)
-                .orElse(HealthInfo.builder().id(userId).build());
+                .orElse(HealthInfo.builder().userid(userId).build());
         info.setDiseases(diseaseIds);
         healthInfoRepository.save(info);
     }
@@ -74,7 +89,9 @@ public class HealthInfoService {
         tesseract.setLanguage("kor");
 
         try {
-            return tesseract.doOCR(imageFile);
+            String result = tesseract.doOCR(imageFile);
+            logger.debug("OCR 출 결과: \n{}", result);
+            return result;
         } catch (TesseractException e) {
             logger.error("OCR 처리 중 오류 발생. 파일: {}", imageFile.getAbsolutePath(), e);
             return null;
@@ -82,14 +99,8 @@ public class HealthInfoService {
     }
 
     // 텍스트에서 질병명 추출 → 질병 ID 리스트로 변환
-    private List<String> extractDiseaseIdsFromText(String text) {
-
-        text = text.replaceAll("[^ㄱ-ㅎ가-힣a-zA-Z0-9\\s]", ""); // 특수문자 제거거
-        text = text.replaceAll("\\s+", " "); // 공백 정규화
-
+    private List<String> inferDiseasesFromWords(List<String> words) {
         Set<String> diseaseIdSet = new HashSet<>();
-        List<String> words = List.of(text.split(" "));
-
         for (String word : words) {
             if (word.isBlank()) continue;
             List<DiseaseKeywordMapping> mappings = diseaseKeywordRepository.findByKeywordContaining(word);
@@ -97,8 +108,16 @@ public class HealthInfoService {
                 diseaseIdSet.add(mapping.getDiseaseId());
             }
         }
+        logger.debug("추론된 질병 ID 목록: {}", diseaseIdSet);
         return new ArrayList<>(diseaseIdSet);
     }
+
+    private List<String> extractDiseaseIdsFromText(String rawText) {
+        String cleanedText = preprocessText(rawText);
+        List<String> words = extractWords(cleanedText);
+        return inferDiseasesFromWords(words);
+    }
+
 
     private boolean isValidImageFile(File file) {
         if (file == null || !file.exists()) return false;
