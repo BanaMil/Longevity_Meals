@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/service_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/screens/screen_health_info/choice_info.dart';
-import 'screen_home.dart';
+import 'package:frontend/tabs/tab_home.dart';
+// import 'screen_home.dart';
 import 'dart:convert';
 
 
@@ -112,10 +113,10 @@ class _LoginScreenState extends State<LoginScreen> {
         if (healthInfoSubmitted == true) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => HomeScreen()),  // 홈 화면으로 이동
+            MaterialPageRoute(builder: (_) => HomeTab()),  // 홈 화면으로 이동
           );
 
-          print("🏠 건강정보 입력됨 → HomeScreen 이동");
+          print("🏠 건강정보 입력됨 → tab_home 이동");
         } else {
           Navigator.pushReplacement(
             context,
