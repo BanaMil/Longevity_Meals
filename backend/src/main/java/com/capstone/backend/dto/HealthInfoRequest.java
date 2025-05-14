@@ -20,4 +20,6 @@ public class HealthInfoRequest {
     private List<String> diseases;
     private List<String> allergies;
     private List<String> dislikes;
+    private List<String> recommendedNutrients;
+    private List<String> restrictedNutrients;
 }
