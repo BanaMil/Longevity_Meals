@@ -25,7 +25,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   Future<void> _loadUserId() async {
     final prefs = await SharedPreferences.getInstance();
-    final storedId = prefs.getString('id');
+    final storedId = prefs.getString('userid');
 
     if (storedId == null) {
       if (!mounted) return;

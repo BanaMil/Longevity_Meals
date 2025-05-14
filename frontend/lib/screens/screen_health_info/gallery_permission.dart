@@ -18,18 +18,14 @@ class _GalleryPermissionScreen extends State<GalleryPermissionScreen> {
     PermissionStatus status; 
 
     if(Platform.isAndroid) {
-      // Android 버전에 따라 분기
-      if (await Permission.photos.isGranted) {
-        status = PermissionStatus.granted;
-      } else if (Platform.version.contains('13') || Platform.version.contains('14')) {
-        // Android 13 (API33) + 
-        status = await Permission.mediaLibrary.request();
-      } else {
-        // Android 12 이하
+      // Android 13이상 권한 요청 (API 33+)
+      status = await Permission.mediaLibrary.request();
+      if (status.isDenied) {
+        // Android 12 이하 대응
         status = await Permission.storage.request();
-      } 
+      }
     } else {
-      status = await Permission.photos.request();
+      status = PermissionStatus.denied;
     } 
 
     if (!mounted) return;
