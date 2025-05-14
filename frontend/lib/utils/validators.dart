@@ -10,7 +10,7 @@ class Validators {
     return null;
   }
 
-  // 아이디 (id) 유효성 검사: 영문자와 숫자, 4~16자
+  // 아이디 (userid) 유효성 검사: 영문자와 숫자, 4~16자
   static String? validateId(String? value) {
     final regex = RegExp(r'^[a-zA-Z0-9]{4,16}$');
     if (value == null || value.isEmpty) {

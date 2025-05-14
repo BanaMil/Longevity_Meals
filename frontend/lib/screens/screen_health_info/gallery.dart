@@ -1,5 +1,3 @@
-// gallery.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,7 +27,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     final prefs = await SharedPreferences.getInstance();
     final storedId = prefs.getString('id');
 
-    if(storedId == null) {
+    if (storedId == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("사용자 ID를 찾을 수 없습니다.")),
@@ -52,31 +50,38 @@ class _GalleryScreenState extends State<GalleryScreen> {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
-
-      try {
-        await OcrService.uploadImage(
-          userId: _userid!, 
-          imageFile: _selectedImage!,
-        );
-
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("업로드 완료")),
-        );
-
-        Navigator.push(
-          context, 
-          MaterialPageRoute(builder: (_) => InputDiseasesScreen())
-        );
-      } catch (e) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("업로드 실패: $e")),
-        );
-      }
     } else {
       if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("이미지가 선택되지 않았습니다.")),
+      );
       Navigator.pop(context);
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    if (_selectedImage == null || _userid == null) return;
+
+    try {
+      await OcrService.uploadImage(
+        userId: _userid!,
+        imageFile: _selectedImage!,
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("업로드 완료")),
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => InputDiseasesScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("업로드 실패: $e")),
+      );
     }
   }
 
@@ -85,9 +90,19 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('갤러리에서 선택')),
       body: Center(
-        child: _selectedImage != null
-            ? Image.file(_selectedImage!)
-            : const CircularProgressIndicator(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _selectedImage != null
+                ? Image.file(_selectedImage!)
+                : const CircularProgressIndicator(),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _uploadImage,
+              child: const Text("업로드 및 다음"),
+            ),
+          ],
+        ),
       ),
     );
   }
