@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
-import 'package:frontend/screens/screen_home.dart';
+import 'package:frontend/tabs/tab_home.dart';
 
 class InputDislikesScreen extends StatefulWidget {
   const InputDislikesScreen({super.key});
@@ -161,7 +161,7 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                         );  
                         // 홈화면으로 이동
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                          MaterialPageRoute(builder: (_) => const HomeTab()),
                         );
                       }
                     } catch (e) {

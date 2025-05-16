@@ -18,14 +18,14 @@ class FirstScreen extends StatelessWidget {
             ClipOval(
               child: Image.asset(
               'assets/images/longevity_meals_logo.png',
-              width: 180,
-              height: 180,
+              width: 220,
+              height: 220,
               fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 20),
-            Text('장수밥상', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-            SizedBox(height: 60),
+            const SizedBox(height: 60), 
+            // SizedBox(height: 20),
+            // Text('장수밥상', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen()));

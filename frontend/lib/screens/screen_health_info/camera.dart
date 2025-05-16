@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/services/service_ocr.dart';
-import 'package:frontend/screens/screen_health_info/input_diseases.dart';
+// import 'package:frontend/screens/screen_health_info/input_diseases.dart';
+import 'package:frontend/screens/screen_health_info/input_height_weight.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -27,7 +28,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> _loadUserId() async {
     final prefs = await SharedPreferences.getInstance();
-    final storedId = prefs.getString('id');
+    final storedId = prefs.getString('userid');
 
     if (storedId == null) {
       if (!mounted) return;
@@ -64,7 +65,7 @@ class _CameraScreenState extends State<CameraScreen> {
           const SnackBar(content: Text('업로드 완료')),
         );
 
-        Navigator.push(context, MaterialPageRoute(builder: (_) => InputDiseasesScreen())); 
+        Navigator.push(context, MaterialPageRoute(builder: (_) =>  InputHeightWeightScreen())); 
       } catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
