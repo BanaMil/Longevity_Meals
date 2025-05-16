@@ -50,7 +50,7 @@ public class AuthController {
                 request.getPassword()
             );
 
-            String token = jwtTokenProvider.createToken(user.getUserid());
+            String token = jwtTokenProvider.createToken(user.getId());
 
             LoginResponse responseData = new LoginResponse(
                 user.getUserid(),
