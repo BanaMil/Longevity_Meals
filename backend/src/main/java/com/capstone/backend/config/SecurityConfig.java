@@ -25,7 +25,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll() // 하늘 수정
             .requestMatchers("/api/health/health_info").permitAll()
-            .requestMatchers("/ocr/upload").permitall()
+            .requestMatchers("/ocr/upload").permitAll()
                 .anyRequest().authenticated()
             )
         .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
