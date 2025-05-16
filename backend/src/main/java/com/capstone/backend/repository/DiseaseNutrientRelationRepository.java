@@ -1,6 +1,6 @@
 package com.capstone.backend.repository;
 
-import com.capstone.backend.domain.DiseaseKeywordMapping;
+import com.capstone.backend.domain.DiseaseNutrientRelation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 import com.capstone.backend.domain.DiseaseNutrientRelation;
