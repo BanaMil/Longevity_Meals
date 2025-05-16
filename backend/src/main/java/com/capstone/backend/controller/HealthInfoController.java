@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +24,8 @@ public class HealthInfoController {
 
     @PostMapping("/health_info")
     public ResponseEntity<ApiResponse<Object>> submitHealthInfo(@Valid @RequestBody HealthInfoRequest request) {
-        healthInfoService.saveHealthInfo(request);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        healthInfoService.saveHealthInfo(userId, request);
         return ResponseEntity.ok(new ApiResponse<>(true, "건강 정보 저장 완료", null));
     }
     

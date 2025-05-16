@@ -2,9 +2,11 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.domain.DiseaseKeywordMapping;
 import com.capstone.backend.domain.HealthInfo;
+import com.capstone.backend.domain.User;
 import com.capstone.backend.dto.HealthInfoRequest;
 import com.capstone.backend.repository.DiseaseKeywordRepository;
 import com.capstone.backend.repository.HealthInfoRepository;
+import com.capstone.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.Tesseract;
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
-
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class HealthInfoService {
     private static final Logger logger = LoggerFactory.getLogger(HealthInfoService.class);
 
     private final HealthInfoRepository healthInfoRepository;
+    private final UserRepository userRepository;
     private final DiseaseKeywordRepository diseaseKeywordRepository;
 
 
@@ -39,7 +42,7 @@ public class HealthInfoService {
     private String tessDataPath;
 
 
-    public void saveHealthInfo(HealthInfoRequest request) { // 사용자가 직접 입력한 정보 저장
+    public void saveHealthInfo(String userId, HealthInfoRequest request) { // 사용자가 직접 입력한 정보 저장
         HealthInfo healthInfo = HealthInfo.builder()
                 .height(request.getHeight())
                 .weight(request.getWeight())
@@ -47,8 +50,18 @@ public class HealthInfoService {
                 .allergies(request.getAllergies())
                 .dislikes(request.getDislikes())
                 .build();
+        
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()){
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId);
+        }
+
+        User user = optionalUser.get();
+
+        user.setHealthInfoSubmitted(true);
 
         healthInfoRepository.save(healthInfo);
+        userRepository.save(user);
     }
 
     private String preprocessText(String rawText) { // 텍스트 전처리 함수
