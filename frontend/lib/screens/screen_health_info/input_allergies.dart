@@ -61,7 +61,7 @@ class InputAllergiesScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const InputDislikesScreen()), //카메라 화면 생성하기
+                    MaterialPageRoute(builder: (context) => const InputDislikesScreen()), 
                   );
                 }, 
               ),    

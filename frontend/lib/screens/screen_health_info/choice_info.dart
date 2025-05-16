@@ -2,13 +2,31 @@
 
 import 'package:flutter/material.dart';
 import 'package:frontend/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/providers/health_info_provider.dart';
 import 'gallery_permission.dart';
 import 'camera_permission.dart';
 import 'input_height_weight.dart';
 
 
-class ChoiceInfoScreen extends StatelessWidget {
+class ChoiceInfoScreen extends StatefulWidget {
   const ChoiceInfoScreen({super.key});
+
+  @override
+  State<ChoiceInfoScreen> createState() => _ChoiceInfoScreenState();
+}
+
+class _ChoiceInfoScreenState extends State<ChoiceInfoScreen> {
+  
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      if (mounted) {
+        context.read<HealthInfoProvider>().reset();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

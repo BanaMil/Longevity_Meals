@@ -26,6 +26,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 
   DateTime? _selectedBirthdate; // 생년월일 저장용
+  bool isIdAvailable = false; //ID 사용 가능 여부 상태
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 아이디 입력값이 변경될 때마다 중복 확인 상태 초기화
+    useridController.addListener(() {
+      setState(() {
+        isIdAvailable = false;
+      });
+    });
+  }
 
   void _pickBirthdate() async {
     final DateTime? picked = await showDatePicker(
@@ -41,8 +54,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
     }
   }
-
-  bool isIdAvailable = false; //ID 사용 가능 여부 상태
 
   void _checkIdDuplicate() async {
     final userid = useridController.text.trim();
@@ -67,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         isIdAvailable = available;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(available ? "사용 가능한 아이디입니다." : "이미 존재하는 아이디입니다.")),
+        SnackBar(content: Text(available ? "사용 가능한 아이디입니다." : "이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.")),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,6 +99,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           '${_selectedBirthdate!.day.toString().padLeft(2, '0')}';
     final phone = phoneController.text.trim();
     final address = addressController.text.trim();
+
+    // 아이디 중복 확인 여부 검사
+    if(!isIdAvailable) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("아이디 중복 확인을 먼저 해주세요.")),
+      );
+      return;
+    }
 
     // 비밀번호 확인 검사
     if (password != confirmpassword) {

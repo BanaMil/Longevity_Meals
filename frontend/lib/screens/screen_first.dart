@@ -18,8 +18,8 @@ class FirstScreen extends StatelessWidget {
             ClipOval(
               child: Image.asset(
               'assets/images/longevity_meals_logo.png',
-              width: 220,
-              height: 220,
+              width: 250,
+              height: 250,
               fit: BoxFit.cover,
               ),
             ),

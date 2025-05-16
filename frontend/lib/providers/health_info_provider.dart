@@ -54,5 +54,15 @@ class HealthInfoProvider with ChangeNotifier {
   Future<void> submitToServer() async {
     await HealthInfoService.uploadHealthInfo(_info);
   } 
+
+  // 건강정보 입력 초기화
+  void reset() {
+    _info.height = null;
+    _info.weight = null;
+    _info.diseases.clear();
+    _info.allergies.clear();
+    _info.dislikes.clear();
+    notifyListeners();
+  }
 }
 
