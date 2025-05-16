@@ -17,6 +17,8 @@ import java.util.List;
 
 public class HealthInfo {
     @Id
+    private String id;
+
     private String userid;
     private double height;
     private double weight;
