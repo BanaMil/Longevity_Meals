@@ -68,8 +68,8 @@ public class AuthController {
 
     @GetMapping("/check-id")
 public ResponseEntity<ApiResponse<Map<String, Boolean>>> checkId(@RequestParam String userid) {
-    boolean isDuplicate = userService.isIdTaken(userid);
-    Map<String, Boolean> result = Map.of("available", isDuplicate);
+    boolean available = !userService.isIdTaken(userid);
+    Map<String, Boolean> result = Map.of("available", available);
     return ResponseEntity.ok(new ApiResponse<>(true, "아이디 중복 확인 완료", result));
 }
 
