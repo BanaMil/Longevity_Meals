@@ -38,8 +38,7 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add),
+                ElevatedButton(
                   onPressed: () {
                     final text = _controller.text.trim();
                     if (text.isNotEmpty) {
@@ -47,6 +46,10 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                       _controller.clear();
                     }
                   },
+                  style: ElevatedButton.styleFrom(
+                    side: const BorderSide(color: Colors.black, width: 0.5), // 태두리 
+                  ),
+                  child: const Text('추가'),
                 )
               ],
             ),

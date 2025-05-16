@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
-      final available = result['available'] == true;
+      final available = result['data']['available'] == true;
 
       setState(() {
         isIdAvailable = available;
@@ -101,6 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final address = addressController.text.trim();
 
     // 아이디 중복 확인 여부 검사
+    // 여기 고쳐야 함!!
     if(!isIdAvailable) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

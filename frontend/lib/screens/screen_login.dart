@@ -126,9 +126,16 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         final msg = result['message'] ?? "로그인 실패 (원인 불명)";
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("❌ 로그인 실패: $msg")),
-        );
+
+        if (response.statusCode == 401) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("아이디나 비밀번호가 잘못 입력되었습니다.")),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("❌ 로그인 실패: $msg")),
+          );
+        }
         print("❌ 로그인 실패: $msg");
       }
     } catch (e) {
