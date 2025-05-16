@@ -34,9 +34,10 @@ class InputAllergiesScreen extends StatelessWidget {
             child:  SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
+                alignment: WrapAlignment.center,
                 spacing: 8,
                 runSpacing: 8,
-    children: allergyList.map((a) {
+                children: allergyList.map((a) {
                   final selected = provider.info.allergies.contains(a);
                   return SelectableButton(
                     text: a,

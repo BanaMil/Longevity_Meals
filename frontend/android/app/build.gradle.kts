@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.frontend"
-    compileSdk = 33 //flutter.compileSdkVersion
+    compileSdk = 35 //flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
