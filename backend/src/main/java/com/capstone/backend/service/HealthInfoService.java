@@ -90,7 +90,7 @@ public class HealthInfoService {
 
         try {
             String result = tesseract.doOCR(imageFile);
-            logger.debug("OCR 출 결과: \n{}", result);
+            logger.debug("OCR 추출 결과: \n{}", result);
             return result;
         } catch (TesseractException e) {
             logger.error("OCR 처리 중 오류 발생. 파일: {}", imageFile.getAbsolutePath(), e);
