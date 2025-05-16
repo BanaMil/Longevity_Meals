@@ -39,7 +39,7 @@ public class UserService {
     public User login(String userid, String password) {
     System.out.println("🔐 로그인 시도: ID = " + userid + ", 입력 PW = " + password);
 
-    return userRepository.findById(userid)
+    return userRepository.findByUserid(userid)
         .map(user -> {
             System.out.println("✅ 사용자 찾음: " + user.getUserid());
             boolean passwordMatches = encoder.matches(password, user.getPassword());

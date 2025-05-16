@@ -22,12 +22,12 @@ public class JwtTokenProvider {
 
     private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
-    public String createToken(String _id) {
+    public String createToken(String id) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
-            .setSubject(_id)
+            .setSubject(id)
             .setIssuedAt(now)
             .setExpiration(validity)
             .signWith(key, SignatureAlgorithm.HS256)
