@@ -10,7 +10,7 @@ import java.lang.String;
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findById(String Id);
     Optional<User> findByUserid(String Userid);
-    boolean existsById(String Id);
+    boolean existsByUserid(String Userid);
 }
 
 

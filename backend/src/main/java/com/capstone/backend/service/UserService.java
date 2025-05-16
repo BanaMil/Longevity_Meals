@@ -59,6 +59,6 @@ public class UserService {
 
 
     public boolean isIdTaken(String userid) {
-        return userRepository.existsById(userid);
+        return userRepository.existsByUserid(userid);
     }
 }
