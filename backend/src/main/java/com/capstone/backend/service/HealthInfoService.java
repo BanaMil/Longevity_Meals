@@ -51,14 +51,18 @@ public class HealthInfoService {
                 .dislikes(request.getDislikes())
                 .build();
         
-        Optional<User> optionalUser = userRepository.findById(userId);
+        /*Optional<User> optionalUser = userRepository.findByUserid(userId);
         if (optionalUser.isEmpty()){
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId);
         }
 
-        User user = optionalUser.get();
+        User user = optionalUser.get();*/
+        User user = userRepository.findByUserid(userId)
+            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
+
 
         user.setHealthInfoSubmitted(true);
+        
 
         healthInfoRepository.save(healthInfo);
         userRepository.save(user);
