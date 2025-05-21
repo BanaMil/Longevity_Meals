@@ -1,52 +1,76 @@
 package com.capstone.backend.service;
 
-import com.capstone.backend.utils.DiseaseDictionary;
+import com.capstone.backend.domain.Allergy;
+import com.capstone.backend.domain.DiseaseKeywordMapping;
+import com.capstone.backend.domain.DiseaseNutrientRelation;
 import com.capstone.backend.dto.HealthInfoRequest;
+import com.capstone.backend.repository.AllergyRepository;
+import com.capstone.backend.repository.DiseaseKeywordRepository;
+import com.capstone.backend.repository.DiseaseNutrientRelationRepository;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.regex.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class HealthInfoAnalyzer {
 
-    private static final Set<String> KNOWN_DISEASES = DiseaseDictionary.getAll().keySet();
-    private static final Set<String> KNOWN_ALLERGIES = Set.of("우유", "계란", "땅콩", "대두", "밀", "갑각류");
+    private final DiseaseKeywordRepository keywordRepo;
+    private final DiseaseNutrientRelationRepository nutrientRepo;
+    private final AllergyRepository allergyRepo;
 
     public HealthInfoRequest analyze(String ocrText) {
         log.info("Analyzing OCR text: {}", ocrText);
 
-        List<String> diseaseIds = extractDiseaseIds(ocrText);
-        List<String> allergies = extractMatches(ocrText, KNOWN_ALLERGIES);
+        // 1. 질병 유추
+        List<String> diseases = inferDiseasesFromKeywords(ocrText);
 
-        return HealthInfoRequest.builder()
-                .diseases(diseaseIds)  // 여기에 이제 'D001' 같은 ID 저장
-                .allergies(allergies)
-                .build();
-    }
+        // 2. 알레르기 추출
+        List<String> allergies = inferAllergiesFromKeywords(ocrText);
 
-    private List<String> extractDiseaseIds(String text) {
-        List<String> ids = new ArrayList<>();
-        for (String disease : KNOWN_DISEASES) {
-            if (text.contains(disease)) {
-                String id = DiseaseDictionary.getDiseaseId(disease);
-                if (id != null && !ids.contains(id)) {
-                    ids.add(id);
+        // 3. 질병별 영양소 추출
+        List<String> recommended = new ArrayList<>();
+        List<String> restricted = new ArrayList<>();
+
+        for (String disease : diseases) {
+            for (DiseaseNutrientRelation relation : nutrientRepo.findByDisease(disease)) {
+                switch (relation.getRelation()) {
+                    case "recommended" -> recommended.add(relation.getNutrient());
+                    case "restricted" -> restricted.add(relation.getNutrient());
                 }
             }
         }
-        return ids;
+
+        return HealthInfoRequest.builder()
+                .diseases(diseases)
+                .allergies(allergies)
+                .recommendedNutrients(recommended)
+                .restrictedNutrients(restricted)
+                .build();
     }
 
-    private List<String> extractMatches(String text, Set<String> keywords) {
-        List<String> matches = new ArrayList<>();
-        for (String keyword : keywords) {
-            if (text.contains(keyword)) {
-                matches.add(keyword);
+    private List<String> inferDiseasesFromKeywords(String text) {
+        return keywordRepo.findAll().stream()
+                .filter(mapping -> mapping.getKeywords().stream().anyMatch(text::contains))
+                .map(DiseaseKeywordMapping::getDiseaseName)
+                .distinct()
+                .toList();
+    }
+
+    private List<String> inferAllergiesFromKeywords(String text) {
+        List<String> results = new ArrayList<>();
+        for (Allergy allergy : allergyRepo.findAll()) {
+            for (String keyword : allergy.getIngredientKeywords()) {
+                if (text.contains(keyword)) {
+                    results.add(allergy.getName());
+                    break; // 해당 알러지는 한 번 매칭되면 추가
+                }
             }
         }
-        return matches;
+        return results.stream().distinct().toList();
     }
 }
