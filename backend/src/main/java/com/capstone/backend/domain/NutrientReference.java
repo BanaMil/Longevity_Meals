@@ -1,7 +1,5 @@
 package com.capstone.backend.domain;
 
-import com.capstone.backend.domain.enums.NutrientRelation;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,15 +7,16 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@Document(collection = "disease_nutrient_relations")
+@Document(collection = "nutrient_reference")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DiseaseNutrientRelation {
+public class NutrientReference {
     @Id
     private String id;
-    private String disease;
     private String nutrient;
-    private NutrientRelation relation;
-    private Double modifier;
+    private String unit;
+    private Double recommendedAmount;
+    private Double upperLimit;
+    private Double minimumAmount;
 }

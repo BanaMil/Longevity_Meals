@@ -2,11 +2,13 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.domain.DiseaseKeywordMapping;
 import com.capstone.backend.domain.HealthInfo;
+import com.capstone.backend.domain.NutrientStatusMapping;
 import com.capstone.backend.domain.User;
 import com.capstone.backend.dto.HealthInfoRequest;
 import com.capstone.backend.repository.DiseaseKeywordRepository;
 import com.capstone.backend.repository.HealthInfoRepository;
 import com.capstone.backend.repository.UserRepository;
+import com.capstone.backend.analysis.HealthInfoAnalyzer;
 
 import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.Tesseract;
@@ -31,7 +33,7 @@ public class HealthInfoService {
 
     private final HealthInfoRepository healthInfoRepository;
     private final UserRepository userRepository;
-    private final DiseaseKeywordRepository diseaseKeywordRepository;
+    private final HealthInfoAnalyzer analyzer;
 
 
     @Value("${tesseract.datapath}")
@@ -39,7 +41,10 @@ public class HealthInfoService {
 
 
     public void saveHealthInfo(String userId, HealthInfoRequest request) { // 사용자가 직접 입력한 정보 저장
+        List<NutrientStatusMapping> statusList = analyzer.analyze(request.getDiseases());
+
         HealthInfo healthInfo = HealthInfo.builder()
+                .userid(userId);
                 .height(request.getHeight())
                 .weight(request.getWeight())
                 .diseases(request.getDiseases())
@@ -89,7 +94,7 @@ public class HealthInfoService {
     }
 
         // 기존 사용자 정보가 있으면 업데이트, 없으면 새로 생성
-        HealthInfo info = healthInfoRepository.findById(userId)
+        HealthInfo info = healthInfoRepository.findById(userId) // FINDBYID????
                 .orElse(HealthInfo.builder().userid(userId).build());
         info.setDiseases(diseaseIds);
         healthInfoRepository.save(info);

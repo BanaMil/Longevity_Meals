@@ -1,5 +1,6 @@
 package com.capstone.backend.dto;
 
+import com.capstone.backend.domain.NutrientStatusMapping;
 
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -20,4 +21,6 @@ public class HealthInfoRequest {
     private List<String> diseases;
     private List<String> allergies;
     private List<String> dislikes;
+
+    private List<NutrientStatusMapping> nutrientStatusList;
 }
