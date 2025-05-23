@@ -12,6 +12,8 @@ import java.util.List;
 @Getter @Setter @Builder
 public class HealthInfoRequest {
     
+    private String gender;
+
     @Positive
     private double height;
 
@@ -21,6 +23,4 @@ public class HealthInfoRequest {
     private List<String> diseases;
     private List<String> allergies;
     private List<String> dislikes;
-
-    private List<NutrientStatusMapping> nutrientStatusList;
 }

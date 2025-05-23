@@ -8,9 +8,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
+
 
 @Document(collection = "disease_nutrient_relations")
 @Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class DiseaseNutrientRelation {

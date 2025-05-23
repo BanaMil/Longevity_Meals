@@ -18,5 +18,4 @@ public class NutrientReference {
     private String unit;
     private Double recommendedAmount;
     private Double upperLimit;
-    private Double minimumAmount;
 }
