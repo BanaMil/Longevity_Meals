@@ -16,6 +16,14 @@ public class NutrientReference {
     private String id;
     private String nutrient;
     private String unit;
-    private Double recommendedAmount;
-    private Double upperLimit;
+    private IntakeStandard male;
+    private IntakeStandard female;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class IntakeStandard{
+        private Double recommendedAmount;
+        private Double upperLimit;
+    }
 }
