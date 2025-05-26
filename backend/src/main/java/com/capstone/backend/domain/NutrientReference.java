@@ -6,11 +6,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Document(collection = "nutrient_reference")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class NutrientReference {
     @Id
     private String id;

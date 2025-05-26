@@ -3,6 +3,7 @@ package com.capstone.backend.analysis;
 import com.capstone.backend.repository.NutrientReferenceRepository;
 import com.capstone.backend.domain.NutrientStatusMapping;
 import com.capstone.backend.domain.NutrientReference;
+import com.capstone.backend.domain.NutrientReference.IntakeStandard;
 
 import java.util.List;
 import java.util.HashMap;
@@ -18,8 +19,13 @@ public class NutrientTargetCalculator {
 
     private final NutrientReferenceRepository referenceRepo;
 
-    public Map<String, Double> calculateTargets(List<NutrientStatusMapping> statusList) {
+    public Map<String, Double> calculateTargets(List<NutrientStatusMapping> statusList, String gender) {
         Map<String, Double> result = new HashMap<>();
+
+        // 기본값 처리
+        if (!"male".equals(gender) && !"female".equals(gender)) {
+            gender = "male";
+        }
 
         for (NutrientStatusMapping status : statusList) {
             String nutrient = status.getNutrient();
@@ -29,13 +35,14 @@ public class NutrientTargetCalculator {
             if (optionalRef.isEmpty()) continue;
 
             NutrientReference ref = optionalRef.get();
-            Double baseAmount = ref.getRecommendedAmount();
-            Double upperLimit = ref.getUpperLimit();
+            IntakeStandard standard = "male".equals(gender) ? ref.getMale() : ref.getFemale();
+            if (standard == null || standard.getRecommendedAmount() == null) continue;
 
-            if (baseAmount == null) continue;
+            double baseAmount = standard.getRecommendedAmount();
+            double upperLimit = standard.getUpperLimit() != null ? standard.getUpperLimit() : Double.MAX_VALUE;
 
             double personalized = baseAmount * modifier;
-            if (upperLimit != null && personalized > upperLimit) {
+            if (personalized > upperLimit) {
                 personalized = upperLimit;
             }
 

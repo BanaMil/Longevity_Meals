@@ -1,14 +1,12 @@
 package com.capstone.backend.domain.enums;
 
-package com.capstone.backend.domain.enums;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
 public enum NutrientRelation {
-    RECOMMENDED("권장"),
+    RECOMMENDED("\"권장\""),
     RESTRICTED("제한"),
     CAUTION("주의"),
     NEUTRAL("중립");
@@ -30,7 +28,7 @@ public enum NutrientRelation {
             if (r.label.equals(input)) {
                 return r;
             }
-            return NEUTRAL;
         }
+        return NEUTRAL;
     }
 }

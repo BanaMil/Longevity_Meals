@@ -40,7 +40,7 @@ public class HealthInfoService {
 
     public void saveHealthInfo(String userId, HealthInfoRequest request) { // 사용자가 직접 입력한 정보 저장
         List<NutrientStatusMapping> statusList = analyzer.analyze(request.getDiseases());
-        Map<String, Double> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList);
+        Map<String, Double> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, request.getGender());
 
         HealthInfo healthInfo = HealthInfo.builder()
                 .userid(userId)
