@@ -21,10 +21,22 @@ public class NutrientTargetCalculator {
 
     public Map<String, Double> calculateTargets(List<NutrientStatusMapping> statusList, String gender) {
         Map<String, Double> result = new HashMap<>();
+        
 
         // 기본값 처리
         if (!"male".equals(gender) && !"female".equals(gender)) {
             gender = "male";
+        }
+
+        double energyIntake = 2000.0;
+        Optional<NutrientReference> energyOpt = referenceRepo.findByNutrient("에너지");
+        if(energyOpt.isPresent()){
+            IntakeStandard std = "male".equals(gender)
+                ? energyOpt.get().getMale()
+                : energyOpt.get().getFemale();
+            if (std != null && std.getRecommendedAmount() != null) {
+                energyIntake = std.getRecommendedAmount();
+            }
         }
 
         for (NutrientStatusMapping status : statusList) {
@@ -36,9 +48,16 @@ public class NutrientTargetCalculator {
 
             NutrientReference ref = optionalRef.get();
             IntakeStandard standard = "male".equals(gender) ? ref.getMale() : ref.getFemale();
-            if (standard == null || standard.getRecommendedAmount() == null) continue;
+            if (standard == null) continue;
 
-            double baseAmount = standard.getRecommendedAmount();
+            Double baseAmount = standard.getRecommendedAmount();
+            if (baseAmount == null && standard.getMinRatio() != null && ref.getKcalPerUnit() > 0){
+                double targetkcal = energyIntake * standard.getMinRatio();
+                baseAmount = targetkcal / ref.getKcalPerUnit();
+            }
+
+            if (baseAmount == null) continue;
+
             double upperLimit = standard.getUpperLimit() != null ? standard.getUpperLimit() : Double.MAX_VALUE;
 
             double personalized = baseAmount * modifier;

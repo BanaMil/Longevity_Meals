@@ -20,6 +20,7 @@ public class NutrientReference {
     private String id;
     private String nutrient;
     private String unit;
+    private double kcalPerUnit;
     private IntakeStandard male;
     private IntakeStandard female;
 
@@ -29,5 +30,7 @@ public class NutrientReference {
     public static class IntakeStandard{
         private Double recommendedAmount;
         private Double upperLimit;
+        private Double minRatio;
+        private Double maxRatio;
     }
 }
