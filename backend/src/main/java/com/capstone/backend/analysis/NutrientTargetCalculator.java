@@ -28,16 +28,14 @@ public class NutrientTargetCalculator {
             gender = "male";
         }
 
-        double energyIntake = 2000.0;
-        Optional<NutrientReference> energyOpt = referenceRepo.findByNutrient("에너지");
-        if(energyOpt.isPresent()){
-            IntakeStandard std = "male".equals(gender)
-                ? energyOpt.get().getMale()
-                : energyOpt.get().getFemale();
-            if (std != null && std.getRecommendedAmount() != null) {
-                energyIntake = std.getRecommendedAmount();
-            }
-        }
+        // 에너지 먼저 조회 (칼로리 기반 계산용)
+        Optional<NutrientReference> energyRefOpt = referenceRepo.findByNutrient("에너지");
+        final String effectiveGender = gender;
+
+        double energyKcal = energyRefOpt.map(ref -> {
+            IntakeStandard standard = "male".equals(effectiveGender) ? ref.getMale() : ref.getFemale();
+            return standard != null && standard.getRecommendedAmount() != null ? standard.getRecommendedAmount() : 0;
+        }).orElse(0.0);
 
         for (NutrientStatusMapping status : statusList) {
             String nutrient = status.getNutrient();
@@ -48,20 +46,26 @@ public class NutrientTargetCalculator {
 
             NutrientReference ref = optionalRef.get();
             IntakeStandard standard = "male".equals(gender) ? ref.getMale() : ref.getFemale();
-            if (standard == null) continue;
 
-            Double baseAmount = standard.getRecommendedAmount();
-            if (baseAmount == null && standard.getMinRatio() != null && ref.getKcalPerUnit() > 0){
-                double targetkcal = energyIntake * standard.getMinRatio();
-                baseAmount = targetkcal / ref.getKcalPerUnit();
+            Double baseAmount = standard != null ? standard.getRecommendedAmount() : null;
+            Double upperLimit = standard != null ? standard.getUpperLimit() : null;
+
+            double personalized;
+
+            if (baseAmount != null) {
+                // 일반적인 base × modifier
+                personalized = baseAmount * modifier;
+            } else if (ref.getKcalPerUnit() != null && standard != null && standard.getMinRatio() != null && standard.getMaxRatio() != null && energyKcal > 0) {
+                // kcal 비율 계산
+                double minKcal = energyKcal * standard.getMinRatio();
+                double maxKcal = energyKcal * standard.getMaxRatio();
+                double targetKcal = ((minKcal + maxKcal) / 2.0) * modifier;
+                personalized = targetKcal / ref.getKcalPerUnit(); // 양으로 환산
+            } else {
+                continue; // 계산 불가
             }
 
-            if (baseAmount == null) continue;
-
-            double upperLimit = standard.getUpperLimit() != null ? standard.getUpperLimit() : Double.MAX_VALUE;
-
-            double personalized = baseAmount * modifier;
-            if (personalized > upperLimit) {
+            if (upperLimit != null && personalized > upperLimit){
                 personalized = upperLimit;
             }
 

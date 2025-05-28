@@ -20,7 +20,7 @@ public class NutrientReference {
     private String id;
     private String nutrient;
     private String unit;
-    private double kcalPerUnit;
+    private Double kcalPerUnit;
     private IntakeStandard male;
     private IntakeStandard female;
 

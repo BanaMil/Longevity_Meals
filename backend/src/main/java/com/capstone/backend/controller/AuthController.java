@@ -12,6 +12,9 @@ import com.capstone.backend.config.JwtTokenProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import java.nio.charset.StandardCharsets;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -44,6 +47,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest request) {
+        MediaType mediaTypeUtf8 = new MediaType("application", "json", StandardCharsets.UTF_8);
         try {
             User user = userService.login(
                 request.getUserid(),
@@ -60,9 +64,16 @@ public class AuthController {
                 user.isHealthInfoSubmitted()
             );
             
-            return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", responseData));
-        } catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, e.getMessage(), null));
+            return ResponseEntity
+                .ok()
+                .contentType(mediaTypeUtf8)
+                .body(new ApiResponse<>(true, "로그인 성공", responseData));
+
+        } catch (RuntimeException e){            
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(mediaTypeUtf8)
+                .body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
 
