@@ -69,15 +69,10 @@ public class HealthInfoService {
         userRepository.save(user);
     }
 
-    // private String preprocessText(String rawText) { // 텍스트 전처리 함수
-    //     String cleaned = rawText.replaceAll("[^ㄱ-ㅎ가-힣a-zA-Z0-9\\s]", "");
-    //     return cleaned.replaceAll("\\s+", " ").trim();
-    // }
-
-    // private List<String> extractWords(String text) { // 단어 추출 함수
-    //     return List.of(text.split(" "));
-    // }
-
+    public HealthInfo getHealthInfoByUserId(String userId) {
+        return healthInfoRepository.findByUserid(userId)
+            .orElseThrow(() -> new IllegalArgumentException("건강 정보가 존재하지 않습니다: " + userId));
+    }
 
 
     public void extractAndSaveDiseasesFromImage(String userId, File imageFile) {

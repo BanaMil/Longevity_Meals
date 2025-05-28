@@ -2,6 +2,7 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.domain.Food;
 import com.capstone.backend.domain.enums.NutrientConstants;
+import com.capstone.backend.dto.NutrientIntake;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,6 @@ import org.bson.Document;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -39,11 +38,14 @@ public class FoodService {
 
         List<Food> foods = new ArrayList<>();
         for (Document doc : docs) {
-            Map<String, Double> nutrientMap = new HashMap<>();
+            List<NutrientIntake> nutrientList = new ArrayList<>();
             for (String nutrient : NutrientConstants.TARGET_NUTRIENTS) {
                 Object val = doc.get(nutrient);
                 if (val instanceof Number) {
-                    nutrientMap.put(nutrient, ((Number) val).doubleValue());
+                    double amount = ((Number) val).doubleValue();
+                    String unitField = nutrient + "단위";
+                    String unit = doc.getString(unitField);
+                    nutrientList.add(new NutrientIntake(nutrient, unit, amount));
                 }
             }
 
@@ -52,10 +54,11 @@ public class FoodService {
             food.setOrigin(doc.getString("식품기원명"));
             food.setCategory(doc.getString("식품대분류명"));
             food.setBaseAmount(doc.getDouble("영양성분함량기준량"));
-            food.setNutrients(nutrientMap);
+            food.setNutrients(nutrientList);  // ✅ 올바른 타입으로 설정
 
             foods.add(food);
         }
+
 
         return foods;
     }

@@ -2,11 +2,13 @@ package com.capstone.backend.dto;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Data @AllArgsConstructor @NoArgsConstructor
 public class DailyMealsResponse {
+    private String date;
     private List<String> breakfast;
     private List<String> lunch;
     private List<String> dinner;

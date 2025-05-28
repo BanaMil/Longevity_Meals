@@ -1,38 +1,43 @@
 package com.capstone.backend.mapper;
 
-import com.capstone.backend.dto.MealItemResponse;
+import com.capstone.backend.dto.FoodItemResponse;
 import com.capstone.backend.dto.MealResponse;
 import com.capstone.backend.domain.Food;
 
-import java.util.stream.Collectors;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MealMapper {
 
-    public static MealItemResponse toResponse(Food food) {
-        MealItemResponse dto = new MealItemResponse();
+    public static FoodItemResponse toResponse(Food food) {
+        FoodItemResponse dto = new FoodItemResponse();
         dto.setName(food.getName());
-        dto.setImageUrl(food.getImageUrl()); // Food 도메인에 imageUrl 필드 필요
-        dto.setNutrients(food.getNutrients());
-        dto.setNutrients(food.getIngredients());
-        dto.setRecipe(food.getRecipe());
+        dto.setImageUrl(food.getImageUrl());
         return dto;
     }
 
     public static MealResponse groupMeal(List<Food> foods) {
-        MealResponse res = new MealResponse();
-        res.setRice(foods.stream()
+        Food rice = foods.stream()
             .filter(f -> f.getCategory().contains("밥"))
-            .map(MealMapper::toResponse)
-            .collect(Collectors.toList()));
-        res.setSoup(foods.stream()
+            .findFirst()
+            .orElse(null);
+
+        Food soup = foods.stream()
             .filter(f -> f.getCategory().contains("국"))
+            .findFirst()
+            .orElse(null);
+
+        List<Food> sides = foods.stream()
+            .filter(f -> !f.getCategory().contains("밥") && !f.getCategory().contains("국"))
+            .limit(3)
+            .collect(Collectors.toList());
+
+        MealResponse response = new MealResponse();
+        response.setRice(toResponse(rice));
+        response.setSoup(toResponse(soup));
+        response.setSideDishes(sides.stream()
             .map(MealMapper::toResponse)
             .collect(Collectors.toList()));
-        res.setSides(foods.stream()
-            .filter(f -> !f.getCategory().contains("밥s") && !f.getCategory().contains("국"))
-            .map(MealMapper::toResponse)
-            .collect(Collectors.toList()));
-        return res;
+        return response;
     }
 }

@@ -1,11 +1,13 @@
 package com.capstone.backend.domain;
 
+import com.capstone.backend.dto.NutrientIntake;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Map;
+import java.util.List;
 
 @Document(collection = "foods")
 @Getter
@@ -18,9 +20,9 @@ public class Food {
     private String origin;             // 식품기원명
     private String category;           // 식품대분류명
     private double baseAmount;         // 100g 기준 섭취량
-    private Map<String, Double> nutrients;
+    private List<NutrientIntake> nutrients;
     private String imageUrl;
-    private Map<String, Double> ingredients;
+    private List<String> ingredients;
     private String Recipe;
 
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 @Setter
 public class MealResponse {
-    List<MealItemResponse> rice;
-    List<MealItemResponse> soup;
-    List<MealItemResponse> sides;
+    private FoodItemResponse rice;
+    private FoodItemResponse soup;
+    private List<FoodItemResponse> sideDishes;
 }
