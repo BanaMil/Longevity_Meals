@@ -8,12 +8,14 @@ import com.capstone.backend.dto.NutrientIntake;
 
 import com.capstone.backend.utils.MealPlanner;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MealPlanService {
@@ -39,16 +41,19 @@ public class MealPlanService {
         List<Food> riceList = allFoods.stream()
             .filter(f -> f.getCategory() != null && f.getCategory().contains("밥"))
             .collect(Collectors.toList());
+        log.info("[식단 생성중] 밥 후보 개수: {}", riceList.size());
 
         List<Food> soupList = allFoods.stream()
             .filter(f -> f.getCategory() != null && f.getCategory().contains("국"))
             .collect(Collectors.toList());
+        log.info("[식단 생성중] 국 후보 개수: {}", soupList.size());
 
         List<Food> sideList = allFoods.stream()
             .filter(f -> f.getCategory() != null &&
                 !f.getCategory().contains("밥") &&
                 !f.getCategory().contains("국"))
             .collect(Collectors.toList());
+        log.info("[식단 생성] 반찬 후보 개수: {}", sideList.size());
 
         // 2. 현재 영양소 누적량 (처음엔 0)
         Map<String, Double> current = new HashMap<>();
@@ -56,12 +61,15 @@ public class MealPlanService {
         // 3. 분류별로 추천 음식 선택 (기여도 + 랜덤 전략)
         Food rice = MealPlanner.chooseMeal(riceList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
         updateCurrentNutrients(current, rice);
+        log.info("[식단 생성 결과] 밥: {}", rice.getName());
 
         Food soup = MealPlanner.chooseMeal(soupList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
         updateCurrentNutrients(current, soup);
+        log.info("[식단 생성 결과] 국: {}", soup.getName());
 
         List<Food> sides = MealPlanner.chooseMeal(sideList, current, targetPerMeal, 3, 10, allergies, dislikes, recentFoods);
         sides.forEach(f -> updateCurrentNutrients(current, f));
+        log.info("[식단 생성 결과] 반찬: {}", sides.stream().map(Food::getName).toList());
 
         // 4. 최종 구성
         List<Food> meal = new ArrayList<>();
@@ -89,6 +97,7 @@ public class MealPlanService {
      * 사용자 ID를 기반으로 한 끼 식단 추천 (상위 서비스 메서드)
      */
     public Map<String, DailyMeals> recommendMealForUser(String userId) {
+        log.info("=== [식단 추천 시작] userId: {} ===", userId);
         // 1. 사용자 건강 정보 조회
         HealthInfo healthInfo = healthInfoService.getHealthInfoByUserId(userId);
         Set<String> allergies = new HashSet<>(healthInfo.getAllergies());
