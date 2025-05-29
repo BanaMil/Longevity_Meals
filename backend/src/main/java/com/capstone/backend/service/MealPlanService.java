@@ -4,6 +4,7 @@ import com.capstone.backend.analysis.NutrientTargetCalculator;
 import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.domain.Food;
 import com.capstone.backend.domain.HealthInfo;
+import com.capstone.backend.domain.MealRecommendationLog;
 import com.capstone.backend.dto.NutrientIntake;
 
 import com.capstone.backend.utils.MealPlanner;
@@ -149,6 +150,29 @@ public class MealPlanService {
 
         return result;
     }
+
+    public boolean hasExistingMealPlan(String userId) {
+        // MongoDB에서 해당 유저의 meal_recommendation_logs가 있는지 확인
+        return recentRecommendationLogService.existsByUserIdAndDate(userId, LocalDate.now());
+    }
+
+    public void createAndSaveWeeklyMeal(String userId) {
+        Map<String, DailyMeals> meals = recommendMealForUser(userId);
+
+        for (Map.Entry<String, DailyMeals> entry : meals.entrySet()) {
+            MealRecommendationLog log = MealRecommendationLog.builder()
+                .userId(userId)
+                .date(LocalDate.parse(entry.getKey()))
+                .breakfast(entry.getValue().getBreakfast())
+                .lunch(entry.getValue().getLunch())
+                .dinner(entry.getValue().getDinner())
+                .build();
+
+            recentRecommendationLogService.save(log);
+        }
+}
+
+
 
 
 }

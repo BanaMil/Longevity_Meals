@@ -4,6 +4,9 @@ import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.dto.DailyMealsResponse;
 import com.capstone.backend.service.MealPlanService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -16,6 +19,20 @@ import java.util.Map;
 public class MealPlanController {
 
     private final MealPlanService mealPlanService;
+
+    @PostMapping("/recommend")
+    public ResponseEntity<?> requestMealRecommendation(@RequestParam String userId) {
+        boolean alreadyExists = mealPlanService.hasExistingMealPlan(userId);
+        if (alreadyExists) {
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("이미 추천된 식단이 존재합니다.");
+        }
+
+        mealPlanService.createAndSaveWeeklyMeal(userId);
+        return ResponseEntity.ok("식단이 성공적으로 추천되었습니다.");
+    }
+
 
     @GetMapping("/weekly")
     public Map<String, DailyMealsResponse> getWeeklyMeals(@RequestParam String userId) {

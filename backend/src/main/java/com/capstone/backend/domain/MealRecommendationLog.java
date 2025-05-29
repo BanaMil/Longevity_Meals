@@ -18,5 +18,7 @@ public class MealRecommendationLog {
 
     private String userId;
     private LocalDate date;             // 추천된 날짜
-    private List<String> foodNames;     // 추천된 음식 이름 목록
+    private List<String> breakfast;
+    private List<String> lunch;
+    private List<String> dinner;
 }

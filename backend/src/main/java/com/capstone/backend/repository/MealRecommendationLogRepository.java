@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface MealRecommendationLogRepository extends MongoRepository<MealRecommendationLog, String> {
     List<MealRecommendationLog> findByUserIdAndDateAfter(String userId, LocalDate after);
+
+    public boolean existsByUserIdAndDate(String userId, LocalDate date);
+
 }

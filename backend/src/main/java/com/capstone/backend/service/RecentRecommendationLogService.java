@@ -17,13 +17,24 @@ public class RecentRecommendationLogService {
     private final MealRecommendationLogRepository logRepository;
 
     public Set<String> getLastTwoDaysFoodNames(String userId) {
-        LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
-        List<MealRecommendationLog> logs = logRepository.findByUserIdAndDateAfter(userId, twoDaysAgo);
+    LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
+    List<MealRecommendationLog> logs = logRepository.findByUserIdAndDateAfter(userId, twoDaysAgo);
 
-        Set<String> result = new HashSet<>();
-        for (MealRecommendationLog log : logs) {
-            result.addAll(log.getFoodNames());
-        }
-        return result;
+    Set<String> result = new HashSet<>();
+    for (MealRecommendationLog log : logs) {
+        if (log.getBreakfast() != null) result.addAll(log.getBreakfast());
+        if (log.getLunch() != null) result.addAll(log.getLunch());
+        if (log.getDinner() != null) result.addAll(log.getDinner());
+    }
+    return result;
+}
+
+
+    public boolean existsByUserIdAndDate(String userId, LocalDate date) {
+        return logRepository.existsByUserIdAndDate(userId, date);
+    }
+
+    public void save(MealRecommendationLog log) {
+        logRepository.save(log);
     }
 }
