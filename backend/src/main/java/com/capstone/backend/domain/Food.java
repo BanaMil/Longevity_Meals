@@ -3,6 +3,7 @@ package com.capstone.backend.domain;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +28,9 @@ public class Food {
     private String category;
 
     @Field("영양성분함량기준량")
+    private String baseAmountRaw;
+
+    @Transient  // DB에 저장하지 않음
     private double baseAmount;
 
     private Map<String, Double> nutrients;
@@ -37,4 +41,5 @@ public class Food {
 
     @Field("recipe")
     private String recipe;
+
 }
