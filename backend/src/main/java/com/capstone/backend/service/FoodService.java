@@ -93,7 +93,7 @@ public class FoodService {
 
 
     public Food findByName(String name) {
-        return foodRepository.findByName(name)
+        return foodRepository.findFirstByName(name)
             .orElseThrow(() -> new NoSuchElementException("음식명으로 Food를 찾을 수 없습니다: " + name));
     }
 

@@ -36,7 +36,8 @@ public class MealPlanService {
         Map<String, Double> targetPerMeal,
         Set<String> allergies,
         Set<String> dislikes,
-        Set<String> recentFoods
+        Set<String> recentFoods,
+        Set<String> usedFoodsInDay
     ) {
         // ✅ 1. 명확한 분류 기준 정의
         final Set<String> RICE_CATEGORIES = Set.of("밥류", "죽 및 스프류");
@@ -48,28 +49,33 @@ public class MealPlanService {
         // ✅ 2. 카테고리 분할
         List<Food> riceList = allFoods.stream()
             .filter(f -> f.getCategory() != null && RICE_CATEGORIES.contains(f.getCategory()))
+            .filter(f -> !usedFoodsInDay.contains(f.getName()))
             .collect(Collectors.toList());
         log.info("[식단 생성중] 밥 후보 개수: {}", riceList.size());
 
         List<Food> soupList = allFoods.stream()
             .filter(f -> f.getCategory() != null && SOUP_CATEGORIES.contains(f.getCategory()))
+            .filter(f -> !usedFoodsInDay.contains(f.getName()))
             .collect(Collectors.toList());
         log.info("[식단 생성중] 국 후보 개수: {}", soupList.size());
 
         List<Food> sideList = allFoods.stream()
             .filter(f -> f.getCategory() != null && SIDE_CATEGORIES.contains(f.getCategory()))
+            .filter(f -> !usedFoodsInDay.contains(f.getName()))
             .collect(Collectors.toList());
         log.info("[식단 생성중] 반찬 후보 개수: {}", sideList.size());
 
         List<Food> oneDishList = allFoods.stream()
-                .filter(f -> f.getCategory() != null && ONE_DISH_CATEGORIES.contains(f.getCategory()))
-                .collect(Collectors.toList());
+            .filter(f -> f.getCategory() != null && ONE_DISH_CATEGORIES.contains(f.getCategory()))
+            .filter(f -> !usedFoodsInDay.contains(f.getName()))
+            .collect(Collectors.toList());
         log.info("[식단 생성중] 국밥 및 면류 후보 개수: {}", oneDishList.size());
 
         // 3. 현재 영양소 누적량
         Map<String, Double> current = new HashMap<>();
         Random rand = new Random();
         boolean useOneDish = false;
+        
 
         // 4. 밥 + 국일지 일체형일지 선택 (기여도 + 확률 기반)
         if (!oneDishList.isEmpty() && !riceList.isEmpty() && !soupList.isEmpty()) {
@@ -139,6 +145,24 @@ public class MealPlanService {
         if (soup != null) meal.add(soup);
         meal.addAll(sides);
 
+        // 6. 오늘 추천한 음식 저장 (단, 김치류, 밥류는 제외)
+        String riceCategory = rice.getCategory();
+        if (rice != null && (riceCategory == null || !riceCategory.contains("밥"))) {
+            usedFoodsInDay.add(rice.getName());
+        }
+
+        if (soup != null) {
+            usedFoodsInDay.add(soup.getName());
+        }
+
+        // 반찬 중 김치류를 제외한 것만 추가
+        for (Food side : sides) {
+            String cat = side.getCategory();
+            if (cat == null || !cat.contains("김치")) {
+                usedFoodsInDay.add(side.getName());
+            }
+        }
+
         return meal;
     }
 
@@ -193,16 +217,20 @@ public class MealPlanService {
         for (int i = 0; i < 7; i++) {
             LocalDate date = today.plusDays(i);
             String dateStr = date.toString(); // yyyy-MM-dd
+            Set<String> usedFoods = new HashSet<>(recentFoods);
 
-            List<Food> mealFoods = generateOneMeal(allFoods, targetPerMeal, allergies, dislikes, recentFoods);
+            List<Food> breakfastFoods = generateOneMeal(allFoods, targetPerMeal, allergies, dislikes, recentFoods, usedFoods);
+            List<Food> lunchFoods = generateOneMeal(allFoods, targetPerMeal, allergies, dislikes, recentFoods, usedFoods);
+            List<Food> dinnerFoods = generateOneMeal(allFoods, targetPerMeal, allergies, dislikes, recentFoods, usedFoods);
 
-            // 한 끼: 밥, 국, 반찬3 → DailyMeals에 아침/점심/저녁 모두 동일하게 구성
-            List<String> names = mealFoods.stream().map(Food::getName).toList();
+            List<String> breakfastNames = breakfastFoods.stream().map(Food::getName).toList();
+            List<String> lunchNames = lunchFoods.stream().map(Food::getName).toList();
+            List<String> dinnerNames = dinnerFoods.stream().map(Food::getName).toList();
 
             DailyMeals daily = new DailyMeals();
-            daily.setBreakfast(names);
-            daily.setLunch(names);
-            daily.setDinner(names);
+            daily.setBreakfast(breakfastNames);
+            daily.setLunch(lunchNames);
+            daily.setDinner(dinnerNames);
 
             weeklyMeals.put(dateStr, daily);
         }

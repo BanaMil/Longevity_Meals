@@ -77,7 +77,7 @@ public class MealPlanner {
 
         for (int i = 0; i < mealSize && !scored.isEmpty(); i++) {
             // 소프트맥스 확률 계산
-            double temperature = 1.0;  // 값이 작을수록 탐욕적, 클수록 랜덤성 증가
+            double temperature = 1.5;  // 값이 작을수록 탐욕적, 클수록 랜덤성 증가
             double[] expScores = scored.stream()
                 .mapToDouble(fs -> Math.exp(fs.getScore() / temperature))
                 .toArray();
