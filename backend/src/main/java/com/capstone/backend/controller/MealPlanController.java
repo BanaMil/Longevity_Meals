@@ -37,21 +37,24 @@ public class MealPlanController {
     }
 
 
-    @GetMapping("/weekly")
-    public Map<String, DailyMealsResponse> getWeeklyMeals(@RequestParam String userId) {
-        Map<String, DailyMeals> rawMeals = mealPlanService.recommendMealForUser(userId);
-        Map<String, DailyMealsResponse> result = new HashMap<>();
+    // @PostMapping("/weekly")
+    // public Map<String, DailyMealsResponse> getWeeklyMeals(@RequestBody RecommendRequest request) {
+    //     String userId = request.getUserid();
 
-        for (Map.Entry<String, DailyMeals> entry : rawMeals.entrySet()) {
-            DailyMeals daily = entry.getValue();
-            DailyMealsResponse response = new DailyMealsResponse();
-            response.setBreakfast(daily.getBreakfast());
-            response.setLunch(daily.getLunch());
-            response.setDinner(daily.getDinner());
-            result.put(entry.getKey(), response);
-        }
+    //     // ✅ 저장된 추천 기록 조회
+    //     Map<String, DailyMeals> rawMeals = mealPlanService.loadSavedWeeklyMeals(userId);
+    //     Map<String, DailyMealsResponse> result = new HashMap<>();
 
-        return result;
-    }
+    //     for (Map.Entry<String, DailyMeals> entry : rawMeals.entrySet()) {
+    //         DailyMeals daily = entry.getValue();
+    //         DailyMealsResponse response = new DailyMealsResponse();
+    //         response.setBreakfast(daily.getBreakfast());
+    //         response.setLunch(daily.getLunch());
+    //         response.setDinner(daily.getDinner());
+    //         result.put(entry.getKey(), response);
+    //     }
+
+    //     return result;
+    // }
 
 }
