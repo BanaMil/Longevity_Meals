@@ -17,18 +17,22 @@ public class Food {
     @Id
     private String id;
 
-    @Field("foodName")
+    @Field("식품명")
     private String name;
 
+    @Field("식품기원명")
     private String origin;
+
+    @Field("식품대분류명")
     private String category;
 
-    @Field("servingSize")
+    @Field("영양성분함량기준량")
     private double baseAmount;
 
     private Map<String, Double> nutrients;
 
     private List<String> ingredients;
+    @Field("image_url")
     private String imageUrl;
 
     @Field("recipe")
