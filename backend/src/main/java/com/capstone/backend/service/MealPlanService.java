@@ -32,65 +32,73 @@ public class MealPlanService {
      * @return 구성된 Food 리스트 (1끼)
      */
     public List<Food> generateOneMeal(
-            List<Food> allFoods,
-            Map<String, Double> targetPerMeal,
-            Set<String> allergies,
-            Set<String> dislikes,
-            Set<String> recentFoods
-        ) {
-        // 1. 카테고리 분할
-        List<Food> riceList = allFoods.stream()
-            .filter(f -> f.getCategory() != null && f.getCategory().contains("밥"))
-            .collect(Collectors.toList());
-        log.info("[식단 생성중] 밥 후보 개수: {}", riceList.size());
+        List<Food> allFoods,
+        Map<String, Double> targetPerMeal,
+        Set<String> allergies,
+        Set<String> dislikes,
+        Set<String> recentFoods
+) {
+    // ✅ 1. 명확한 분류 기준 정의
+    final Set<String> RICE_CATEGORIES = Set.of("밥류", "죽 및 스프류");
+    final Set<String> SOUP_CATEGORIES = Set.of("국 및 탕류", "찌개 및 전골류");
 
-        List<Food> soupList = allFoods.stream()
-            .filter(f -> f.getCategory() != null && f.getCategory().contains("국"))
-            .collect(Collectors.toList());
-        log.info("[식단 생성중] 국 후보 개수: {}", soupList.size());
+    // ✅ 2. 카테고리 분할
+    List<Food> riceList = allFoods.stream()
+        .filter(f -> f.getCategory() != null && RICE_CATEGORIES.contains(f.getCategory()))
+        .collect(Collectors.toList());
+    log.info("[식단 생성중] 밥 후보 개수: {}", riceList.size());
 
-        List<Food> sideList = allFoods.stream()
-            .filter(f -> f.getCategory() != null &&
-                !f.getCategory().contains("밥") &&
-                !f.getCategory().contains("국"))
-            .collect(Collectors.toList());
-        log.info("[식단 생성중] 반찬 후보 개수: {}", sideList.size());
+    List<Food> soupList = allFoods.stream()
+        .filter(f -> f.getCategory() != null && SOUP_CATEGORIES.contains(f.getCategory()))
+        .collect(Collectors.toList());
+    log.info("[식단 생성중] 국 후보 개수: {}", soupList.size());
 
-        // 2. 현재 영양소 누적량 (처음엔 0)
-        Map<String, Double> current = new HashMap<>();
+    List<Food> sideList = allFoods.stream()
+        .filter(f -> f.getCategory() != null &&
+            !RICE_CATEGORIES.contains(f.getCategory()) &&
+            !SOUP_CATEGORIES.contains(f.getCategory()))
+        .collect(Collectors.toList());
+    log.info("[식단 생성중] 반찬 후보 개수: {}", sideList.size());
 
-        // 3. 분류별로 추천 음식 선택 (기여도 + 랜덤 전략)
-        Food rice = MealPlanner.chooseMeal(riceList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
-        updateCurrentNutrients(current, rice);
-        log.info("[식단 생성 결과] 밥: {}", rice.getName());
+    // 3. 현재 영양소 누적량
+    Map<String, Double> current = new HashMap<>();
 
-        Food soup = MealPlanner.chooseMeal(soupList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
-        updateCurrentNutrients(current, soup);
-        log.info("[식단 생성 결과] 국: {}", soup.getName());
+    // 4. 추천 음식 선택 (기여도 + softmax 기반)
+    Food rice = MealPlanner.chooseMeal(riceList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
+    updateCurrentNutrients(current, rice);
+    log.info("[식단 생성 결과] 밥: {}", rice.getName());
 
-        List<Food> sides = MealPlanner.chooseMeal(sideList, current, targetPerMeal, 3, 10, allergies, dislikes, recentFoods);
-        sides.forEach(f -> updateCurrentNutrients(current, f));
-        log.info("[식단 생성 결과] 반찬: {}", sides.stream().map(Food::getName).toList());
+    Food soup = MealPlanner.chooseMeal(soupList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
+    updateCurrentNutrients(current, soup);
+    log.info("[식단 생성 결과] 국: {}", soup.getName());
 
-        // 4. 최종 구성
-        List<Food> meal = new ArrayList<>();
-        meal.add(rice);
-        meal.add(soup);
-        meal.addAll(sides);
+    List<Food> sides = MealPlanner.chooseMeal(sideList, current, targetPerMeal, 3, 10, allergies, dislikes, recentFoods);
+    sides.forEach(f -> updateCurrentNutrients(current, f));
+    log.info("[식단 생성 결과] 반찬: {}", sides.stream().map(Food::getName).toList());
 
-        return meal;
-    }
+    // 5. 최종 구성
+    List<Food> meal = new ArrayList<>();
+    meal.add(rice);
+    meal.add(soup);
+    meal.addAll(sides);
+
+    return meal;
+}
+
 
     /**
      * 선택된 음식의 영양소 값을 current 누적량에 반영
      */
     private void updateCurrentNutrients(Map<String, Double> current, Food food) {
-        if (food.getNutrients() == null) return;
+        if (food == null || food.getNutrients() == null) return;
 
-        for (NutrientIntake intake : food.getNutrients()) {
-            String name = intake.getName();
-            double amount = intake.getAmount();
-            current.put(name, current.getOrDefault(name, 0.0) + amount);
+        for (Map.Entry<String, Double> entry : food.getNutrients().entrySet()) {
+            String nutrient = entry.getKey();
+            Double amount = entry.getValue();
+
+            if (nutrient != null && amount != null) {
+                current.put(nutrient, current.getOrDefault(nutrient, 0.0) + amount);
+            }
         }
     }
 

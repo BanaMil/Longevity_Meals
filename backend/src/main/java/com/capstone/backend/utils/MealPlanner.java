@@ -13,12 +13,7 @@ public class MealPlanner {
     public static double computeContribution(Food food, Map<String, Double> current, Map<String, Double> target) {
         double score = 0;
 
-        Map<String, Double> foodMap = new HashMap<>();
-        if (food.getNutrients() != null) {
-            for (NutrientIntake ni : food.getNutrients()) {
-                foodMap.put(ni.getName(), ni.getAmount());
-            }
-        }
+        Map<String, Double> foodMap = food.getNutrients() != null ? food.getNutrients() : Collections.emptyMap();
 
         for (String nutrient : target.keySet()) {
             double value = foodMap.getOrDefault(nutrient, 0.0);
@@ -89,9 +84,9 @@ public class MealPlanner {
 
             // 누적 영양소 갱신
             if (selected.getNutrients() != null) {
-                for (NutrientIntake ni : selected.getNutrients()) {
-                    String nutrient = ni.getName();
-                    double value = ni.getAmount();
+                for (Map.Entry<String, Double> entry : selected.getNutrients().entrySet()) {
+                    String nutrient = entry.getKey();
+                    double value = entry.getValue();
                     updated.put(nutrient, updated.getOrDefault(nutrient, 0.0) + value);
                 }
             }
