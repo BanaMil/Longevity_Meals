@@ -1,7 +1,6 @@
 package com.capstone.backend.utils;
 
 import com.capstone.backend.domain.Food;
-import com.capstone.backend.dto.NutrientIntake;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -13,22 +12,28 @@ import java.util.stream.Collectors;
 public class MealPlanner {
 
     public static double computeContribution(Food food, Map<String, Double> current, Map<String, Double> target) {
-        double score = 0;
+    double score = 0.0;
 
-        Map<String, Double> foodMap = food.getNutrients() != null ? food.getNutrients() : Collections.emptyMap();
+    if (food.getNutrients() == null || food.getCategory() == null) return 0.0;
 
-        for (String nutrient : target.keySet()) {
-            double value = foodMap.getOrDefault(nutrient, 0.0);
-            double expected = current.getOrDefault(nutrient, 0.0) + value;
-            double targetVal = target.get(nutrient);
-            if (targetVal != 0) {
-                double contribution = 1 - Math.abs(expected - targetVal) / targetVal;
-                score += contribution;
-            }
-        }
+    double estimatedIntake = IntakeEstimator.getEstimatedIntake(food.getCategory());
+    double baseAmount = food.getBaseAmount(); // 예: 100g
 
-        return score;
+    for (String nutrient : target.keySet()) {
+        double original = food.getNutrients().getOrDefault(nutrient, 0.0);
+        double scaled = (estimatedIntake / baseAmount) * original;
+
+        double currentAmount = current.getOrDefault(nutrient, 0.0);
+        double targetAmount = target.get(nutrient);
+        double gap = targetAmount - currentAmount;
+
+        double contribution = Math.min(scaled, gap); // 초과 기여 방지
+        score += contribution;
     }
+
+    return score;
+}
+
 
     public static List<Food> chooseMeal(
         List<Food> candidates,
@@ -95,11 +100,17 @@ public class MealPlanner {
 
             // 누적 영양소 갱신
             if (selected.getNutrients() != null) {
+                double estimatedIntake = IntakeEstimator.getEstimatedIntake(selected.getCategory());
+                double baseAmount = selected.getBaseAmount();
+
                 for (Map.Entry<String, Double> entry : selected.getNutrients().entrySet()) {
                     String nutrient = entry.getKey();
-                    double value = entry.getValue();
-                    updated.put(nutrient, updated.getOrDefault(nutrient, 0.0) + value);
+                    double original = entry.getValue();
+                    double scaled = (estimatedIntake / baseAmount) * original;
+
+                    updated.put(nutrient, updated.getOrDefault(nutrient, 0.0) + scaled);
                 }
+
             }
 
             // 해당 음식 제거

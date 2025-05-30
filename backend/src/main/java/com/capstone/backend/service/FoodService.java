@@ -2,6 +2,7 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.domain.Food;
 import com.capstone.backend.domain.enums.NutrientConstants;
+import com.capstone.backend.repository.FoodRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.bson.Document;
 import java.util.List; 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.HashMap;
 
 @Service
@@ -19,6 +21,7 @@ import java.util.HashMap;
 public class FoodService {
 
     private final MongoTemplate mongoTemplate;
+    private final FoodRepository foodRepository;
 
     public List<Food> fetchFilteredFoods() {
         Query query = new Query();
@@ -56,6 +59,11 @@ public class FoodService {
         }
 
         return foods;
+    }
+    
+    public Food findByName(String name) {
+        return foodRepository.findByName(name)
+            .orElseThrow(() -> new NoSuchElementException("음식명으로 Food를 찾을 수 없습니다: " + name));
     }
 
 }

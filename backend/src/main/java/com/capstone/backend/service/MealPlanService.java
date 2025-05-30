@@ -5,12 +5,12 @@ import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.domain.Food;
 import com.capstone.backend.domain.HealthInfo;
 import com.capstone.backend.domain.MealRecommendationLog;
-
+import com.capstone.backend.dto.FoodWithIntake;
+import com.capstone.backend.utils.IntakeEstimator;
 import com.capstone.backend.utils.MealPlanner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -147,17 +147,24 @@ public class MealPlanService {
      * 선택된 음식의 영양소 값을 current 누적량에 반영
      */
     private void updateCurrentNutrients(Map<String, Double> current, Food food) {
-        if (food == null || food.getNutrients() == null) return;
+    if (food == null || food.getNutrients() == null || food.getCategory() == null) return;
 
-        for (Map.Entry<String, Double> entry : food.getNutrients().entrySet()) {
-            String nutrient = entry.getKey();
-            Double amount = entry.getValue();
+    double estimatedIntake = IntakeEstimator.getEstimatedIntake(food.getCategory());
+    double baseAmount = food.getBaseAmount();
 
-            if (nutrient != null && amount != null) {
-                current.put(nutrient, current.getOrDefault(nutrient, 0.0) + amount);
-            }
+    // baseAmount가 0이거나 음수일 경우, 안전하게 100g으로 대체
+    if (baseAmount <= 0.0) baseAmount = 100.0;
+
+    for (Map.Entry<String, Double> entry : food.getNutrients().entrySet()) {
+        String nutrient = entry.getKey();
+        Double originalAmount = entry.getValue();
+
+        if (nutrient != null && originalAmount != null) {
+            double scaledAmount = (estimatedIntake / baseAmount) * originalAmount;
+            current.put(nutrient, current.getOrDefault(nutrient, 0.0) + scaledAmount);
         }
     }
+}
 
         /**
      * 사용자 ID를 기반으로 한 끼 식단 추천 (상위 서비스 메서드)
@@ -225,36 +232,51 @@ public class MealPlanService {
         Map<String, DailyMeals> meals = recommendMealForUser(userId);
 
         for (Map.Entry<String, DailyMeals> entry : meals.entrySet()) {
+            String date = entry.getKey();
+            DailyMeals daily = entry.getValue();
+
+            List<FoodWithIntake> breakfast = convertToFoodWithIntake(daily.getBreakfast());
+            List<FoodWithIntake> lunch = convertToFoodWithIntake(daily.getLunch());
+            List<FoodWithIntake> dinner = convertToFoodWithIntake(daily.getDinner());
+
             MealRecommendationLog log = MealRecommendationLog.builder()
                 .userId(userId)
-                .date(LocalDate.parse(entry.getKey()))
-                .breakfast(entry.getValue().getBreakfast())
-                .lunch(entry.getValue().getLunch())
-                .dinner(entry.getValue().getDinner())
+                .date(LocalDate.parse(date))
+                .breakfast(breakfast)
+                .lunch(lunch)
+                .dinner(dinner)
                 .build();
 
             recentRecommendationLogService.save(log);
         }
     }
+
+    /**
+     * 음식 이름 리스트를 FoodWithIntake 리스트로 변환
+     */
+    private List<FoodWithIntake> convertToFoodWithIntake(List<String> foodNames) {
+        return foodNames.stream()
+            .map(name -> {
+                Food food = foodService.findByName(name); // 음식 이름으로 Food 객체 조회
+                double intake = IntakeEstimator.getEstimatedIntake(food.getCategory());
+                return new FoodWithIntake(name, intake);
+            })
+            .collect(Collectors.toList());
+    }
+
     public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
         List<MealRecommendationLog> logs = recentRecommendationLogService.findLatestWeeklyLogs(userId);
 
         Map<String, DailyMeals> weeklyMeals = new HashMap<>();
         for (MealRecommendationLog log : logs) {
             DailyMeals daily = new DailyMeals();
-            daily.setBreakfast(log.getBreakfast());
-            daily.setLunch(log.getLunch());
-            daily.setDinner(log.getDinner());
+            daily.setBreakfast(log.getBreakfast().stream().map(FoodWithIntake::getName).toList());
+            daily.setLunch(log.getLunch().stream().map(FoodWithIntake::getName).toList());
+            daily.setDinner(log.getDinner().stream().map(FoodWithIntake::getName).toList());
             weeklyMeals.put(log.getDate().toString(), daily);
         }
 
         return weeklyMeals;
     }
-
-
-
-
-
-
 
 }

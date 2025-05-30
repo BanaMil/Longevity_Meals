@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.capstone.backend.dto.FoodWithIntake;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,10 +17,9 @@ import java.util.List;
 public class MealRecommendationLog {
     @Id
     private String id;
-
     private String userId;
     private LocalDate date;             // 추천된 날짜
-    private List<String> breakfast;
-    private List<String> lunch;
-    private List<String> dinner;
+    private List<FoodWithIntake> breakfast;
+    private List<FoodWithIntake> lunch;
+    private List<FoodWithIntake> dinner;
 }
