@@ -1,14 +1,18 @@
 package com.capstone.backend.service;
 
 import com.capstone.backend.domain.Food;
+import com.capstone.backend.domain.enums.NutrientConstants;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.bson.Document;
 
-import java.util.List;
+import java.util.List; 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -41,13 +45,13 @@ public class FoodService {
                     nutrientMap.put(nutrient, number.doubleValue());
                 }
             }
+        
 
             Food food = new Food();
             food.setName(doc.getString("식품명"));
             food.setOrigin(doc.getString("식품기원명"));
             food.setCategory(doc.getString("식품대분류명"));
             food.setNutrients(nutrientMap);
-
             foods.add(food);
         }
 

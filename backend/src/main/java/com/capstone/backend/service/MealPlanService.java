@@ -5,7 +5,6 @@ import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.domain.Food;
 import com.capstone.backend.domain.HealthInfo;
 import com.capstone.backend.domain.MealRecommendationLog;
-import com.capstone.backend.dto.NutrientIntake;
 
 import com.capstone.backend.utils.MealPlanner;
 import lombok.RequiredArgsConstructor;
