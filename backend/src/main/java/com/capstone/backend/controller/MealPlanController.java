@@ -3,6 +3,7 @@ package com.capstone.backend.controller;
 import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.dto.DailyMealsResponse;
 import com.capstone.backend.service.MealPlanService;
+import com.capstone.backend.dto.RecommendRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,9 @@ public class MealPlanController {
     private final MealPlanService mealPlanService;
 
     @PostMapping("/recommend")
-    public ResponseEntity<?> requestMealRecommendation(@RequestParam String userId) {
+    public ResponseEntity<?> requestMealRecommendation(@RequestBody RecommendRequest request) {
+        String userId = request.getUserid();
+
         boolean alreadyExists = mealPlanService.hasExistingMealPlan(userId);
         if (alreadyExists) {
             return ResponseEntity

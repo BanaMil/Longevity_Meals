@@ -20,46 +20,6 @@ public class FoodService {
     private final MongoTemplate mongoTemplate;
 
     public List<Food> fetchFilteredFoods() {
-        Query query = new Query();
-
-        // 기본 필드 포함
-        query.fields()
-            .include("식품명")
-            .include("식품기원명")
-            .include("식품대분류명")
-            .include("영양성분함량기준량");
-
-        // 영양소 필드만 추가적으로 포함
-        for (String nutrient : NutrientConstants.TARGET_NUTRIENTS) {
-            query.fields().include(nutrient);
-        }
-
-        List<Document> docs = mongoTemplate.find(query, Document.class, "foods");
-
-        List<Food> foods = new ArrayList<>();
-        for (Document doc : docs) {
-            List<NutrientIntake> nutrientList = new ArrayList<>();
-            for (String nutrient : NutrientConstants.TARGET_NUTRIENTS) {
-                Object val = doc.get(nutrient);
-                if (val instanceof Number) {
-                    double amount = ((Number) val).doubleValue();
-                    String unitField = nutrient + "단위";
-                    String unit = doc.getString(unitField);
-                    nutrientList.add(new NutrientIntake(nutrient, unit, amount));
-                }
-            }
-
-            Food food = new Food();
-            food.setName(doc.getString("식품명"));
-            food.setOrigin(doc.getString("식품기원명"));
-            food.setCategory(doc.getString("식품대분류명"));
-            food.setBaseAmount(doc.getDouble("영양성분함량기준량"));
-            food.setNutrients(nutrientList);  // ✅ 올바른 타입으로 설정
-
-            foods.add(food);
-        }
-
-
-        return foods;
+        return mongoTemplate.findAll(Food.class, "foodDB");
     }
 }

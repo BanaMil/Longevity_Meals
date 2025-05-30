@@ -9,21 +9,27 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Document(collection = "foods")
 @Getter
 @Setter
+@Document(collection = "foodDB")  // ← 컬렉션 이름도 정확히 확인
 public class Food {
     @Id
     private String id;
 
-    private String name;                // 식품명
-    private String origin;             // 식품기원명
-    private String category;           // 식품대분류명
-    private double baseAmount;         // 100g 기준 섭취량
-    private List<NutrientIntake> nutrients;
-    private String imageUrl;
+    @Field("foodName")
+    private String name;
+
+    private String origin;
+    private String category;
+
+    @Field("servingSize")
+    private double baseAmount;
+
+    private Map<String, Double> nutrients;
+
     private List<String> ingredients;
-    private String Recipe;
+    private String imageUrl;
 
-
+    @Field("recipe")
+    private String recipe;
 }

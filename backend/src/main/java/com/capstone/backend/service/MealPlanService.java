@@ -54,7 +54,7 @@ public class MealPlanService {
                 !f.getCategory().contains("밥") &&
                 !f.getCategory().contains("국"))
             .collect(Collectors.toList());
-        log.info("[식단 생성] 반찬 후보 개수: {}", sideList.size());
+        log.info("[식단 생성중] 반찬 후보 개수: {}", sideList.size());
 
         // 2. 현재 영양소 누적량 (처음엔 0)
         Map<String, Double> current = new HashMap<>();
@@ -170,7 +170,7 @@ public class MealPlanService {
 
             recentRecommendationLogService.save(log);
         }
-}
+    }
 
 
 
