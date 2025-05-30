@@ -10,6 +10,7 @@ import com.capstone.backend.utils.MealPlanner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -40,7 +41,7 @@ public class MealPlanService {
         // ✅ 1. 명확한 분류 기준 정의
         final Set<String> RICE_CATEGORIES = Set.of("밥류", "죽 및 스프류");
         final Set<String> SOUP_CATEGORIES = Set.of("국 및 탕류", "찌개 및 전골류");
-        final Set<String> SIDE_CATEGORIES = Set.of("구이류", "볶음류", "나물∙숙채류", "생채∙무침류", "수∙조∙어∙육류", "장아찌∙절임류", "전∙적 및 부침류", "젓갈류", "조림류", "찜류", "채소∙해조류", "튀김류", "만두류");
+        final Set<String> SIDE_CATEGORIES = Set.of("구이류", "볶음류", "나물, 숙채류", "생채, 무침류", "수, 조, 어, 육류", "장아찌, 절임류", "전, 적 및 부침류", "젓갈류", "조림류", "찜류", "채소, 해조류", "튀김류", "만두류");
         final Set<String> KIMCHI_CATEGORIES = Set.of("김치류");
         final Set<String> ONE_DISH_CATEGORIES = Set.of("국밥류", "면류");
 
@@ -235,21 +236,22 @@ public class MealPlanService {
             recentRecommendationLogService.save(log);
         }
     }
-    // public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
-    //     List<MealRecommendationLog> logs = recentRecommendationLogService.findLast7DaysLogs(userId);
+    public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
+        List<MealRecommendationLog> logs = recentRecommendationLogService.findLatestWeeklyLogs(userId);
 
-    //     Map<String, DailyMeals> weeklyMeals = new HashMap<>();
-    //     for (MealRecommendationLog log : logs) {
-    //         DailyMeals daily = new DailyMeals();
-    //         daily.setBreakfast(log.getBreakfast());
-    //         daily.setLunch(log.getLunch());
-    //         daily.setDinner(log.getDinner());
+        Map<String, DailyMeals> weeklyMeals = new HashMap<>();
+        for (MealRecommendationLog log : logs) {
+            DailyMeals daily = new DailyMeals();
+            daily.setBreakfast(log.getBreakfast());
+            daily.setLunch(log.getLunch());
+            daily.setDinner(log.getDinner());
+            weeklyMeals.put(log.getDate().toString(), daily);
+        }
 
-    //         weeklyMeals.put(log.getDate().toString(), daily);
-    //     }
+        return weeklyMeals;
+    }
 
-    //     return weeklyMeals;
-    // }
+
 
 
 

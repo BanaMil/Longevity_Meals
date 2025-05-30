@@ -28,7 +28,7 @@ public class SecurityConfig {
             .requestMatchers("/api/health/analysis/**").permitAll()
             .requestMatchers("/ocr/upload").permitAll()
             .requestMatchers("/api/meals/today").permitAll()
-            .requestMatchers("/api/meals/weekly").permitAll()
+            .requestMatchers("/api/meals/weekly/**").permitAll()
             .requestMatchers("/api/meals/recommend").permitAll()
                 .anyRequest().authenticated()
             )
