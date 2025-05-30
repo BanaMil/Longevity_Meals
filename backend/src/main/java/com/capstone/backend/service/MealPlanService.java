@@ -36,53 +36,110 @@ public class MealPlanService {
         Set<String> allergies,
         Set<String> dislikes,
         Set<String> recentFoods
-) {
-    // ✅ 1. 명확한 분류 기준 정의
-    final Set<String> RICE_CATEGORIES = Set.of("밥류", "죽 및 스프류");
-    final Set<String> SOUP_CATEGORIES = Set.of("국 및 탕류", "찌개 및 전골류");
-    final Set<String> SIDE_CATEGORIES = Set.of("구이류", "김치류", "볶음류", "나물∙숙채류", "생채∙무침류", "수∙조∙어∙육류", "장아찌∙절임류", "전∙적 및 부침류", "젓갈류", "조림류", "찜류", "채소∙해조류", "튀김류");
+    ) {
+        // ✅ 1. 명확한 분류 기준 정의
+        final Set<String> RICE_CATEGORIES = Set.of("밥류", "죽 및 스프류");
+        final Set<String> SOUP_CATEGORIES = Set.of("국 및 탕류", "찌개 및 전골류");
+        final Set<String> SIDE_CATEGORIES = Set.of("구이류", "볶음류", "나물∙숙채류", "생채∙무침류", "수∙조∙어∙육류", "장아찌∙절임류", "전∙적 및 부침류", "젓갈류", "조림류", "찜류", "채소∙해조류", "튀김류", "만두류");
+        final Set<String> KIMCHI_CATEGORIES = Set.of("김치류");
+        final Set<String> ONE_DISH_CATEGORIES = Set.of("국밥류", "면류");
 
+        // ✅ 2. 카테고리 분할
+        List<Food> riceList = allFoods.stream()
+            .filter(f -> f.getCategory() != null && RICE_CATEGORIES.contains(f.getCategory()))
+            .collect(Collectors.toList());
+        log.info("[식단 생성중] 밥 후보 개수: {}", riceList.size());
 
-    // ✅ 2. 카테고리 분할
-    List<Food> riceList = allFoods.stream()
-        .filter(f -> f.getCategory() != null && RICE_CATEGORIES.contains(f.getCategory()))
-        .collect(Collectors.toList());
-    log.info("[식단 생성중] 밥 후보 개수: {}", riceList.size());
+        List<Food> soupList = allFoods.stream()
+            .filter(f -> f.getCategory() != null && SOUP_CATEGORIES.contains(f.getCategory()))
+            .collect(Collectors.toList());
+        log.info("[식단 생성중] 국 후보 개수: {}", soupList.size());
 
-    List<Food> soupList = allFoods.stream()
-        .filter(f -> f.getCategory() != null && SOUP_CATEGORIES.contains(f.getCategory()))
-        .collect(Collectors.toList());
-    log.info("[식단 생성중] 국 후보 개수: {}", soupList.size());
+        List<Food> sideList = allFoods.stream()
+            .filter(f -> f.getCategory() != null && SIDE_CATEGORIES.contains(f.getCategory()))
+            .collect(Collectors.toList());
+        log.info("[식단 생성중] 반찬 후보 개수: {}", sideList.size());
 
-    List<Food> sideList = allFoods.stream()
-        .filter(f -> f.getCategory() != null && SIDE_CATEGORIES.contains(f.getCategory()))
-        .collect(Collectors.toList());
-    log.info("[식단 생성중] 반찬 후보 개수: {}", sideList.size());
+        List<Food> oneDishList = allFoods.stream()
+                .filter(f -> f.getCategory() != null && ONE_DISH_CATEGORIES.contains(f.getCategory()))
+                .collect(Collectors.toList());
+        log.info("[식단 생성중] 국밥 및 면류 후보 개수: {}", oneDishList.size());
 
-    // 3. 현재 영양소 누적량
-    Map<String, Double> current = new HashMap<>();
+        // 3. 현재 영양소 누적량
+        Map<String, Double> current = new HashMap<>();
+        Random rand = new Random();
+        boolean useOneDish = false;
 
-    // 4. 추천 음식 선택 (기여도 + softmax 기반)
-    Food rice = MealPlanner.chooseMeal(riceList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
-    updateCurrentNutrients(current, rice);
-    log.info("[식단 생성 결과] 밥: {}", rice.getName());
+        // 4. 밥 + 국일지 일체형일지 선택 (기여도 + 확률 기반)
+        if (!oneDishList.isEmpty() && !riceList.isEmpty() && !soupList.isEmpty()) {
+            Food oneDish = MealPlanner.chooseMeal(oneDishList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
+            double oneDishScore = MealPlanner.computeContribution(oneDish, current, targetPerMeal);
 
-    Food soup = MealPlanner.chooseMeal(soupList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods).get(0);
-    updateCurrentNutrients(current, soup);
-    log.info("[식단 생성 결과] 국: {}", soup.getName());
+            List<Food> riceCandidates = MealPlanner.chooseMeal(riceList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods);
+            List<Food> soupCandidates = MealPlanner.chooseMeal(soupList, current, targetPerMeal, 1, 5, allergies, dislikes, recentFoods);
 
-    List<Food> sides = MealPlanner.chooseMeal(sideList, current, targetPerMeal, 3, 10, allergies, dislikes, recentFoods);
-    sides.forEach(f -> updateCurrentNutrients(current, f));
-    log.info("[식단 생성 결과] 반찬: {}", sides.stream().map(Food::getName).toList());
+            if (!riceCandidates.isEmpty() && !soupCandidates.isEmpty()) {
+                double comboScore = MealPlanner.computeContribution(riceCandidates.get(0), current, targetPerMeal)
+                                    + MealPlanner.computeContribution(soupCandidates.get(0), current, targetPerMeal);
+                double threshold = 0.3;  // 30% 확률 허용
 
-    // 5. 최종 구성
-    List<Food> meal = new ArrayList<>();
-    meal.add(rice);
-    meal.add(soup);
-    meal.addAll(sides);
+                useOneDish = oneDishScore > comboScore || rand.nextDouble() < threshold;
+                if (useOneDish) {
+                    riceList = List.of(oneDish);  // 밥에 포함시켜 하나로 취급
+                    soupList = List.of();         // 국 없음
+                } else {
+                    riceList = riceCandidates;
+                    soupList = soupCandidates;
+                }
+            }
+        }
 
-    return meal;
-}
+        // 4. 결정된 밥, 국을 불러오고 추천 반찬 선택 (기여도 + softmax 기반)
+        Food rice = riceList.get(0);
+        updateCurrentNutrients(current, rice);
+        log.info("[식단 생성 결과] 밥(또는 일체형): {}", rice.getName());
+
+        Food soup = soupList.isEmpty() ? null : soupList.get(0);
+        if (soup != null) {
+            updateCurrentNutrients(current, soup);
+            log.info("[식단 생성 결과] 국: {}", soup.getName());
+        }
+
+        // ✅ 김치 반찬 확보
+        List<Food> kimchiList = allFoods.stream()
+            .filter(f -> f.getCategory() != null && KIMCHI_CATEGORIES.contains(f.getCategory()))
+            .collect(Collectors.toList());
+
+        // ✅ 김치 1개 선택 (없으면 생략)
+        List<Food> selectedKimchi = kimchiList.isEmpty()
+            ? new ArrayList<>()
+            : MealPlanner.chooseMeal(kimchiList, current, targetPerMeal, 1, 3, allergies, dislikes, recentFoods);
+
+        // ✅ 일반 반찬 후보 중 김치 제외한 것들
+        List<Food> sideExcludingKimchi = sideList.stream()
+            .filter(f -> f.getCategory() == null || !KIMCHI_CATEGORIES.contains(f.getCategory()))
+            .collect(Collectors.toList());
+
+        // ✅ 일반 반찬 2개 선택
+        List<Food> selectedOthers = MealPlanner.chooseMeal(sideExcludingKimchi, current, targetPerMeal, 2, 10, allergies, dislikes, recentFoods);
+
+        // ✅ 합쳐서 최종 반찬 구성
+        List<Food> sides = new ArrayList<>();
+        sides.addAll(selectedKimchi);
+        sides.addAll(selectedOthers);
+
+        // ✅ current 갱신 및 로그
+        sides.forEach(f -> updateCurrentNutrients(current, f));
+        log.info("[식단 생성 결과] 반찬(김치 포함): {}", sides.stream().map(Food::getName).toList());
+
+        // 5. 최종 구성
+        List<Food> meal = new ArrayList<>();
+        meal.add(rice);
+        if (soup != null) meal.add(soup);
+        meal.addAll(sides);
+
+        return meal;
+    }
 
 
     /**
