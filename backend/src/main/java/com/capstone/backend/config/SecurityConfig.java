@@ -27,6 +27,9 @@ public class SecurityConfig {
             .requestMatchers("/api/health/health_info").permitAll()
             .requestMatchers("/api/health/analysis/**").permitAll()
             .requestMatchers("/ocr/upload").permitAll()
+            .requestMatchers("/api/meals/today").permitAll()
+            .requestMatchers("/api/meals/weekly").permitAll()
+            .requestMatchers("/api/meals/recommend").permitAll()
                 .anyRequest().authenticated()
             )
         .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
