@@ -1,13 +1,10 @@
 package com.capstone.backend.service;
 
 import com.capstone.backend.domain.Food;
-import com.capstone.backend.domain.enums.NutrientConstants;
-import com.capstone.backend.dto.NutrientIntake;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.bson.Document;
 
 import java.util.List;
