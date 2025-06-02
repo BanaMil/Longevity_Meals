@@ -13,11 +13,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.domain.Sort;
 
-import java.util.Comparator;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -61,4 +58,10 @@ public class RecentRecommendationLogService {
         logs.sort(Comparator.comparing(MealRecommendationLog::getDate));
         return logs;
     }
+
+    public Optional<MealRecommendationLog> findByUserIdAndDate(String userId, LocalDate date) {
+        return logRepository.findByUserIdAndDate(userId, date);
+    }
+
+
 }
