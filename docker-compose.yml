@@ -10,6 +10,7 @@ services:
     stdin_open: true
     volumes:
       - .:/app                 # 프로젝트 폴더를 /app에 마운트
+      # - /etc/localtime:/etc/localtime:ro
     ports:
       - "25223:22"             # SSH 접속용 포트 포워딩
       - "8080:8080"            # Spring Boot 외부 접근을 위한 포트 포워딩

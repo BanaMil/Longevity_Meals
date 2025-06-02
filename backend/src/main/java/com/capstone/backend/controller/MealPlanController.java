@@ -62,10 +62,12 @@ public class MealPlanController {
         return result;
     }
     
-    @GetMapping("/today")
+    @PostMapping("/today")
     public MealResponse getTodayMeal(
-        @RequestParam String userId
+        @RequestBody RecommendRequest request
     ) {
+        log.info("=== /today api 호출 성공 ===");
+        String userId = request.getUserid();
         return mealPlanService.getTodayMeal(userId);
     }
 

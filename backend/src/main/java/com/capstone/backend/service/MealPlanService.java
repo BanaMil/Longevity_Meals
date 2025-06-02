@@ -324,7 +324,7 @@ public class MealPlanService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         log.info("=== 현재 시각에 따라 식단 선택, 현재 시각: {} ===", now.format(formatter));
         List<FoodWithIntake> selected;
-        if (now.isBefore(LocalTime.of(11, 0))) {
+        if (now.isBefore(LocalTime.of(10, 0))) {
             selected = recommendLog.getBreakfast();
             log.info("아침 식단 선택");
         } else if (now.isBefore(LocalTime.of(16, 0))) {
@@ -368,19 +368,17 @@ public class MealPlanService {
             }
         }
 
-        // ✅ ingredients가 null인 경우 빈 문자열로 처리
-        String ingredientsStr = (food.getIngredients() != null)
-            ? String.join(", ", food.getIngredients())
-            : "";
+        List<String> ingredients = food.getIngredients() != null
+            ? food.getIngredients()
+            : List.of();
 
         return new FoodItemResponse(
             food.getName(),
             food.getImageUrl(),
             nutrientList,
-            ingredientsStr,
+            ingredients,
             food.getRecipe()
         );
     }
-
 
 }

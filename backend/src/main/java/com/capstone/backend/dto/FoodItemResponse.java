@@ -2,11 +2,10 @@ package com.capstone.backend.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,6 +15,6 @@ public class FoodItemResponse {
     private String name;
     private String imageUrl;
     private List<NutrientIntake> nutrients;
-    private String ingredients;
+    private List<String> ingredients;
     private String recipe;
 }

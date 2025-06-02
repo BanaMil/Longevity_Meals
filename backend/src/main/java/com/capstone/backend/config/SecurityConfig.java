@@ -21,7 +21,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.csrf(csrf -> csrf.disable())
+        http.cors().and()
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll() // 하늘 수정
             .requestMatchers("/api/health/health_info").permitAll()

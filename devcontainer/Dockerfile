@@ -70,6 +70,13 @@ RUN apt-get update && apt-get install -y openssh-server && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 
+# 한국시간 설정
+ENV TZ=Asia/Seoul
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
+
+
 # 컨테이너 시작 시 sshd 실행
 CMD ["/usr/sbin/sshd", "-D"]
 
