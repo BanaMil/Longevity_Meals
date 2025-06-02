@@ -9,6 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FoodNutrientResponse {
     private String name;
-    private String unit;
     private double amount;
 }

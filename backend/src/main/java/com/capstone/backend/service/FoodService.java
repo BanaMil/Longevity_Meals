@@ -2,6 +2,8 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.domain.Food;
 import com.capstone.backend.domain.enums.NutrientConstants;
+import com.capstone.backend.dto.FoodItemResponse;
+import com.capstone.backend.dto.NutrientIntake;
 import com.capstone.backend.repository.FoodRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -97,23 +99,5 @@ public class FoodService {
             .orElseThrow(() -> new NoSuchElementException("음식명으로 Food를 찾을 수 없습니다: " + name));
     }
 
-    private FoodItemResponse toFoodItemResponse(Food food) {
-    List<FoodNutrientResponse> nutrients = food.getNutrients().entrySet().stream()
-        .map(entry -> new FoodNutrientResponse(
-            entry.getKey(),  // 영양소 이름
-            getUnitForNutrient(entry.getKey()),  // 단위 (단위는 NutrientReference 등에서 매핑해야 할 수 있음)
-            entry.getValue()  // 영양소 양
-        ))
-        .toList();
-
-    return new FoodItemResponse(
-        food.getName(),
-        food.getImageUrl(),
-        nutrients,
-        food.getIngredients() != null ? food.getIngredients() : List.of(),
-        food.getRecipe()
-    );
-}
-
-
+    
 }

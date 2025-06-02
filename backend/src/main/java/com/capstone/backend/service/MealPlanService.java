@@ -356,29 +356,23 @@ public class MealPlanService {
     }
 
     private FoodItemResponse toFoodItemResponse(Food food) {
-        if (food == null) return null;
-
-        // nutrients 변환
-        List<NutrientIntake> nutrientList = new ArrayList<>();
-        if (food.getNutrients() != null) {
-            for (Map.Entry<String, Double> entry : food.getNutrients().entrySet()) {
-                String nutrientName = entry.getKey();
-                double amount = entry.getValue();
-                nutrientList.add(new NutrientIntake(nutrientName, "", amount));  // 단위는 비워둠
-            }
-        }
-
-        List<String> ingredients = food.getIngredients() != null
-            ? food.getIngredients()
-            : List.of();
+        List<NutrientIntake> nutrients = food.getNutrients().entrySet().stream()
+            .map(entry -> new NutrientIntake(
+                entry.getKey(),        // 영양소 이름
+                "",
+                entry.getValue()       // 영양소 양
+            ))
+            .toList();
 
         return new FoodItemResponse(
             food.getName(),
             food.getImageUrl(),
-            nutrientList,
-            ingredients,
+            nutrients,
+            food.getIngredients() != null ? food.getIngredients() : List.of(),
             food.getRecipe()
         );
     }
+
+    
 
 }
