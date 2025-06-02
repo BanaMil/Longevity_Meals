@@ -8,7 +8,7 @@ import com.capstone.backend.domain.MealRecommendationLog;
 import com.capstone.backend.dto.FoodItemResponse;
 import com.capstone.backend.dto.FoodWithIntake;
 import com.capstone.backend.dto.NutrientIntake;
-import com.capstone.backend.dto.TodayMealResponse;
+import com.capstone.backend.dto.MealResponse;
 import com.capstone.backend.utils.IntakeEstimator;
 import com.capstone.backend.utils.MealPlanner;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -311,64 +312,75 @@ public class MealPlanService {
         return weeklyMeals;
     }
 
-    public TodayMealResponse getTodayMeal(String userId) {
-    // 1. 오늘 날짜의 로그 가져오기
-    LocalDate today = LocalDate.now();
-    MealRecommendationLog log = recentRecommendationLogService.findByUserIdAndDate(userId, today)
-        .orElseThrow(() -> new NoSuchElementException("오늘 식단 없음"));
+    public MealResponse getTodayMeal(String userId) {
+        // 1. 오늘 날짜의 로그 가져오기
+        LocalDate today = LocalDate.now();
+        log.info("=== 오늘 날짜의 식단 가져오기: {} ===", today);
+        MealRecommendationLog recommendLog = recentRecommendationLogService.findByUserIdAndDate(userId, today)
+            .orElseThrow(() -> new NoSuchElementException("오늘 식단 없음"));
 
-    // 2. 현재 시각에 따라 끼니 선택
-    LocalTime now = LocalTime.now();
-    List<FoodWithIntake> selected;
-    if (now.isBefore(LocalTime.of(11, 0))) {
-        selected = log.getBreakfast();
-    } else if (now.isBefore(LocalTime.of(16, 0))) {
-        selected = log.getLunch();
-    } else {
-        selected = log.getDinner();
-    }
-
-    // 3. rice/soup/sideDishes 분할
-    Food rice = foodService.findByName(selected.get(0).getName());
-    Food soup = foodService.findByName(selected.get(1).getName());
-    List<Food> sides = selected.subList(2, selected.size()).stream()
-        .map(f -> foodService.findByName(f.getName()))
-        .toList();
-
-    // 4. DTO로 변환
-    return new TodayMealResponse(
-        toFoodItemResponse(rice),
-        toFoodItemResponse(soup),
-        sides.stream().map(this::toFoodItemResponse).toList()
-    );
-}
-
-private FoodItemResponse toFoodItemResponse(Food food) {
-    if (food == null) return null;
-
-    // nutrients 변환
-    List<NutrientIntake> nutrientList = new ArrayList<>();
-    if (food.getNutrients() != null) {
-        for (Map.Entry<String, Double> entry : food.getNutrients().entrySet()) {
-            String nutrientName = entry.getKey();
-            double amount = entry.getValue();
-            nutrientList.add(new NutrientIntake(nutrientName, "", amount));  // 단위는 비워둠
+        // 2. 현재 시각에 따라 끼니 선택
+        LocalTime now = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        log.info("=== 현재 시각에 따라 식단 선택, 현재 시각: {} ===", now.format(formatter));
+        List<FoodWithIntake> selected;
+        if (now.isBefore(LocalTime.of(11, 0))) {
+            selected = recommendLog.getBreakfast();
+            log.info("아침 식단 선택");
+        } else if (now.isBefore(LocalTime.of(16, 0))) {
+            selected = recommendLog.getLunch();
+            log.info("점심 식단 선택");
+        } else {
+            selected = recommendLog.getDinner();
+            log.info("저녁 식단 선택");
         }
+
+        // 3. rice/soup/sideDishes 분할
+        Food rice = foodService.findByName(selected.get(0).getName());
+        Food soup = foodService.findByName(selected.get(1).getName());
+        List<Food> sides = selected.subList(2, selected.size()).stream()
+            .map(f -> foodService.findByName(f.getName()))
+            .toList();
+        log.info("식단 분할 완료 - 밥: {}, 국: {}, 반찬 개수: {}", rice.getName(), soup.getName(), sides.size());
+
+        // 4. DTO로 변환
+        MealResponse response = new MealResponse(
+            toFoodItemResponse(rice),
+            toFoodItemResponse(soup),
+            sides.stream().map(this::toFoodItemResponse).toList()
+        );
+        
+        log.info("식단 DTO 변환 완료 - MealResponse 생성");
+
+        return response;
     }
 
-    // ✅ ingredients가 null인 경우 빈 문자열로 처리
-    String ingredientsStr = (food.getIngredients() != null)
-        ? String.join(", ", food.getIngredients())
-        : "";
+    private FoodItemResponse toFoodItemResponse(Food food) {
+        if (food == null) return null;
 
-    return new FoodItemResponse(
-        food.getName(),
-        food.getImageUrl(),
-        nutrientList,
-        ingredientsStr,
-        food.getRecipe()
-    );
-}
+        // nutrients 변환
+        List<NutrientIntake> nutrientList = new ArrayList<>();
+        if (food.getNutrients() != null) {
+            for (Map.Entry<String, Double> entry : food.getNutrients().entrySet()) {
+                String nutrientName = entry.getKey();
+                double amount = entry.getValue();
+                nutrientList.add(new NutrientIntake(nutrientName, "", amount));  // 단위는 비워둠
+            }
+        }
+
+        // ✅ ingredients가 null인 경우 빈 문자열로 처리
+        String ingredientsStr = (food.getIngredients() != null)
+            ? String.join(", ", food.getIngredients())
+            : "";
+
+        return new FoodItemResponse(
+            food.getName(),
+            food.getImageUrl(),
+            nutrientList,
+            ingredientsStr,
+            food.getRecipe()
+        );
+    }
 
 
 }

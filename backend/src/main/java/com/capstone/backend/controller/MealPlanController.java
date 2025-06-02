@@ -4,7 +4,7 @@ import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.dto.DailyMealsResponse;
 import com.capstone.backend.service.MealPlanService;
 import com.capstone.backend.dto.RecommendRequest;
-import com.capstone.backend.dto.TodayMealResponse;
+import com.capstone.backend.dto.MealResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +63,7 @@ public class MealPlanController {
     }
     
     @GetMapping("/today")
-    public TodayMealResponse getTodayMeal(
+    public MealResponse getTodayMeal(
         @RequestParam String userId
     ) {
         return mealPlanService.getTodayMeal(userId);
