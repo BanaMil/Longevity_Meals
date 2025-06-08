@@ -2,6 +2,7 @@
 
 class HealthInfo {
   String? userid;
+  String? gender;
   double? height;
   double? weight;
   List<String> diseases = [];
@@ -11,6 +12,7 @@ class HealthInfo {
   Map<String, dynamic> toJson() {
     return {
       'userid' : userid,
+      'gender' : gender,
       'height': height,
       'weight': weight,
       'diseases': diseases,

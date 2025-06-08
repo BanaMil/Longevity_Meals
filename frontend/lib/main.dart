@@ -3,10 +3,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
-// import 'package:frontend/screens/screen_first.dart';
+import 'package:frontend/screens/screen_first.dart';
 
-import 'package:frontend/screens/screen_health_info/choice_info.dart';
+// import 'package:frontend/screens/screen_health_info/choice_info.dart';
 // import 'package:frontend/screens/screen_index.dart';
+// import 'package:frontend/screens/screen_health_result.dart';
+// import 'package:frontend/screens/screen_health_info/input_height_weight.dart';
 
 void main() {
   runApp(
@@ -26,9 +28,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '장수밥상',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 196, 215, 108)),
       ),
-      home: ChoiceInfoScreen(), //앱 시작 시 가장 먼저 보여줄 화면
+      debugShowCheckedModeBanner: false,  // flutter 디버그 배너 false 
+      home: FirstScreen(), //앱 시작 시 가장 먼저 보여줄 화면
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

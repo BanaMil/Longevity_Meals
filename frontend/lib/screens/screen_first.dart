@@ -11,6 +11,7 @@ class FirstScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 196, 215, 108),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -32,10 +33,11 @@ class FirstScreen extends StatelessWidget {
                 // Navigator.pushNamed(context, '/screen_login');
               },
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
                 minimumSize: const Size(200, 60),           // 버튼 높이 
-                textStyle: const TextStyle(color: Colors.black, fontSize: 20),   // 폰트 크기
+                textStyle: const TextStyle(fontSize: 20),   // 폰트 크기
               ),
-              child: Text('로그인'),
+              child: Text('로그인', style: TextStyle(color: Colors.black)),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -44,11 +46,11 @@ class FirstScreen extends StatelessWidget {
                 // Navigator.pushNamed(context, '/screen_register');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal[100],
+                backgroundColor: Color.fromARGB(156, 137, 177, 95), 
                 minimumSize: const Size(200, 60),           // 버튼 높이 
-                textStyle: const TextStyle(color: Colors.black, fontSize: 20),   // 폰트 크기
+                textStyle: const TextStyle(fontSize: 20),   // 폰트 크기
                 ),
-              child: Text('회원가입'),
+              child: Text('회원가입', style: TextStyle(color: Colors.black)),
             ),
           ],
         ),

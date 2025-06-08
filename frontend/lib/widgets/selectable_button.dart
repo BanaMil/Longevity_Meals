@@ -13,22 +13,20 @@ class SelectableButton extends StatelessWidget {
     required this.text,
     required this.isSelected,
     required this.onTap,
-    this.fontSize = 16,
+    this.fontSize = 14,
   });
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double buttonWidth = (screenWidth - 16*2 - 8*2) / 3;  // 3개 버튼 
-   
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: buttonWidth,
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        constraints: const BoxConstraints(minHeight: 46), // 버튼의 최소 높이 
         decoration: BoxDecoration(
-          color: isSelected ? Colors.green[200] : Colors.grey[300],
+          color: isSelected ? const Color.fromARGB(255, 179, 216, 168) 
+                            : Colors.grey[300],
           borderRadius: BorderRadius.circular(10),
         ),
         alignment: Alignment.center,
