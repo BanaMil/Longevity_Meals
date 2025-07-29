@@ -336,17 +336,30 @@ public class MealPlanService {
         }
 
         // 3. rice/soup/sideDishes 분할
-        Food rice = foodService.findByName(selected.get(0).getName());
-        Food soup = foodService.findByName(selected.get(1).getName());
-        List<Food> sides = selected.subList(2, selected.size()).stream()
-            .map(f -> foodService.findByName(f.getName()))
-            .toList();
-        log.info("식단 분할 완료 - 밥: {}, 국: {}, 반찬 개수: {}", rice.getName(), soup.getName(), sides.size());
+        Food rice;
+        Food soup = null;
+        List<Food> sides;
+
+        if (selected.size() == 4) { // 통합 메뉴
+            rice = foodService.findByName(selected.get(0).getName());
+            sides = selected.subList(1, 4).stream()
+                .map(f -> foodService.findByName(f.getName()))
+                .toList();
+            log.info("통합메뉴 처리 - 밥+국: {}, 반찬 개수: {}", rice.getName(), sides.size());
+        } else {
+            rice = foodService.findByName(selected.get(0).getName());
+            soup = foodService.findByName(selected.get(1).getName());
+            sides = selected.subList(2, selected.size()).stream()
+                .map(f -> foodService.findByName(f.getName()))
+                .toList();
+            log.info("일반 식단 처리 - 밥: {}, 국: {}, 반찬 개수: {}", rice.getName(), soup.getName(), sides.size());
+        }
+
 
         // 4. DTO로 변환
         MealResponse response = new MealResponse(
             toFoodItemResponse(rice),
-            toFoodItemResponse(soup),
+            soup != null ? toFoodItemResponse(soup): null,
             sides.stream().map(this::toFoodItemResponse).toList()
         );
         

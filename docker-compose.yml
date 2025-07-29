@@ -14,7 +14,29 @@ services:
     ports:
       - "25223:22"             # SSH 접속용 포트 포워딩
       - "8080:8080"            # Spring Boot 외부 접근을 위한 포트 포워딩
+    networks:
+      - capstone-net
+    depends_on:
+      - qdrant
+
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    ports:
+      - "6333:6333"   # REST API
+    #  - "6334:6334"   # Web UI
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - capstone-net
+
+networks:
+  capstone-net:
+
+volumes:
+  qdrant_data:
 
 
 
 # docker exec -it capstone-container bash
+# http://localhost:6333/dashboard
