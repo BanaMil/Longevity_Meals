@@ -1,11 +1,17 @@
+# fastapi-server/app/models.py
+
 from pydantic import BaseModel
-from typing import List, Dict, Literal
+from typing import List, Dict
+
 
 class HealthInfoRequest(BaseModel):
+    gender: str
+    height: float
+    weight: float
     diseases: List[str]
     allergies: List[str]
     dislikes: List[str]
-    statusList: List[dict]  # or custom class
+
 
 class DailyMealsResponse(BaseModel):
     breakfast: List[str]

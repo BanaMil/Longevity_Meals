@@ -11,5 +11,6 @@ public interface MealRecommendationLogRepository extends MongoRepository<MealRec
     List<MealRecommendationLog> findByUserIdAndDateAfter(String userId, LocalDate after);
     Optional<MealRecommendationLog> findByUserIdAndDate(String userId, LocalDate date);
     public boolean existsByUserIdAndDate(String userId, LocalDate date);
+    public boolean existsByUserId(String userId);
 
 }
