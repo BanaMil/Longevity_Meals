@@ -1,9 +1,12 @@
 package com.capstone.backend.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import com.capstone.backend.domain.Food;
 
 public interface FoodRepository extends MongoRepository<Food, String> {
     Optional<Food> findFirstByName(String name);
+    List<Food> findByNameIn(List<String> names);
+
 }

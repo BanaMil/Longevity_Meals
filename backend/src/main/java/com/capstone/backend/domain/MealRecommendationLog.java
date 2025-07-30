@@ -19,7 +19,12 @@ public class MealRecommendationLog {
     private String id;
     private String userId;
     private LocalDate date;             // 추천된 날짜
-    private List<FoodWithIntake> breakfast;
-    private List<FoodWithIntake> lunch;
-    private List<FoodWithIntake> dinner;
+    // private List<FoodWithIntake> breakfast;
+    // private List<FoodWithIntake> lunch;
+    // private List<FoodWithIntake> dinner;
+
+    public MealRecommendationLog(String userid) {
+        this.userId = userid;
+        this.date = LocalDate.now();  // 기본 추천일
+    }
 }

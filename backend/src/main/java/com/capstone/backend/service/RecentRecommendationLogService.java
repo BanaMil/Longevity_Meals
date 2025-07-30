@@ -22,18 +22,18 @@ public class RecentRecommendationLogService {
     private final MongoTemplate mongoTemplate;
     private final MealRecommendationLogRepository logRepository;
 
-    public Set<String> getLastTwoDaysFoodNames(String userId) {
-        LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
-        List<MealRecommendationLog> logs = logRepository.findByUserIdAndDateAfter(userId, twoDaysAgo);
+    // public Set<String> getLastTwoDaysFoodNames(String userId) {
+    //     LocalDate twoDaysAgo = LocalDate.now().minusDays(2);
+    //     List<MealRecommendationLog> logs = logRepository.findByUserIdAndDateAfter(userId, twoDaysAgo);
 
-        Set<String> result = new HashSet<>();
-        for (MealRecommendationLog log : logs) {
-            if (log.getBreakfast() != null) result.addAll(log.getBreakfast().stream().map(FoodWithIntake::getName).toList());
-            if (log.getLunch() != null) result.addAll(log.getLunch().stream().map(FoodWithIntake::getName).toList());
-            if (log.getDinner() != null) result.addAll(log.getDinner().stream().map(FoodWithIntake::getName).toList());
-        }
-        return result;
-    }
+    //     Set<String> result = new HashSet<>();
+    //     for (MealRecommendationLog log : logs) {
+    //         if (log.getBreakfast() != null) result.addAll(log.getBreakfast().stream().map(FoodWithIntake::getName).toList());
+    //         if (log.getLunch() != null) result.addAll(log.getLunch().stream().map(FoodWithIntake::getName).toList());
+    //         if (log.getDinner() != null) result.addAll(log.getDinner().stream().map(FoodWithIntake::getName).toList());
+    //     }
+    //     return result;
+    // }
 
 
     public boolean existsByUserIdAndDate(String userId, LocalDate date) {

@@ -1,13 +1,14 @@
 package com.capstone.backend.dto;
 
+import com.capstone.backend.domain.HealthInfo;
+
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Builder;
 
 import java.util.List;
 
-@Getter @Setter @Builder
+@Getter @Setter 
 public class HealthInfoRequest {
     
     private String gender;
@@ -21,4 +22,13 @@ public class HealthInfoRequest {
     private List<String> diseases;
     private List<String> allergies;
     private List<String> dislikes;
+
+    public HealthInfoRequest(HealthInfo info) {
+        this.gender = info.getGender();
+        this.height = info.getHeight();
+        this.weight = info.getWeight();
+        this.diseases = info.getDiseases();
+        this.allergies = info.getAllergies();
+        this.dislikes = info.getDislikes();
+    }
 }

@@ -5,6 +5,7 @@ import com.capstone.backend.dto.DailyMealsResponse;
 import com.capstone.backend.service.MealPlanService;
 import com.capstone.backend.dto.RecommendRequest;
 import com.capstone.backend.dto.MealResponse;
+import com.capstone.backend.repository.MealRecommendationLogRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class MealPlanController {
 
     private final MealPlanService mealPlanService;
+    private final MealRecommendationLogRepository logRepository;
 
     @PostMapping("/recommend")
     public ResponseEntity<?> requestMealRecommendation(@RequestBody RecommendRequest request) {

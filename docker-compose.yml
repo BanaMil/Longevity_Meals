@@ -4,17 +4,23 @@ services:
   dev:
     container_name: capstone-container
     build:
-      context: .               # Dockerfile이 있는 현재 디렉토리
-      dockerfile: devcontainer/Dockerfile  # Dockerfile 이름
+      context: .
+      dockerfile: devcontainer/Dockerfile
     tty: true
     stdin_open: true
     volumes:
-      - .:/app                 # 프로젝트 폴더를 /app에 마운트
-      # - /etc/localtime:/etc/localtime:ro
+      - .:/app
     ports:
-      - "25223:22"             # SSH 접속용 포트 포워딩
-      - "8080:8080"            # Spring Boot 외부 접근을 위한 포트 포워딩
+      - "25223:22"
+      - "8080:8080"  # Spring Boot
 
-
-
-# docker exec -it capstone-container bash
+  fastapi:
+    container_name: fastapi-server
+    build:
+      context: ./fastapi-server     # FastAPI 디렉토리 따로 생성
+      dockerfile: Dockerfile        # FastAPI용 Dockerfile
+    ports:
+      - "8000:8000"                 # FastAPI 기본 포트
+    volumes:
+      - ./fastapi-server:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload

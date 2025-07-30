@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class MealMapper {
 
     public static FoodItemResponse toResponse(Food food) {
+        if (food == null) return null;
         FoodItemResponse dto = new FoodItemResponse();
         dto.setName(food.getName());
         dto.setImageUrl(food.getImageUrl());
@@ -18,26 +19,29 @@ public class MealMapper {
 
     public static MealResponse groupMeal(List<Food> foods) {
         Food rice = foods.stream()
-            .filter(f -> f.getCategory().contains("밥"))
+            .filter(f -> f.getCategory() != null && f.getCategory().contains("밥"))
             .findFirst()
             .orElse(null);
 
         Food soup = foods.stream()
-            .filter(f -> f.getCategory().contains("국"))
+            .filter(f -> f.getCategory() != null && f.getCategory().contains("국"))
             .findFirst()
             .orElse(null);
 
         List<Food> sides = foods.stream()
-            .filter(f -> !f.getCategory().contains("밥") && !f.getCategory().contains("국"))
+            .filter(f -> f.getCategory() != null &&
+                        !f.getCategory().contains("밥") &&
+                        !f.getCategory().contains("국"))
             .limit(3)
             .collect(Collectors.toList());
 
         MealResponse response = new MealResponse();
         response.setRice(toResponse(rice));
         response.setSoup(toResponse(soup));
-        response.setSideDishes(sides.stream()
-            .map(MealMapper::toResponse)
-            .collect(Collectors.toList()));
+        response.setSideDishes(
+            sides.stream().map(MealMapper::toResponse).collect(Collectors.toList())
+        );
         return response;
     }
+
 }
