@@ -5,7 +5,7 @@ import json
 import logging
 
 # OpenAI API 키
-client = OpenAI(api_key="key를 넣어줘")
+client = OpenAI(api_key="")
 
 # 사용자 건강 정보와 음식 후보 리스트를 바탕으로 GPT에게 전달할 프롬프트(자연어)를 생성하는 함수
 def build_gpt_prompt(user: dict, foods: list) -> str:
