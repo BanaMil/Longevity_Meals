@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.models import HealthInfoRequest, DailyMealsResponse, WeeklyMealsResponse, SearchQuery, AdvancedSearchQuery
+from app.models import HealthInfoRequest, DailyMealsResponse, WeeklyMealsResponse, MealPlanWeeklyRequest, FoodCandidate
 from typing import List, Literal
+from app.utils.gpt_service import ask_chatgpt
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue, SearchRequest
@@ -26,8 +27,28 @@ def recommend_today_meal(request: HealthInfoRequest):
     return DailyMealsResponse(...)
 
 @router.post("/mealplan/weekly", response_model=WeeklyMealsResponse)
-def recommend_weekly_meal(request: HealthInfoRequest):
-    return WeeklyMealsResponse(...)
+def recommend_weekly_meal(payload: MealPlanWeeklyRequest):
+    try:
+        user_dict = payload.user.dict()
+        foods = [food.dict() for food in payload.foods]
+
+        gpt_response = ask_chatgpt(user_dict, foods)
+        parsed = json.loads(gpt_response)
+
+        meals = {}
+        for day in parsed:
+            date = day["date"]
+            meals[date] = DailyMealsResponse(
+                breakfast=[{"name": item["name"], "intake": item["intake"]} for item in day["breakfast"]],
+                lunch=[{"name": item["name"], "intake": item["intake"]} for item in day["lunch"]],
+                dinner=[{"name": item["name"], "intake": item["intake"]} for item in day["dinner"]],
+            )
+
+        return WeeklyMealsResponse(meals=meals)
+
+    except Exception as e:
+        logging.error(f"WEEKLY GPT 추천 실패: {str(e)}")
+        raise HTTPException(status_code=500, detail="GPT 기반 식단 추천 중 오류 발생")
 
 # Simple 버전: 자연어 기반 벡터 검색
 @router.post("/search/simple")
