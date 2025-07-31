@@ -2,10 +2,10 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.models import HealthInfoRequest, DailyMealsResponse, WeeklyMealsResponse, MealPlanWeeklyRequest, FoodCandidate
 from typing import List, Literal
-from app.utils.gpt_service import ask_chatgpt
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue, SearchRequest
+from app.utils.gpt_service import ask_chatgpt
 from app.utils.vectorizer import build_query_vectors
 from app.utils.filtering import build_filters
 from app.utils.qdrant_client import search
@@ -56,9 +56,10 @@ def recommend_weekly_meal(payload: MealPlanWeeklyRequest):
 
 
 
+
 # Weighted 버전: post_score 기반 정량 점수 계산 포함
 @router.post("/search/weighted")
-def search_weighted(query: AdvancedSearchQuery):
+def search_weighted(query: HealthInfoRequest):
     try:
         logging.info(f"[{datetime.datetime.now()}] 검색 요청 수신: {query.dict()}")
 

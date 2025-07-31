@@ -77,7 +77,7 @@ def build_gpt_prompt(user: dict, foods: list) -> str:
 """
 
 # GPT에게 프롬프트를 전송하고 응답받아 결과를 문자열로 반환하는 함수
-def ask_chatgpt(user: dict, foods: list) -> str:
+def ask_chatgpt(user: dict, foods: list) -> str: 
     prompt = build_gpt_prompt(user, foods) #prompt 함수 호출
     try:
         response = client.chat.completions.create(
