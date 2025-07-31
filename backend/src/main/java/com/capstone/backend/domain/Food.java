@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.List;
 
 
-@Document(collection = "foodDB")  // ← 컬렉션 이름도 정확히 확인
+@Document(collection = "foodDB")  // ← 컬렉션 이름도 정확히 확인s
 @Getter
 @Setter
 public class Food {

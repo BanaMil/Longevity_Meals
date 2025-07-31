@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 
 @Getter @Setter @AllArgsConstructor
 public class DailyMeals {
-    private String userid;
+    private String userId;
     private String date;
     private List<String> breakfast;
     private List<String> lunch;
