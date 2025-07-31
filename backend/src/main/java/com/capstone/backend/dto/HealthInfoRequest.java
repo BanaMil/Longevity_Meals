@@ -4,11 +4,12 @@ import com.capstone.backend.domain.HealthInfo;
 
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
-@Getter @Setter 
+@Getter @Setter @NoArgsConstructor
 public class HealthInfoRequest {
     
     private String gender;
