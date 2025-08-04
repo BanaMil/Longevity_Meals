@@ -57,4 +57,4 @@ public class MealGptClient {
             throw new RuntimeException("GPT 주간 식단 API 호출 실패: " + response.getStatusCode());
         }
     }
-}
+}   
