@@ -2,6 +2,7 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.domain.HealthInfo;
 import com.capstone.backend.domain.NutrientStatusMapping;
+import com.capstone.backend.domain.PersonalizedIntake;
 import com.capstone.backend.domain.User;
 import com.capstone.backend.dto.HealthInfoRequest;
 import com.capstone.backend.repository.HealthInfoRepository;
@@ -36,7 +37,7 @@ public class HealthInfoService {
 
     public void saveHealthInfo(String userId, HealthInfoRequest request) { // 사용자가 직접 입력한 정보 저장
         List<NutrientStatusMapping> statusList = analyzer.analyze(request.getDiseases());
-        Map<String, Double> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, request.getGender());
+        List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, request.getGender());
 
         HealthInfo healthInfo = HealthInfo.builder()
                 .userid(userId)

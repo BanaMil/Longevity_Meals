@@ -7,6 +7,8 @@ import lombok.Builder;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 
+
+
 import java.util.List;
 import java.util.Map;
 
@@ -28,5 +30,5 @@ public class HealthInfo {
     private List<String> allergies;
     private List<String> dislikes;
     private List<NutrientStatusMapping> statusList;
-    private Map<String, Double> personalizedIntake;
+    private List<PersonalizedIntake> personalizedIntake;
 }

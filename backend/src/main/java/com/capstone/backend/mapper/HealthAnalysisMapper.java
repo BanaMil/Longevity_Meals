@@ -7,6 +7,7 @@ import java.util.Map;
 import com.capstone.backend.domain.HealthInfo;
 import com.capstone.backend.domain.NutrientReference;
 import com.capstone.backend.domain.NutrientStatusMapping;
+import com.capstone.backend.domain.PersonalizedIntake;
 import com.capstone.backend.domain.enums.NutrientRelation;
 import com.capstone.backend.dto.HealthAnalysisResponse;
 import com.capstone.backend.dto.NutrientIntake;
@@ -42,19 +43,19 @@ public class HealthAnalysisMapper {
         );
     }
 
-    private List<NutrientIntake> convertToNutrientIntakeList(Map<String, Double> intakeMap, Map<String, NutrientReference> referenceMap) {
-        List<NutrientIntake> list = new ArrayList<>();
+     private List<NutrientIntake> convertToNutrientIntakeList(List<PersonalizedIntake> intakeList, Map<String, NutrientReference> referenceMap) {
+        List<NutrientIntake> result = new ArrayList<>();
 
-        for (Map.Entry<String, Double> entry : intakeMap.entrySet()) {
-            String nutrient = entry.getKey();
-            double amount = entry.getValue();
+        for (PersonalizedIntake intake : intakeList) {
+            String nutrient = intake.getNutrient();
+            double amount = intake.getAmount();
             String unit = referenceMap.containsKey(nutrient)
                     ? referenceMap.get(nutrient).getUnit()
                     : ""; // 단위 정보 없을 경우 공백 처리
 
-            list.add(new NutrientIntake(nutrient, unit, amount));
+            result.add(new NutrientIntake(nutrient, unit, amount));
         }
 
-        return list;
+        return result;
     }
 }
