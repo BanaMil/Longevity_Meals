@@ -60,13 +60,13 @@ public class MealPlanService {
 
         // 2. GPT 호출용 DTO 생성
         HealthInfoRequest request = new HealthInfoRequest(info);
-        List<Food> foodList = foodService.getAllFoods();
-        List<FoodCandidate> candidates = foodList.stream()
-            .map(FoodCandidate::fromFood)
-            .toList();
+        // List<Food> foodList = foodService.getAllFoods();
+        // List<FoodCandidate> candidates = foodList.stream()
+        //     .map(FoodCandidate::fromFood)
+        //     .toList();
 
         // 3. GPT에게 1주일치 식단 요청
-        WeeklyMealsResponse weeklyResponse = gptClient.requestWeeklyMealPlan(request, candidates);
+        WeeklyMealsResponse weeklyResponse = gptClient.requestWeeklyMealPlan(request);
 
         // 4. 응답에서 날짜별 식단을 추출하여 저장
         Map<String, DailyMealsResponse> weeklyMeals = weeklyResponse.getMeals();

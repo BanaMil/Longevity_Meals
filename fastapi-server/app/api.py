@@ -31,14 +31,22 @@ def recommend_today_meal(request: HealthInfoRequest):
 
 
 @router.post("/mealplan/weekly", response_model=WeeklyMealsResponse)
-def recommend_weekly_meal(payload: MealPlanWeeklyRequest):
+def recommend_weekly_meal(request: HealthInfoRequest):
     try:
-        user_dict = payload.user.dict()
-        foods = [food.dict() for food in payload.foods]
+        # 사용자 건강정보 → 벡터 생성
+        recommended_vector, restricted_vector = build_query_vectors(request)
+
+        # Qdrant에서 음식 검색
+        food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
+
+        # GPT 프롬프트 생성 및 요청
+        user_dict = request.dict()
+        foods = [f.dict() for f in food_candidates]
 
         gpt_response = ask_chatgpt(user_dict, foods)
         parsed = json.loads(gpt_response)
 
+        # 결과 파싱
         meals = {}
         for day in parsed:
             date = day["date"]

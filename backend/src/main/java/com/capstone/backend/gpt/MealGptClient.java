@@ -55,12 +55,10 @@ public class MealGptClient {
         }
     }
 
-    public WeeklyMealsResponse requestWeeklyMealPlan(HealthInfoRequest request, List<FoodCandidate> foods) {
-        MealPlanWeeklyRequest payload = new MealPlanWeeklyRequest(request, foods);  // 🔄 수정: 전체 payload 생성
-
+    public WeeklyMealsResponse requestWeeklyMealPlan(HealthInfoRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<MealPlanWeeklyRequest> entity = new HttpEntity<>(payload, headers);  // 🔄 수정: payload 사용
+        HttpEntity<HealthInfoRequest> entity = new HttpEntity<>(request, headers);
 
         ResponseEntity<WeeklyMealsResponse> response = restTemplate.exchange(
             langchainApiUrl + "/weekly",  // ✅ FastAPI 쪽 /weekly endpoint
