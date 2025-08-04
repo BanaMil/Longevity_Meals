@@ -14,7 +14,7 @@ def compute_score(
 
     for nutrient, (relation, weight) in weight_map.items():
         food_val = food_nutrients.get(nutrient)
-        target_val = intake_map.get(nutrient)
+        target_val = intake_map.get(nutrient, 0)
         if food_val is None or target_val is None or target_val == 0:
             continue
 

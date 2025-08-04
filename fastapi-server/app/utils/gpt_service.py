@@ -22,8 +22,9 @@ def build_gpt_prompt(user: dict, foods: list) -> str:
     ])
     
     # 개인 맞춤 섭취 기준 (예: 단백질 36g 등) 포맷 구성
-    intake = user.get("personalizedIntake", {})
-    intake_str = "\n".join([f"- {k}: {v}" for k, v in intake.items()])
+    intake_list = user.get("personalizedIntake", [])
+    intake_str = "\n".join([f"- {item['nutrient']}: {item['amount']}" for item in intake_list])
+
     
     # 음식 후보 리스트 포맷 구성 (이름 + 재료 + 영양소)
     food_str = "\n".join([
