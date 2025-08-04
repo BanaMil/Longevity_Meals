@@ -5,6 +5,7 @@ import com.capstone.backend.domain.DailyMeals;
 // import com.capstone.backend.domain.Food;
 import com.capstone.backend.domain.HealthInfo;
 import com.capstone.backend.dto.DailyMealsResponse;
+import com.capstone.backend.dto.FoodCandidate;
 import com.capstone.backend.dto.HealthInfoRequest;
 import com.capstone.backend.dto.MealResponse;
 import com.capstone.backend.dto.ResolvedMealResponse;
@@ -33,6 +34,7 @@ import com.capstone.backend.domain.Food;
 import com.capstone.backend.gpt.MealGptClient;
 import com.capstone.backend.gpt.MealPromptBuilder;
 import com.capstone.backend.gpt.MealResponseParser;
+import com.capstone.backend.dto.FoodCandidate;
 
 @Service
 @RequiredArgsConstructor
@@ -58,9 +60,13 @@ public class MealPlanService {
 
         // 2. GPT 호출용 DTO 생성
         HealthInfoRequest request = new HealthInfoRequest(info);
+        List<Food> foodList = foodService.getAllFoods();
+        List<FoodCandidate> candidates = foodList.stream()
+            .map(FoodCandidate::fromFood)
+            .toList();
 
         // 3. GPT에게 1주일치 식단 요청
-        WeeklyMealsResponse weeklyResponse = gptClient.requestWeeklyMealPlan(request);
+        WeeklyMealsResponse weeklyResponse = gptClient.requestWeeklyMealPlan(request, candidates);
 
         // 4. 응답에서 날짜별 식단을 추출하여 저장
         Map<String, DailyMealsResponse> weeklyMeals = weeklyResponse.getMeals();

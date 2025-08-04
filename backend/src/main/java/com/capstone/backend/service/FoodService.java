@@ -106,4 +106,9 @@ public class FoodService {
     public List<Food> findByNames(List<String> names) {
         return foodRepository.findByNameIn(names);
     }
+
+    public List<Food> getAllFoods() {
+        return foodRepository.findAll();
+    }
+
 }
