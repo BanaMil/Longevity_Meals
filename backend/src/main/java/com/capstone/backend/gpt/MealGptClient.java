@@ -4,13 +4,16 @@ package com.capstone.backend.gpt;
 import com.capstone.backend.dto.DailyMealsResponse;
 import com.capstone.backend.dto.HealthInfoRequest;
 import com.capstone.backend.dto.WeeklyMealsResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MealGptClient {
@@ -24,6 +27,14 @@ public class MealGptClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<HealthInfoRequest> entity = new HttpEntity<>(request, headers);
+
+        try {
+            // ✅ 요청 JSON 로그 출력
+            ObjectMapper mapper = new ObjectMapper();
+            log.info("보내는 요청 본문: {}", mapper.writeValueAsString(request));
+        } catch (Exception e) {
+            log.error("요청 직렬화 실패", e);
+        }
 
         ResponseEntity<DailyMealsResponse> response = restTemplate.exchange(
                 langchainApiUrl,
