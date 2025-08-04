@@ -1,34 +1,29 @@
-from typing import List, Dict
-from models import HealthInfoRequest
-from db import get_nutrient_list, get_disease_nutrient_relations
+# app/utils/vectorizer.py
 
-def build_query_vectors(health_info: HealthInfoRequest) -> Dict[str, List[float]]:
+from typing import List
+from sentence_transformers import SentenceTransformer
+from app.models import StatusMapping
+
+# 모델 초기화 (한 번만 로드됨)
+model = SentenceTransformer("jhgan/ko-sroberta-multitask")
+
+
+def build_query_text(status_list: List[StatusMapping]) -> str:
     """
-    사용자의 질병 정보를 기반으로 권장/제한 영양소 벡터를 생성
-    반환: {"recommended": List[float], "restricted": List[float]}
+    statusList로부터 쿼리 텍스트 구성 (영양소 상태 정보 기반)
+    예시: 단백질 RECOMMENDED 0.9
     """
-    nutrient_list = get_nutrient_list()  # 예: ["탄수화물", "단백질", "지방", ...]
-    index_map = {nutrient: idx for idx, nutrient in enumerate(nutrient_list)}
-    vector_size = len(nutrient_list)
+    lines = []
+    for s in status_list:
+        status_word = s.status.upper()  # "RECOMMENDED", "RESTRICTED"
+        line = f"{s.nutrient} {status_word} {s.weight}"
+        lines.append(line)
+    return "\n".join(lines)
 
-    recommended_vector = [0.0] * vector_size
-    restricted_vector = [0.0] * vector_size
 
-    for disease in health_info.diseases:
-        relations = get_disease_nutrient_relations(disease)  # MongoDB에서 조회
-        for r in relations:
-            nutrient = r["nutrient"]
-            relation = r["relation"].upper()
-            modifier = r.get("modifier", 1.0)
-
-            if nutrient in index_map:
-                idx = index_map[nutrient]
-                if relation == "RECOMMENDED":
-                    recommended_vector[idx] += modifier
-                elif relation == "RESTRICTED":
-                    restricted_vector[idx] += modifier
-
-    return {
-        "recommended": recommended_vector,
-        "restricted": restricted_vector
-    }
+def vectorize_query(status_list: List[StatusMapping]) -> List[float]:
+    """
+    상태 정보를 기반으로 쿼리 벡터 생성
+    """
+    query_text = build_query_text(status_list)
+    return model.encode(query_text).tolist()
