@@ -2,11 +2,17 @@ package com.capstone.backend.gpt;
 
 
 import com.capstone.backend.dto.DailyMealsResponse;
+import com.capstone.backend.dto.FoodCandidate;
 import com.capstone.backend.dto.HealthInfoRequest;
+import com.capstone.backend.dto.MealPlanWeeklyRequest;
 import com.capstone.backend.dto.WeeklyMealsResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -29,12 +35,11 @@ public class MealGptClient {
         HttpEntity<HealthInfoRequest> entity = new HttpEntity<>(request, headers);
 
         try {
-            // ✅ 요청 JSON 로그 출력
-            ObjectMapper mapper = new ObjectMapper();
-            log.info("보내는 요청 본문: {}", mapper.writeValueAsString(request));
-        } catch (Exception e) {
-            log.error("요청 직렬화 실패", e);
+            log.info("보내는 요청 본문: {}", new ObjectMapper().writeValueAsString(request));
+        } catch (JsonProcessingException e) {
+            log.error("요청 본문 직렬화 중 오류 발생", e);
         }
+
 
         ResponseEntity<DailyMealsResponse> response = restTemplate.exchange(
                 langchainApiUrl,
@@ -50,13 +55,15 @@ public class MealGptClient {
         }
     }
 
-    public WeeklyMealsResponse requestWeeklyMealPlan(HealthInfoRequest request) {
+    public WeeklyMealsResponse requestWeeklyMealPlan(HealthInfoRequest request, List<FoodCandidate> foods) {
+        MealPlanWeeklyRequest payload = new MealPlanWeeklyRequest(request, foods);  // 🔄 수정: 전체 payload 생성
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<HealthInfoRequest> entity = new HttpEntity<>(request, headers);
+        HttpEntity<MealPlanWeeklyRequest> entity = new HttpEntity<>(payload, headers);  // 🔄 수정: payload 사용
 
         ResponseEntity<WeeklyMealsResponse> response = restTemplate.exchange(
-            langchainApiUrl + "/weekly",  // ✅ 별도 API endpoint 필요
+            langchainApiUrl + "/weekly",  // ✅ FastAPI 쪽 /weekly endpoint
             HttpMethod.POST,
             entity,
             WeeklyMealsResponse.class
@@ -68,4 +75,5 @@ public class MealGptClient {
             throw new RuntimeException("GPT 주간 식단 API 호출 실패: " + response.getStatusCode());
         }
     }
+
 }   
