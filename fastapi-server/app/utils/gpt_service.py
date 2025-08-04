@@ -56,7 +56,7 @@ def build_gpt_prompt(user: dict, foods: list) -> str:
 형식은 다음과 같아야 합니다:
 
 {{
-  "userId": "{user.get("userId", "unknown")}",
+  "userid": "{user.get("userid", "unknown")}",
   "date": "2025-06-10",
   "breakfast": [
     {{ "name": "음식명", "intake": g }}
