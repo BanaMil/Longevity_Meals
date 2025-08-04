@@ -9,6 +9,10 @@ class StatusMapping(BaseModel):  # health_Info의 Status List
     weight: float # 중요도 (가중치)
     modifier: float # 개인화 비율 (1.2배, 0.6배 등)
 
+class PersonalizedIntake(BaseModel):
+    nutrient: str
+    amount: float  # 예: 단백질 36.0 (단위는 g)
+
 class HealthInfoRequest(BaseModel):
     userid: str
     gender: str
@@ -18,7 +22,7 @@ class HealthInfoRequest(BaseModel):
     allergies: List[str]
     dislikes: List[str]
     statusList: List[StatusMapping] # 사용자 맞춤 영양소 상태
-    personalizedIntake: List[str, float] # {"단백질(g)": 36, ...} - 개인화된 섭취 기준 (절대 수치)
+    personalizedIntake: List[PersonalizedIntake] # {"단백질(g)": 36, ...} - 개인화된 섭취 기준 (절대 수치)
 
 class FoodItem(BaseModel):
     name: str
@@ -46,6 +50,3 @@ class MealPlanWeeklyRequest(BaseModel):
     user: HealthInfoRequest
     foods: List[FoodCandidate]
 
-class PersonalizedIntake(BaseModel):
-    nutrient: str
-    amount: float  # 예: 단백질 36.0 (단위는 g)
