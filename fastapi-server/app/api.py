@@ -4,7 +4,7 @@ from app.models import HealthInfoRequest, DailyMealsResponse, WeeklyMealsRespons
 from typing import List, Literal
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue, SearchRequest
-from app.utils.gpt_service import ask_chatgpt
+from app.utils.gpt_service import ask_chatgpt_weekly
 from app.utils.vectorizer import vectorize_query, vectorize_query_from_health_info
 from app.utils.filtering import build_filters
 from app.utils.qdrant_client import search
@@ -37,24 +37,24 @@ def recommend_weekly_meal(request: HealthInfoRequest):
         # 사용자 건강정보 → 벡터 생성
         recommended_vector, restricted_vector = vectorize_query_from_health_info(request)
 
-        # Qdrant에서 음식 검색
+        # Qdrant에서 음식 후보 검색
         food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
 
-        # GPT 프롬프트 생성 및 요청
+        # GPT 요청을 위한 데이터 준비
         user_dict = request.dict()
         foods = [f.dict() for f in food_candidates]
 
-        gpt_response = ask_chatgpt(user_dict, foods)
-        parsed = json.loads(gpt_response)
+        # GPT에 하루씩 요청하여 7일 식단 추천 받기
+        gpt_results = ask_chatgpt_weekly(user_dict, foods)
 
-        # 결과 파싱
+        # 응답을 FastAPI용 WeeklyMealsResponse 형식으로 파싱
         meals = {}
-        for day in parsed:
-            date = day["date"]
+        for day_plan in gpt_results:
+            date = day_plan["date"]
             meals[date] = DailyMealsResponse(
-                breakfast=[{"name": item["name"], "intake": item["intake"]} for item in day["breakfast"]],
-                lunch=[{"name": item["name"], "intake": item["intake"]} for item in day["lunch"]],
-                dinner=[{"name": item["name"], "intake": item["intake"]} for item in day["dinner"]],
+                breakfast=[{"name": item["name"], "intake": item["intake"]} for item in day_plan["breakfast"]],
+                lunch=[{"name": item["name"], "intake": item["intake"]} for item in day_plan["lunch"]],
+                dinner=[{"name": item["name"], "intake": item["intake"]} for item in day_plan["dinner"]],
             )
 
         return WeeklyMealsResponse(meals=meals)
@@ -62,6 +62,7 @@ def recommend_weekly_meal(request: HealthInfoRequest):
     except Exception as e:
         logging.error(f"WEEKLY GPT 추천 실패: {str(e)}")
         raise HTTPException(status_code=500, detail="GPT 기반 식단 추천 중 오류 발생")
+
 
 
 @router.post("/search/weighted")
