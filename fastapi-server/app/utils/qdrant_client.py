@@ -3,6 +3,8 @@ from qdrant_client.http.models import SearchRequest
 
 COLLECTION_NAME = "your_collection"  # 필요 시 주입 방식으로 개선 가능
 
+client = QdrantClient(host="qdrant", port=6333)
+
 def search(client: QdrantClient, vector, filters, limit=10):
     return client.search(
         collection_name=COLLECTION_NAME,
