@@ -41,7 +41,7 @@ class WeeklyMealsResponse(BaseModel):
 # 음식 후보 (벡터 검색 결과 + 점수 포함)
 class FoodCandidate(BaseModel):
     name: str
-    ingredients: List[str]
+    ingredients: Dict[str, str]
     nutrients: Dict[str, float]
     score: float
 

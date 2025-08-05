@@ -14,7 +14,7 @@ import com.capstone.backend.domain.Food;
 @AllArgsConstructor
 public class FoodCandidate {
     private String name;
-    private List<String> ingredients;
+    private Map<String, String> ingredients;
     private Map<String, Double> nutrients;
     private double score;
 

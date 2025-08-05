@@ -35,7 +35,7 @@ public class Food {
 
     private Map<String, Double> nutrients;
 
-    private List<String> ingredients;
+    private Map<String, String> ingredients;
     @Field("image_url")
     private String imageUrl;
 
