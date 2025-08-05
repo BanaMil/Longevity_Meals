@@ -2,7 +2,7 @@
 
 from typing import List
 from sentence_transformers import SentenceTransformer
-from app.models import StatusMapping
+from app.models import StatusMapping, HealthInfoRequest, StatusMapping
 
 # 모델 초기화 (한 번만 로드됨)
 model = SentenceTransformer("jhgan/ko-sroberta-multitask")
@@ -27,3 +27,23 @@ def vectorize_query(status_list: List[StatusMapping]) -> List[float]:
     """
     query_text = build_query_text(status_list)
     return model.encode(query_text).tolist()
+
+def vectorize_query_from_health_info(request: HealthInfoRequest) -> Tuple[List[float], List[float]]:
+    recommended_statuses = []
+    restricted_statuses = []
+
+    for s in request.statusList:
+        # 방어적 체크
+        if isinstance(s, dict):  # FastAPI 내부에서 dict로 변환될 수 있음
+            status = s.get("status")
+        else:
+            status = s.status
+        
+        if status == "RECOMMENDED":
+            recommended_statuses.append(s)
+        elif status == "RESTRICTED":
+            restricted_statuses.append(s)
+
+    rec_vector = vectorize_query(recommended_statuses)
+    res_vector = vectorize_query(restricted_statuses)
+    return rec_vector, res_vector

@@ -5,7 +5,7 @@ from typing import List, Literal
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, FieldCondition, MatchValue, SearchRequest
 from app.utils.gpt_service import ask_chatgpt
-from app.utils.vectorizer import vectorize_query
+from app.utils.vectorizer import vectorize_query, vectorize_query_from_health_info
 from app.utils.filtering import build_filters
 from app.utils.qdrant_client import search
 from app.utils.scoring import compute_score
@@ -34,7 +34,7 @@ def recommend_today_meal(request: HealthInfoRequest):
 def recommend_weekly_meal(request: HealthInfoRequest):
     try:
         # 사용자 건강정보 → 벡터 생성
-        recommended_vector, restricted_vector = vectorize_query(request)
+        recommended_vector, restricted_vector = recommended_vector, restricted_vector = vectorize_query_from_health_info(request)
 
         # Qdrant에서 음식 검색
         food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
