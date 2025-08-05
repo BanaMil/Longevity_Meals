@@ -97,6 +97,8 @@ def ask_chatgpt(user: dict, foods: list) -> str:
             max_tokens=2200  # 최대 출력 길이 제한
         )
         content = response.choices[0].message.content
+        # GPT 응답 로그 출력
+        logging.info(f"✅ GPT 응답:\n{content}")
         # JSON 유효성 검증
         try:
             _ = json.loads(content)
