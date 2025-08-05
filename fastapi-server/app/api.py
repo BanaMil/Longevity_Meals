@@ -34,7 +34,7 @@ def recommend_today_meal(request: HealthInfoRequest):
 def recommend_weekly_meal(request: HealthInfoRequest):
     try:
         # 사용자 건강정보 → 벡터 생성
-        recommended_vector, restricted_vector = build_query_vectors(request)
+        recommended_vector, restricted_vector = vectorize_query(request)
 
         # Qdrant에서 음식 검색
         food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
