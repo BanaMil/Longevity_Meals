@@ -99,7 +99,6 @@ def ask_chatgpt_for_day(user: dict, foods: list, date: str) -> dict:
         logging.info(f"✅ GPT 응답 ({date}):\n{content}")
         try:
             day_plan = json.loads(content)
-            return sanitize_day_plan(day_plan)  # ✅ 여기서 정제
         except json.JSONDecodeError:
             logging.error(f"⚠️ JSON 파싱 실패 (날짜 {date}): {content}")
             return {}
