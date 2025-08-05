@@ -22,6 +22,7 @@ public class MealAssembler {
         List<Food> dinner = mapToFoodList(names.getDinner(), foodMap);
 
         return new ResolvedMealResponse(
+            names.getDate(),
             breakfast,
             lunch,
             dinner

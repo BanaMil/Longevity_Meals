@@ -34,29 +34,34 @@ def recommend_today_meal(request: HealthInfoRequest):
 @router.post("/mealplan/weekly", response_model=WeeklyMealsResponse)
 def recommend_weekly_meal(request: HealthInfoRequest):
     try:
+        # 벡터 생성 및 음식 후보 검색
         recommended_vector, restricted_vector = vectorize_query_from_health_info(request)
         food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
 
+        # GPT 요청 준비
         user_dict = request.dict()
         foods = [f.dict() for f in food_candidates]
 
+        # GPT에게 7일치 식단 요청
         gpt_results = ask_chatgpt_weekly(user_dict, foods)
 
+        # 결과를 WeeklyMealsResponse에 맞게 가공
         meals = {}
         for day_plan in gpt_results:
             date = day_plan["date"]
             meals[date] = {
-                "breakfast": [item["name"] for item in day_plan["breakfast"]],
-                "lunch": [item["name"] for item in day_plan["lunch"]],
-                "dinner": [item["name"] for item in day_plan["dinner"]],
+                "date": date,
+                "breakfast": [item["name"] for item in day_plan.get("breakfast", [])],
+                "lunch": [item["name"] for item in day_plan.get("lunch", [])],
+                "dinner": [item["name"] for item in day_plan.get("dinner", [])],
             }
+
         logging.info(f"✅ 최종 반환 결과: {json.dumps({'meals': meals}, ensure_ascii=False, indent=2)}")
-        return {"meals": meals}  # 직접 dict 리턴
+        return {"meals": meals}  # dict 리턴해도 FastAPI가 WeeklyMealsResponse로 자동 변환
 
     except Exception as e:
         logging.error(f"WEEKLY GPT 추천 실패: {str(e)}")
         raise HTTPException(status_code=500, detail="GPT 기반 식단 추천 중 오류 발생")
-
 
 
 

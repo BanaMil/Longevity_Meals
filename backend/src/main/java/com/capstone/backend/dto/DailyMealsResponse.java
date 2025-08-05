@@ -9,6 +9,7 @@ import lombok.Getter;
 
 @Data @AllArgsConstructor @NoArgsConstructor @Getter
 public class DailyMealsResponse {
+    private String date;
     private List<String> breakfast;
     private List<String> lunch;
     private List<String> dinner;
