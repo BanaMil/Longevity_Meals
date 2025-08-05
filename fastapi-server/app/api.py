@@ -46,7 +46,6 @@ def recommend_weekly_meal(request: HealthInfoRequest):
         for day_plan in gpt_results:
             date = day_plan["date"]
             meals[date] = {
-                "date": date,
                 "breakfast": [item["name"] for item in day_plan["breakfast"]],
                 "lunch": [item["name"] for item in day_plan["lunch"]],
                 "dinner": [item["name"] for item in day_plan["dinner"]],

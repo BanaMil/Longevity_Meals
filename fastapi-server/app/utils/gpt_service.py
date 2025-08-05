@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 # .env 파일에서 환경 변수 불러오기
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise RuntimeError("❌ OPENAI_API_KEY가 .env에 설정되어 있지 않습니다.")
 client = OpenAI(api_key=api_key)
 
 # ✅ 하루 단위 프롬프트 생성
