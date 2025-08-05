@@ -12,7 +12,6 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResolvedMealResponse {
-    private String date;
     private List<Food> breakfast;
     private List<Food> lunch;
     private List<Food> dinner;
