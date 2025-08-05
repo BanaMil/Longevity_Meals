@@ -42,8 +42,6 @@ def build_gpt_prompt(user: dict, foods: list) -> str:
 
 # prompt 작성
     return f"""
-당신은 건강 식단 전문가입니다.
-
 [사용자 정보]
 - 질병: {disease_str}
 - 알레르기: {allergy_str}
@@ -58,29 +56,37 @@ def build_gpt_prompt(user: dict, foods: list) -> str:
 [추천 가능한 음식 리스트]
 {food_str}
 
-위 정보를 기반으로 아래 형식처럼 JSON 형태의 7일 식단을 추천해주세요. 
-형식은 다음과 같아야 합니다:
+요청:
+- 위 정보를 기반으로 **7일 식단**을 구성해주세요.
+- 각 날짜마다 하루 세 끼 식사(`breakfast`, `lunch`, `dinner`)를 포함해야 합니다.
+- 각 식사는 `밥`, `국`, `반찬 3가지`로 구성됩니다.
+- 아래 JSON 형식과 완전히 일치해야 하며, **설명 없이 JSON 배열만 출력**해야 합니다.
 
-{{
-  "userid": "{user.get("userid", "unknown")}",
-  "date": "2025-06-10",
-  "breakfast": [
-    {{ "name": "음식명", "intake": g }}
-  ],
-  "lunch": [
-    {{ "name": "음식명", "intake": g }}
-  ],
-  "dinner": [
-    {{ "name": "음식명", "intake": g }}
-  ]
-}}
+형식:
+[
+  {{
+    "userid": "{user.get("userid", "unknown")}",
+    "date": "2025-08-06",
+    "breakfast": [
+      {{ "name": "음식명", "intake": 100 }},
+      ...
+    ],
+    "lunch": [
+      {{ "name": "음식명", "intake": 100 }},
+      ...
+    ],
+    "dinner": [
+      {{ "name": "음식명", "intake": 100 }},
+      ...
+    ]
+  }},
+  ...
+]
 
-제한사항:
-- 각 식사는 밥, 국, 반찬 3가지의 음식으로 구성해주세요.
-- 7일 식단으로 7개의 json 파일을 만들어주세요.
-- intake는 숫자만 기입하며 g 단위를 생략해주세요.
-- 알레르기나 비선호 재료는 반드시 제외해주세요.
-- JSON 외의 설명은 절대 출력하지 마세요.
+제약사항:
+- intake는 정수 숫자만 사용하고 단위(g)는 제외해주세요.
+- 알레르기와 비선호 재료는 반드시 제외해주세요.
+- 반드시 유효한 JSON 배열만 출력하세요. 주석, 설명, 공백, 추가 문장 없이 출력해야 합니다.
 """
 
 # GPT에게 프롬프트를 전송하고 응답받아 결과를 문자열로 반환하는 함수
