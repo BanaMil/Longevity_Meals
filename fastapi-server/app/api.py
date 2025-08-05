@@ -9,6 +9,7 @@ from app.utils.vectorizer import vectorize_query, vectorize_query_from_health_in
 from app.utils.filtering import build_filters
 from app.utils.qdrant_client import search
 from app.utils.scoring import compute_score
+from app.utils.searcher import search_similar_foods
 import logging
 import datetime
 import json
