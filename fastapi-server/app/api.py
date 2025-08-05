@@ -34,34 +34,30 @@ def recommend_today_meal(request: HealthInfoRequest):
 @router.post("/mealplan/weekly", response_model=WeeklyMealsResponse)
 def recommend_weekly_meal(request: HealthInfoRequest):
     try:
-        # 사용자 건강정보 → 벡터 생성
         recommended_vector, restricted_vector = vectorize_query_from_health_info(request)
-
-        # Qdrant에서 음식 후보 검색
         food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
 
-        # GPT 요청을 위한 데이터 준비
         user_dict = request.dict()
         foods = [f.dict() for f in food_candidates]
 
-        # GPT에 하루씩 요청하여 7일 식단 추천 받기
         gpt_results = ask_chatgpt_weekly(user_dict, foods)
 
-        # 응답을 FastAPI용 WeeklyMealsResponse 형식으로 파싱
         meals = {}
         for day_plan in gpt_results:
             date = day_plan["date"]
-            meals[date] = DailyMealsResponse(
-                breakfast=[{"name": item["name"], "intake": item["intake"]} for item in day_plan["breakfast"]],
-                lunch=[{"name": item["name"], "intake": item["intake"]} for item in day_plan["lunch"]],
-                dinner=[{"name": item["name"], "intake": item["intake"]} for item in day_plan["dinner"]],
-            )
+            meals[date] = {
+                "date": date,
+                "breakfast": [item["name"] for item in day_plan["breakfast"]],
+                "lunch": [item["name"] for item in day_plan["lunch"]],
+                "dinner": [item["name"] for item in day_plan["dinner"]],
+            }
 
-        return WeeklyMealsResponse(meals=meals)
+        return {"meals": meals}  # 직접 dict 리턴
 
     except Exception as e:
         logging.error(f"WEEKLY GPT 추천 실패: {str(e)}")
         raise HTTPException(status_code=500, detail="GPT 기반 식단 추천 중 오류 발생")
+
 
 
 
