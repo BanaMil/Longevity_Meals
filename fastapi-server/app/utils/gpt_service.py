@@ -117,6 +117,10 @@ def ask_chatgpt_weekly(user: dict, foods: list, start_date: str = None) -> List[
     for i in range(7):
         date_str = (start_date + timedelta(days=i)).isoformat()
         day_plan = ask_chatgpt_for_day(user, foods, date_str)
-        if day_plan:
-            result.append(day_plan)
+        if not day_plan or "breakfast" not in day_plan:
+            logging.error(f"❌ {date_str} 식단 유효성 검사 실패, 반복 중단")
+            break
+
+        logging.info(f"✅ {date_str} 식단 유효성 통과")
+        result.append(day_plan)
     return result
