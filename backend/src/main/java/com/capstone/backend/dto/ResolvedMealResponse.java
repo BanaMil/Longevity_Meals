@@ -17,11 +17,11 @@ public class ResolvedMealResponse {
     private List<Food> dinner;
 
     public List<Food> getAllFoods() {
-    List<Food> all = new ArrayList<>();
-    if (breakfast != null) all.addAll(breakfast);
-    if (lunch != null) all.addAll(lunch);
-    if (dinner != null) all.addAll(dinner);
-    return all;
-}
+        List<Food> all = new ArrayList<>();
+        if (breakfast != null) all.addAll(breakfast);
+        if (lunch != null) all.addAll(lunch);
+        if (dinner != null) all.addAll(dinner);
+        return all;
+    }
 
 }

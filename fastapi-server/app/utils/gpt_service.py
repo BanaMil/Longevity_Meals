@@ -78,6 +78,7 @@ def build_gpt_prompt_for_day(user: dict, foods: list, date: str) -> str:
 - intake는 정수 숫자만 사용하고 단위(g)는 제외해주세요.
 - 알레르기 및 비선호 재료는 반드시 제외해주세요.
 - 반드시 유효한 JSON 객체만 출력하세요. 주석, 설명, 공백 없이 출력해야 합니다.
+- 각 식단 항목은 반드시 { "name": 음식명, "intake": 정수 } 형식의 JSON 객체로 구성되어야 합니다. 문자열만 있는 항목은 포함하지 마세요.
 """
 
 
