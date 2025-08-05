@@ -5,6 +5,7 @@ import json
 import logging
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from app.utils.sanitizer import sanitize_day_plan
 
 # .env 파일에서 환경 변수 불러오기
 load_dotenv()
@@ -98,7 +99,8 @@ def ask_chatgpt_for_day(user: dict, foods: list, date: str) -> dict:
         content = response.choices[0].message.content.strip()
         logging.info(f"✅ GPT 응답 ({date}):\n{content}")
         try:
-            return json.loads(content)
+            day_plan = json.loads(content)
+            return sanitize_day_plan(day_plan)  # ✅ 여기서 정제
         except json.JSONDecodeError:
             logging.error(f"⚠️ JSON 파싱 실패 (날짜 {date}): {content}")
             return {}
