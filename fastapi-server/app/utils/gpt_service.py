@@ -5,7 +5,7 @@ import json
 import logging
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from app.utils.sanitizer import sanitize_day_plan
+from app.utils.formatter import ensure_dict_format
 
 # .env 파일에서 환경 변수 불러오기
 load_dotenv()
@@ -79,7 +79,6 @@ def build_gpt_prompt_for_day(user: dict, foods: list, date: str) -> str:
 - intake는 정수 숫자만 사용하고 단위(g)는 제외해주세요.
 - 알레르기 및 비선호 재료는 반드시 제외해주세요.
 - 반드시 유효한 JSON 객체만 출력하세요. 주석, 설명, 공백 없이 출력해야 합니다.
-- 각 식단 항목은 반드시 { "name": 음식명, "intake": 정수 } 형식의 JSON 객체로 구성되어야 합니다. 문자열만 있는 항목은 포함하지 마세요.
 """
 
 
@@ -120,6 +119,13 @@ def ask_chatgpt_weekly(user: dict, foods: list, start_date: str = None) -> List[
     for i in range(7):
         date_str = (start_date + timedelta(days=i)).isoformat()
         day_plan = ask_chatgpt_for_day(user, foods, date_str)
+
         if day_plan:
+            # ✅ 각 식사 항목에 대해 dict 형태 보장
+            day_plan["breakfast"] = ensure_dict_format(day_plan.get("breakfast", []))
+            day_plan["lunch"] = ensure_dict_format(day_plan.get("lunch", []))
+            day_plan["dinner"] = ensure_dict_format(day_plan.get("dinner", []))
+
             result.append(day_plan)
+
     return result
