@@ -51,7 +51,7 @@ def recommend_weekly_meal(request: HealthInfoRequest):
                 "lunch": [item["name"] for item in day_plan["lunch"]],
                 "dinner": [item["name"] for item in day_plan["dinner"]],
             }
-
+        logging.info(f"✅ 최종 반환 결과: {json.dumps({'meals': meals}, ensure_ascii=False, indent=2)}")
         return {"meals": meals}  # 직접 dict 리턴
 
     except Exception as e:
