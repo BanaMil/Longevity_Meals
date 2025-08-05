@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum NutrientRelation {
-    RECOMMENDED("\"권장\""),
+    RECOMMENDED("권장"),
     RESTRICTED("제한"),
     CAUTION("주의"),
     NEUTRAL("중립");
@@ -17,10 +17,14 @@ public enum NutrientRelation {
         this.label = label;
     }
 
-    @JsonValue
     public String getLabel() {
         return label;
     }
+    @JsonValue
+    public String toJson() {
+        return this.name();  // "RECOMMENDED" 등
+    }
+
 
     @JsonCreator
     public static NutrientRelation fromLabel(String input) {
