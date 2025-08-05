@@ -3,9 +3,15 @@ from typing import Dict, List
 import os
 import json
 import logging
+from dotenv import load_dotenv
 
-# OpenAI API 키
-client = OpenAI(api_key="")
+# .env 파일에서 환경 변수 불러오기
+load_dotenv()
+
+# 환경 변수에서 API 키 가져오기
+api_key = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=api_key)
 
 # 사용자 건강 정보와 음식 후보 리스트를 바탕으로 GPT에게 전달할 프롬프트(자연어)를 생성하는 함수
 def build_gpt_prompt(user: dict, foods: list) -> str:

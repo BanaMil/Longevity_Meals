@@ -10,6 +10,8 @@ import lombok.Setter;
 import java.util.Map;
 import java.util.List;
 
+import com.capstone.backend.domain.Ingredient;
+
 
 @Document(collection = "foodDB")  // ← 컬렉션 이름도 정확히 확인s
 @Getter
@@ -35,7 +37,7 @@ public class Food {
 
     private Map<String, Double> nutrients;
 
-    private Map<String, String> ingredients;
+    private List<Ingredient> ingredients;
     @Field("image_url")
     private String imageUrl;
 

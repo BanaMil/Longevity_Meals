@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.capstone.backend.domain.Food;
+import com.capstone.backend.domain.Ingredient;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FoodCandidate {
     private String name;
-    private Map<String, String> ingredients;
+    private List<Ingredient> ingredients;
     private Map<String, Double> nutrients;
     private double score;
 
