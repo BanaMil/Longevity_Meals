@@ -10,8 +10,8 @@ def search(client: QdrantClient, vector, filters, limit=10):
     return client.search(
         collection_name=COLLECTION_NAME,
         search_request=SearchRequest(
-            query_vector=vector,
-            query_filter=filters,
+            vector=vector,
+            filter=filters,
             limit=limit,
             with_payload=True
         )
