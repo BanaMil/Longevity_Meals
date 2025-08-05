@@ -109,3 +109,5 @@ def ask_chatgpt(user: dict, foods: list) -> str:
 # → 해당 프롬프트를 GPT에게 보내고, 식단 추천 결과를 받아옵니다.
 
 # 반환 결과는 문자열로 구성된 아침/점심/저녁 식단표
+
+# uvicorn main:app --host 0.0.0.0 --port 8000 --reload
