@@ -47,7 +47,7 @@ def search_similar_foods(
 
     for res in recommended_results:
         payload = res.payload
-        food_id = payload["food_id"]
+        food_id = payload.get("food_id") or payload.get("id")
         food_map[food_id] = FoodCandidate(
             id=food_id,
             name=payload["name"],
@@ -58,7 +58,7 @@ def search_similar_foods(
 
     for res in restricted_results:
         payload = res.payload
-        food_id = payload["food_id"]
+        food_id = payload.get("food_id") or payload.get("id")
         if food_id not in food_map:
             food_map[food_id] = FoodCandidate(
                 id=food_id,
