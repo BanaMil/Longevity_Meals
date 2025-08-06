@@ -122,11 +122,12 @@ def ask_chatgpt_weekly(user: dict, foods: list, start_date: str = None) -> List[
         day_plan = ask_chatgpt_for_day(user, foods, date_str)
 
         if day_plan:
-            # ✅ 각 식사 항목에 대해 dict 형태 보장
             day_plan["breakfast"] = ensure_dict_format(day_plan.get("breakfast", []))
             day_plan["lunch"] = ensure_dict_format(day_plan.get("lunch", []))
             day_plan["dinner"] = ensure_dict_format(day_plan.get("dinner", []))
-
+            logging.info(f"✅ 정제된 day_plan ({date_str}): {day_plan}")
             result.append(day_plan)
+        else:
+            logging.warning(f"⚠️ day_plan 비어있음: {date_str}")
 
     return result
