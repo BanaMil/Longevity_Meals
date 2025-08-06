@@ -31,16 +31,16 @@ public class MealAssembler {
     }
 
     private List<Food> mapToFoodList(List<FoodWithIntake> items, Map<String, Food> foodMap) {
-    List<Food> result = new ArrayList<>();
-    for (FoodWithIntake item : items) {
-        String name = item.getName();
-        Food food = foodMap.get(name);
-        if (food == null) {
-            throw new NoSuchElementException("DB에서 '" + name + "' 음식 정보를 찾을 수 없습니다.");
+        List<Food> result = new ArrayList<>();
+        for (FoodWithIntake item : items) {
+            String name = item.getName();
+            Food food = foodMap.get(name);
+            if (food == null) {
+                throw new NoSuchElementException("DB에서 '" + name + "' 음식 정보를 찾을 수 없습니다.");
+            }
+            result.add(food);
         }
-        result.add(food);
+        return result;
     }
-    return result;
-}
 
 }
