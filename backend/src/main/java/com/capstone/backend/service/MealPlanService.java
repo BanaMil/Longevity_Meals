@@ -94,7 +94,11 @@ public class MealPlanService {
     public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
         List<DailyMeals> meals = dailyMealsRepository.findByUserId(userId);
         return meals.stream()
-            .collect(Collectors.toMap(DailyMeals::getDate, Function.identity()));
+        .collect(Collectors.toMap(
+            DailyMeals::getDate,
+            Function.identity(),
+            (existing, replacement) -> replacement // 중복 시 뒤의 값으로 덮어쓰기
+        ));
     }
 
     public MealResponse getTodayMeal(String userId) {

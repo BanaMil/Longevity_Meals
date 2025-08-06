@@ -15,7 +15,11 @@ public class MealAssembler {
     public ResolvedMealResponse assemble(DailyMealsResponse names, List<Food> foods) {
         // 1. 이름 → Food 객체 매핑
         Map<String, Food> foodMap = foods.stream()
-            .collect(Collectors.toMap(Food::getName, f -> f));
+        .collect(Collectors.toMap(
+            Food::getName,
+            f -> f,
+            (existing, duplicate) -> existing  // 동일 이름이 여러 개일 때 기존 값 유지
+        ));
 
         // 2. 끼니별 음식 이름 리스트를 Food 객체 리스트로 변환
         List<Food> breakfast = mapToFoodList(names.getBreakfast(), foodMap);
