@@ -23,9 +23,9 @@ public class MealRecommendationLog {
     private List<FoodWithIntake> lunch;
     private List<FoodWithIntake> dinner;
 
-    public MealRecommendationLog(String userid, List<FoodWithIntake> breakfast, List<FoodWithIntake> lunch, List<FoodWithIntake> dinner) {
+    public MealRecommendationLog(String userid, LocalDate date, List<FoodWithIntake> breakfast, List<FoodWithIntake> lunch, List<FoodWithIntake> dinner) {
         this.userId = userid;
-        this.date = LocalDate.now();  // 기본 추천일
+        this.date = date;
         this.breakfast = breakfast;
         this.lunch = lunch;
         this.dinner = dinner;
