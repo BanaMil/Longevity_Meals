@@ -1,6 +1,7 @@
 package com.capstone.backend.service;
 
 import com.capstone.backend.domain.Food;
+import com.capstone.backend.domain.FoodItem;
 import com.capstone.backend.dto.DailyMealsResponse;
 import com.capstone.backend.dto.ResolvedMealResponse;
 import org.springframework.stereotype.Component;
@@ -29,15 +30,17 @@ public class MealAssembler {
         );
     }
 
-    private List<Food> mapToFoodList(List<String> nameList, Map<String, Food> foodMap) {
-        List<Food> result = new ArrayList<>();
-        for (String name : nameList) {
-            Food food = foodMap.get(name);
-            if (food == null) {
-                throw new NoSuchElementException("DB에서 '" + name + "' 음식 정보를 찾을 수 없습니다.");
-            }
-            result.add(food);
+    private List<Food> mapToFoodList(List<FoodItem> items, Map<String, Food> foodMap) {
+    List<Food> result = new ArrayList<>();
+    for (FoodItem item : items) {
+        String name = item.getName();
+        Food food = foodMap.get(name);
+        if (food == null) {
+            throw new NoSuchElementException("DB에서 '" + name + "' 음식 정보를 찾을 수 없습니다.");
         }
-        return result;
+        result.add(food);
     }
+    return result;
+}
+
 }

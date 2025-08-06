@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 public class DailyMeals {
     private String userId;
     private String date;
-    private List<String> breakfast;
-    private List<String> lunch;
-    private List<String> dinner;
+    private List<FoodItem> breakfast;
+    private List<FoodItem> lunch;
+    private List<FoodItem> dinner;
 }

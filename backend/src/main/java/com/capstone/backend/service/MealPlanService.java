@@ -31,6 +31,7 @@ import java.util.function.Function;
 import org.springframework.stereotype.Service;
 
 import com.capstone.backend.domain.Food;
+import com.capstone.backend.domain.FoodItem;
 import com.capstone.backend.gpt.MealGptClient;
 import com.capstone.backend.gpt.MealPromptBuilder;
 import com.capstone.backend.gpt.MealResponseParser;
@@ -114,12 +115,18 @@ public class MealPlanService {
     }
 
     private List<String> collectAllNames(DailyMealsResponse meals) {
-        List<String> all = new ArrayList<>();
-        all.addAll(meals.getBreakfast());
-        all.addAll(meals.getLunch());
-        all.addAll(meals.getDinner());
-        return all;
-    }
+    List<String> all = new ArrayList<>();
+    all.addAll(extractNames(meals.getBreakfast()));
+    all.addAll(extractNames(meals.getLunch()));
+    all.addAll(extractNames(meals.getDinner()));
+    return all;
+}
+
+private List<String> extractNames(List<FoodItem> items) {
+    return items.stream()
+                .map(FoodItem::getName)
+                .collect(Collectors.toList());
+}
 }
 
 
