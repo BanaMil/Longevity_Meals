@@ -21,6 +21,7 @@ import com.capstone.backend.domain.MealRecommendationLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -61,21 +62,21 @@ public class MealPlanService {
 
         // 2. GPT 호출용 DTO 생성
         HealthInfoRequest request = new HealthInfoRequest(info);
-        // List<Food> foodList = foodService.getAllFoods();
-        // List<FoodCandidate> candidates = foodList.stream()
-        //     .map(FoodCandidate::fromFood)
-        //     .toList();
 
         // 3. GPT에게 1주일치 식단 요청
         WeeklyMealsResponse weeklyResponse = gptClient.requestWeeklyMealPlan(request);
 
-        // 4. 응답에서 날짜별 식단을 추출하여 저장
+        // 4. 응답에서 날짜별 식단을 추출하여 저장 (logRepository에만 저장)
         Map<String, DailyMealsResponse> weeklyMeals = weeklyResponse.getMeals();
+
         for (Map.Entry<String, DailyMealsResponse> entry : weeklyMeals.entrySet()) {
-            String date = entry.getKey();
+            String dateStr = entry.getKey();
             DailyMealsResponse dto = entry.getValue();
 
-            DailyMeals entity = new DailyMeals(
+            LocalDate date = LocalDate.parse(dateStr);
+
+            // MealRecommendationLog에 전체 식단 저장
+            MealRecommendationLog log = new MealRecommendationLog(
                 userId,
                 date,
                 dto.getBreakfast(),
@@ -83,12 +84,10 @@ public class MealPlanService {
                 dto.getDinner()
             );
 
-            dailyMealsRepository.save(entity);
+            logRepository.save(log);
         }
-
-        // 5. 추천 로그 저장
-        logRepository.save(new MealRecommendationLog(userId));
     }
+
 
 
     public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
