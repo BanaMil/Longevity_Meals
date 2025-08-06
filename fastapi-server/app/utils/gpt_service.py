@@ -99,12 +99,14 @@ def ask_chatgpt_for_day(user: dict, foods: list, date: str) -> dict:
         logging.info(f"✅ GPT 응답 ({date}):\n{content}")
         try:
             day_plan = json.loads(content)
+            return day_plan  # ✅ 빠져 있던 return 추가
         except json.JSONDecodeError:
             logging.error(f"⚠️ JSON 파싱 실패 (날짜 {date}): {content}")
             return {}
     except Exception as e:
         logging.error(f"GPT 요청 실패 ({date}): {e}")
         return {}
+
 
 
 # ✅ 7일 반복 요청 → 전체 식단 리스트로 반환
