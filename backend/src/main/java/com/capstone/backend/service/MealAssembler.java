@@ -1,8 +1,8 @@
 package com.capstone.backend.service;
 
 import com.capstone.backend.domain.Food;
-import com.capstone.backend.domain.FoodItem;
 import com.capstone.backend.dto.DailyMealsResponse;
+import com.capstone.backend.dto.FoodWithIntake;
 import com.capstone.backend.dto.ResolvedMealResponse;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +30,9 @@ public class MealAssembler {
         );
     }
 
-    private List<Food> mapToFoodList(List<FoodItem> items, Map<String, Food> foodMap) {
+    private List<Food> mapToFoodList(List<FoodWithIntake> items, Map<String, Food> foodMap) {
     List<Food> result = new ArrayList<>();
-    for (FoodItem item : items) {
+    for (FoodWithIntake item : items) {
         String name = item.getName();
         Food food = foodMap.get(name);
         if (food == null) {

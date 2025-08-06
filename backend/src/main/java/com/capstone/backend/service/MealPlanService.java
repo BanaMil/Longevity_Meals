@@ -6,6 +6,7 @@ import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.domain.HealthInfo;
 import com.capstone.backend.dto.DailyMealsResponse;
 import com.capstone.backend.dto.FoodCandidate;
+import com.capstone.backend.dto.FoodWithIntake;
 import com.capstone.backend.dto.HealthInfoRequest;
 import com.capstone.backend.dto.MealResponse;
 import com.capstone.backend.dto.ResolvedMealResponse;
@@ -31,7 +32,6 @@ import java.util.function.Function;
 import org.springframework.stereotype.Service;
 
 import com.capstone.backend.domain.Food;
-import com.capstone.backend.domain.FoodItem;
 import com.capstone.backend.gpt.MealGptClient;
 import com.capstone.backend.gpt.MealPromptBuilder;
 import com.capstone.backend.gpt.MealResponseParser;
@@ -122,9 +122,9 @@ public class MealPlanService {
     return all;
 }
 
-private List<String> extractNames(List<FoodItem> items) {
+private List<String> extractNames(List<FoodWithIntake> items) {
     return items.stream()
-                .map(FoodItem::getName)
+                .map(FoodWithIntake::getName)
                 .collect(Collectors.toList());
 }
 }
