@@ -46,12 +46,22 @@ public class MealPlanController {
     @GetMapping("/weekly/{userId}")
     public Map<String, DailyMealsResponse> getWeeklyMeals(@PathVariable String userId) {
         log.info("=== [식단 불러오기 요청] userId: {}", userId);
-        
+
         // ✅ 저장된 추천 기록 조회
         Map<String, DailyMeals> rawMeals = mealPlanService.loadSavedWeeklyMeals(userId);
-        log.info("=== [조회된 날짜 수]: {}", rawMeals.size());
-        Map<String, DailyMealsResponse> result = new HashMap<>();
 
+        // 날짜 수 로그
+        log.info("=== [조회된 날짜 수]: {}", rawMeals.size());
+
+        // 상세 로그 추가
+        rawMeals.forEach((date, daily) -> {
+            log.info("날짜: {}", date);
+            log.info(" - 아침: {}", daily.getBreakfast());
+            log.info(" - 점심: {}", daily.getLunch());
+            log.info(" - 저녁: {}", daily.getDinner());
+        });
+
+        Map<String, DailyMealsResponse> result = new HashMap<>();
         for (Map.Entry<String, DailyMeals> entry : rawMeals.entrySet()) {
             DailyMeals daily = entry.getValue();
             DailyMealsResponse response = new DailyMealsResponse();
@@ -63,6 +73,8 @@ public class MealPlanController {
 
         return result;
     }
+
+    
     
     @PostMapping("/today")
     public MealResponse getTodayMeal(

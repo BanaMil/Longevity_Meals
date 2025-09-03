@@ -5,6 +5,9 @@
 
 # app.include_router(api_router, prefix="/api/gpt")
 
+# 실행 명령어: 
+# uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
