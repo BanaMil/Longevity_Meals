@@ -95,7 +95,7 @@ public class MealPlanService {
 
 
     public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
-        List<DailyMeals> meals = dailyMealsRepository.findByUserId(userId);
+        List<DailyMeals> meals = dailyMealsRepository.findByUserIdOrderByDateDesc(userId);
 
         // === 진단 로그 추가 ===
         log.info("[DB] fetched {} DailyMeals rows for userId={}", meals.size(), userId);
