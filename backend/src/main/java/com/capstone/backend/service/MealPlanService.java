@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -37,7 +38,10 @@ import com.capstone.backend.gpt.MealGptClient;
 import com.capstone.backend.gpt.MealPromptBuilder;
 import com.capstone.backend.gpt.MealResponseParser;
 import com.capstone.backend.dto.FoodCandidate;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MealPlanService {
@@ -92,13 +96,29 @@ public class MealPlanService {
 
     public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
         List<DailyMeals> meals = dailyMealsRepository.findByUserId(userId);
+
+        // === 진단 로그 추가 ===
+        log.info("[DB] fetched {} DailyMeals rows for userId={}", meals.size(), userId);
+
+        List<String> dates = meals.stream()
+                .map(DailyMeals::getDate) // String(yyyy-MM-dd) 가정
+                .collect(Collectors.toList());
+        log.info("[DB] dates raw = {}", dates);
+
+        Map<String, Long> dateHistogram = meals.stream()
+                .collect(Collectors.groupingBy(
+                        DailyMeals::getDate, LinkedHashMap::new, Collectors.counting()));
+        log.info("[DB] date histogram = {}", dateHistogram);
+        // =====================
+
         return meals.stream()
-        .collect(Collectors.toMap(
-            DailyMeals::getDate,
-            Function.identity(),
-            (existing, replacement) -> replacement // 중복 시 뒤의 값으로 덮어쓰기
-        ));
+                .collect(Collectors.toMap(
+                        DailyMeals::getDate,
+                        Function.identity(),
+                        (existing, replacement) -> replacement // 중복 시 뒤 값 유지
+                ));
     }
+
 
     public MealResponse getTodayMeal(String userId) {
         HealthInfo info = healthInfoService.getHealthInfoByUserId(userId);
