@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import com.capstone.backend.domain.Ingredient;
 
 @Data
 @AllArgsConstructor
@@ -15,6 +16,6 @@ public class FoodItemResponse {
     private String name;
     private String imageUrl;
     private List<NutrientIntake> nutrients;
-    private List<String> ingredients;
+    private List<Ingredient> ingredients;
     private String recipe;
 }

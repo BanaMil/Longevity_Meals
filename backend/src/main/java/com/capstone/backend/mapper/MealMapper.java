@@ -23,16 +23,9 @@ public class MealMapper {
         } else {
             dto.setNutrients(null);
         }
-        // ingredients 매핑 (List<Ingredient> → List<String>)
-        if (food.getIngredients() != null) {
-            List<String> ingredientNames = food.getIngredients().stream()
-                .map(Object::toString) // Ingredient에 getName()이 있으면 .map(Ingredient::getName)
-                .collect(Collectors.toList());
-            dto.setIngredients(ingredientNames);
-        } else {
-            dto.setIngredients(List.of());
-        }
-        // recipe 매핑
+        // ingredients 매핑: Food의 List<Ingredient>를 그대로 전달
+        dto.setIngredients(food.getIngredients() != null ? food.getIngredients() : List.of());
+        // recipe 매핑: 여러 줄일 수 있음
         dto.setRecipe(food.getRecipe());
         return dto;
     }
