@@ -14,6 +14,26 @@ public class MealMapper {
         FoodItemResponse dto = new FoodItemResponse();
         dto.setName(food.getName());
         dto.setImageUrl(food.getImageUrl());
+        // nutrients 매핑
+        if (food.getNutrients() != null) {
+            List<com.capstone.backend.dto.NutrientIntake> nutrients = food.getNutrients().entrySet().stream()
+                .map(entry -> new com.capstone.backend.dto.NutrientIntake(entry.getKey(), "", entry.getValue()))
+                .collect(Collectors.toList());
+            dto.setNutrients(nutrients);
+        } else {
+            dto.setNutrients(null);
+        }
+        // ingredients 매핑 (List<Ingredient> → List<String>)
+        if (food.getIngredients() != null) {
+            List<String> ingredientNames = food.getIngredients().stream()
+                .map(Object::toString) // Ingredient에 getName()이 있으면 .map(Ingredient::getName)
+                .collect(Collectors.toList());
+            dto.setIngredients(ingredientNames);
+        } else {
+            dto.setIngredients(List.of());
+        }
+        // recipe 매핑
+        dto.setRecipe(food.getRecipe());
         return dto;
     }
 
