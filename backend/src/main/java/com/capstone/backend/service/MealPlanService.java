@@ -136,12 +136,34 @@ public class MealPlanService {
 
 
     public MealResponse getTodayMeal(String userId) {
-        HealthInfo info = healthInfoService.getHealthInfoByUserId(userId);
-        if (info == null) {
-            throw new NoSuchElementException("해당 사용자에 대한 건강 정보가 존재하지 않습니다: " + userId);
+        LocalDate today = LocalDate.now();
+        MealRecommendationLog recommendLog = logRepository.findByUserIdAndDate(userId, today)
+            .orElseThrow(() -> new NoSuchElementException("오늘 식단 없음: " + userId));
+
+        // rice/soup/sideDishes 분할
+        List<FoodWithIntake> selected = recommendLog.getBreakfast(); // 기본값: 아침
+        // 현재 시각에 따라 끼니 선택
+        java.time.LocalTime now = java.time.LocalTime.now();
+        if (now.isBefore(java.time.LocalTime.of(10, 0))) {
+            selected = recommendLog.getBreakfast();
+        } else if (now.isBefore(java.time.LocalTime.of(16, 0))) {
+            selected = recommendLog.getLunch();
+        } else {
+            selected = recommendLog.getDinner();
         }
 
-        return generateMealPlan(new HealthInfoRequest(info));
+        // rice/soup/sideDishes 분할
+        Food rice = foodService.findByName(selected.get(0).getName());
+        Food soup = foodService.findByName(selected.get(1).getName());
+        List<Food> sides = selected.subList(2, selected.size()).stream()
+            .map(f -> foodService.findByName(f.getName()))
+            .collect(Collectors.toList());
+
+        return new MealResponse(
+            MealMapper.toResponse(rice),
+            MealMapper.toResponse(soup),
+            sides.stream().map(MealMapper::toResponse).collect(Collectors.toList())
+        );
     }
 
     public MealResponse generateMealPlan(HealthInfoRequest userInfo) {
