@@ -99,7 +99,11 @@ public class FoodService {
     // ✅ 단일 음식 이름으로 조회
     public Food findByName(String name) {
         return foodRepository.findFirstByName(name)
-            .orElseThrow(() -> new NoSuchElementException("음식명을 찾을 수 없습니다: " + name));
+            .orElseGet(() -> {
+                Food food = new Food();
+                food.setName(name);
+                return food;
+            });
     }
 
     // ✅ 다건 이름으로 조회 (GPT가 여러 음식명을 반환할 경우)
