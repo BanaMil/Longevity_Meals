@@ -95,28 +95,43 @@ public class MealPlanService {
 
 
     public Map<String, DailyMeals> loadSavedWeeklyMeals(String userId) {
-        List<DailyMeals> meals = dailyMealsRepository.findByUserIdOrderByDateDesc(userId);
+    // 오늘부터 7일치(오늘~6일후)만 반환
+    LocalDate today = LocalDate.now();
+    LocalDate lastDay = today.plusDays(6);
+    List<MealRecommendationLog> logs = logRepository.findByUserIdAndDateAfter(userId, today.minusDays(1));
 
-        // === 진단 로그 추가 ===
-        log.info("[DB] fetched {} DailyMeals rows for userId={}", meals.size(), userId);
+    // 오늘~6일후 사이의 데이터만 필터링
+    List<MealRecommendationLog> filteredLogs = logs.stream()
+        .filter(log -> !log.getDate().isBefore(today) && !log.getDate().isAfter(lastDay))
+        .sorted((a, b) -> a.getDate().compareTo(b.getDate()))
+        .collect(Collectors.toList());
 
-        List<String> dates = meals.stream()
-                .map(DailyMeals::getDate) // String(yyyy-MM-dd) 가정
-                .collect(Collectors.toList());
-        log.info("[DB] dates raw = {}", dates);
+    log.info("[DB] filtered {} MealRecommendationLog rows for userId={} ({} ~ {})", filteredLogs.size(), userId, today, lastDay);
+    List<String> dates = filteredLogs.stream()
+        .map(log -> log.getDate().toString())
+        .collect(Collectors.toList());
+    log.info("[DB] dates raw = {}", dates);
 
-        Map<String, Long> dateHistogram = meals.stream()
-                .collect(Collectors.groupingBy(
-                        DailyMeals::getDate, LinkedHashMap::new, Collectors.counting()));
-        log.info("[DB] date histogram = {}", dateHistogram);
-        // =====================
+    Map<String, Long> dateHistogram = filteredLogs.stream()
+        .collect(Collectors.groupingBy(
+            log -> log.getDate().toString(), LinkedHashMap::new, Collectors.counting()));
+    log.info("[DB] date histogram = {}", dateHistogram);
 
-        return meals.stream()
-                .collect(Collectors.toMap(
-                        DailyMeals::getDate,
-                        Function.identity(),
-                        (existing, replacement) -> replacement // 중복 시 뒤 값 유지
-                ));
+    // MealRecommendationLog -> DailyMeals 변환
+    return filteredLogs.stream()
+        .collect(Collectors.toMap(
+            log -> log.getDate().toString(),
+            log -> {
+                DailyMeals daily = new DailyMeals();
+                daily.setBreakfast(log.getBreakfast());
+                daily.setLunch(log.getLunch());
+                daily.setDinner(log.getDinner());
+                daily.setDate(log.getDate().toString());
+                return daily;
+            },
+            (existing, replacement) -> replacement,
+            LinkedHashMap::new
+        ));
     }
 
 
@@ -143,13 +158,13 @@ public class MealPlanService {
     all.addAll(extractNames(meals.getLunch()));
     all.addAll(extractNames(meals.getDinner()));
     return all;
-}
+    }
 
-private List<String> extractNames(List<FoodWithIntake> items) {
-    return items.stream()
-                .map(FoodWithIntake::getName)
-                .collect(Collectors.toList());
-}
+    private List<String> extractNames(List<FoodWithIntake> items) {
+        return items.stream()
+                    .map(FoodWithIntake::getName)
+                    .collect(Collectors.toList());
+    }
 }
 
 
