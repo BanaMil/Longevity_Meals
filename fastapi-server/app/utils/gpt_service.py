@@ -90,7 +90,7 @@ def ask_chatgpt_for_day(user: dict, foods: list, date: str) -> dict:
     prompt = build_gpt_prompt_for_day(user, foods, date)
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4.1",
             messages=[
                 {"role": "system", "content": "당신은 건강 식단 전문가입니다."},
                 {"role": "user", "content": prompt}
