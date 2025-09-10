@@ -35,6 +35,8 @@ def build_gpt_prompt_for_day(user: dict, foods: list, date: str) -> str:
         f"   - 주요 영양소: {', '.join([f'{k}: {v}' for k, v in f['nutrients'].items()])}"
         for i, f in enumerate(foods)
     ]) if foods else "(음식 후보가 없습니다)"
+    import logging
+    logging.info(f"[build_gpt_prompt_for_day] food_str:\n{food_str}")
 
     return f"""
 [사용자 정보]
