@@ -17,5 +17,5 @@ public class FoodItemResponse {
     private String imageUrl;
     private List<NutrientIntake> nutrients;
     private List<Ingredient> ingredients;
-    private String recipe;
+    private List<String> recipe;
 }

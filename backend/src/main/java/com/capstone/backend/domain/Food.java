@@ -42,6 +42,6 @@ public class Food {
     private String imageUrl;
 
     @Field("recipe")
-    private String recipe;
+    private List<String> recipe;
 
 }
