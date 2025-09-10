@@ -68,18 +68,12 @@ def search_similar_foods(
         logging.info(f"[search_similar_foods] 추천 후보 food_id: {food_id}, name: {payload.get('name')}")
         if food_id in food_map:
             logging.info(f"[search_similar_foods] (중복) 이미 존재하는 food_id: {food_id}, name: {payload.get('name')}")
-        # ingredients가 dict 리스트라면 문자열 리스트로 변환
-        ingredients = payload["ingredients"]
-        if ingredients and isinstance(ingredients, list) and isinstance(ingredients[0], dict):
-            # 각 dict에서 'name' 또는 'ingredient' 키 추출
-            def extract_ingredient(d):
-                return d.get('name') or d.get('ingredient') or str(d)
-            ingredients = [extract_ingredient(d) for d in ingredients]
+        # ingredients는 원본 그대로
         food_map[food_id] = FoodCandidate(
             id=food_id,
             name=payload["name"],
             nutrients=payload["nutrients"],  # Dict[str, float]
-            ingredients=ingredients,
+            ingredients=payload["ingredients"],
             score=0.0  # 점수는 나중에 계산
         )
         logging.info(f"[search_similar_foods] food_map 추가 (추천): id={food_id}, name={payload['name']}")
@@ -92,17 +86,12 @@ def search_similar_foods(
         if food_id in food_map:
             logging.info(f"[search_similar_foods] (중복) 이미 존재하는 food_id: {food_id}, name: {payload.get('name')}")
         if food_id not in food_map:
-            # ingredients가 dict 리스트라면 문자열 리스트로 변환
-            ingredients = payload["ingredients"]
-            if ingredients and isinstance(ingredients, list) and isinstance(ingredients[0], dict):
-                def extract_ingredient(d):
-                    return d.get('name') or d.get('ingredient') or str(d)
-                ingredients = [extract_ingredient(d) for d in ingredients]
+            # ingredients는 원본 그대로
             food_map[food_id] = FoodCandidate(
                 id=food_id,
                 name=payload["name"],
                 nutrients=payload["nutrients"],
-                ingredients=ingredients,
+                ingredients=payload["ingredients"],
                 score=0.0
             )
             logging.info(f"[search_similar_foods] food_map 추가 (제한): id={food_id}, name={payload['name']}")

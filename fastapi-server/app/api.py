@@ -39,8 +39,18 @@ def recommend_weekly_meal(request: HealthInfoRequest):
         food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
         logging.info(f"[api.py] food_candidates 개수: {len(food_candidates)}")
 
+
         user_dict = request.dict()
-        foods = [f.dict() for f in food_candidates]
+        # GPT에 넘길 foods만 ingredients를 문자열 리스트로 변환
+        def to_gpt_food_dict(f):
+            d = f.dict()
+            ings = d.get('ingredients', [])
+            if ings and isinstance(ings[0], dict):
+                def extract_ingredient(x):
+                    return x.get('name') or x.get('ingredient') or str(x)
+                d['ingredients'] = [extract_ingredient(x) for x in ings]
+            return d
+        foods = [to_gpt_food_dict(f) for f in food_candidates]
         logging.info(f"[api.py] foods(dict 변환 후) 개수: {len(foods)}")
 
         gpt_results = ask_chatgpt_weekly(user_dict, foods)
