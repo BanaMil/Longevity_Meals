@@ -19,6 +19,9 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class FoodService {
 
+    private final MongoTemplate mongoTemplate;
+
+
     // MongoDB Document → Food 객체 변환
     private Food convertDocumentToFood(org.bson.Document doc) {
         Food food = new Food();
@@ -157,53 +160,24 @@ public class FoodService {
 
 
     public Food findByName(String name) {
-        return foodRepository.findFirstByName(name)
-            .map(food -> {
-                // DB 구조에 맞춰 정확한 영양소 key로 nutrients를 매핑
-                HashMap<String, Double> nutrientMap = new HashMap<>();
-                String[] nutrientKeys = {
-                    "에너지(kcal)", "단백질(g)", "지방(g)", "탄수화물(g)", "당류(g)", "식이섬유(g)",
-                    "칼슘(mg)", "철(mg)", "칼륨(mg)", "나트륨(mg)", "비타민 A(μg RAE)", "비타민 C(mg)",
-                    "비타민 D(μg)", "콜레스테롤(mg)", "포화지방산(g)", "트랜스지방산(g)",
-                    "비타민 B6 (mg)", "비타민 B12(μg)", "엽산(μg DFE)", "불포화지방(g)", "오메가3 지방산(g)", "마그네슘(mg)"
-                };
-                for (String key : nutrientKeys) {
-                    try {
-                        java.lang.reflect.Field field = food.getClass().getDeclaredField(key.replaceAll("[() μgRAEDFC-]", "").replaceAll("\\s+", ""));
-                        field.setAccessible(true);
-                        Object val = field.get(food);
-                        Double d = null;
-                        if (val instanceof Number) {
-                            d = ((Number) val).doubleValue();
-                        } else if (val instanceof String str) {
-                            try {
-                                String numeric = str.replaceAll("[^\\d.]+", "");
-                                if (!numeric.isBlank()) d = Double.parseDouble(numeric);
-                            } catch (NumberFormatException ignored) {}
-                        }
-                        if (d != null) nutrientMap.put(key, d);
-                    } catch (NoSuchFieldException | IllegalAccessException ignored) {}
-                }
-                food.setNutrients(nutrientMap);
-                // 로그: 영양소 매핑 결과
-                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소 매핑 결과: {}", food.getName(), nutrientMap);
-
-                // 재료 로그
-                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 재료: {}", food.getName(), food.getIngredients());
-                // 레시피 로그
-                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 레시피: {}", food.getName(), food.getRecipe());
-
-                return food;
-            })
-            .orElseGet(() -> {
-                Food food = new Food();
-                food.setName(name);
-                food.setNutrients(new HashMap<>());
-                food.setIngredients(new ArrayList<>());
-                food.setRecipe("");
-                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소/재료/레시피 정보 없음 (빈 Food 반환)", name);
-                return food;
-            });
+        org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query(
+            org.springframework.data.mongodb.core.query.Criteria.where("식품명").is(name)
+        );
+        org.bson.Document doc = mongoTemplate.findOne(query, org.bson.Document.class, "foodDB");
+        if (doc == null) {
+            Food food = new Food();
+            food.setName(name);
+            food.setNutrients(new HashMap<>());
+            food.setIngredients(new ArrayList<>());
+            food.setRecipe("");
+            org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소/재료/레시피 정보 없음 (빈 Food 반환)", name);
+            return food;
+        }
+        Food food = convertDocumentToFood(doc);
+        org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소 매핑 결과: {}", food.getName(), food.getNutrients());
+        org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 재료: {}", food.getName(), food.getIngredients());
+        org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 레시피: {}", food.getName(), food.getRecipe());
+        return food;
     }
 
     // ✅ 다건 이름으로 조회 (GPT가 여러 음식명을 반환할 경우)
