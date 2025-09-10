@@ -6,7 +6,11 @@ def compute_score(
     personalized_intake: List[PersonalizedIntake],
     status_list: List[StatusMapping]
 ) -> float:
-    intake_map = {p.nutrient: p.amount for p in personalized_intake}
+    def normalize_key(key):
+        import re
+        return re.sub(r"[\(\[].*?[\)\]]", "", key).replace(" ", "").lower()
+
+    intake_map = {normalize_key(p.nutrient): p.amount for p in personalized_intake}
     weight_map = {s.nutrient: (s.status, s.weight) for s in status_list}
 
     score = 0.0
@@ -18,14 +22,13 @@ def compute_score(
         import re
         return re.sub(r"[\(\[].*?[\)\]]", "", key).replace(" ", "").lower()
 
+
     norm_food_nutrients = {normalize_key(k): v for k, v in food_nutrients.items()}
-    norm_intake_map = {normalize_key(k): v for k, v in intake_map.items()}
 
     for nutrient, (relation, weight) in weight_map.items():
         norm_nutrient = normalize_key(nutrient)
         food_val = norm_food_nutrients.get(norm_nutrient)
-        target_val = norm_intake_map.get(norm_nutrient, 0)
-        import logging
+        target_val = intake_map.get(norm_nutrient, 0)
         logging.info(f"[compute_score] nutrient: '{nutrient}' (정규화: '{norm_nutrient}'), food_val: {food_val}, target_val: {target_val}")
         logging.info(f"[compute_score] food_nutrients.keys(): {list(food_nutrients.keys())}")
         logging.info(f"[compute_score] intake_map.keys(): {list(intake_map.keys())}")
