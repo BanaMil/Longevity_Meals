@@ -14,10 +14,13 @@ public class MealMapper {
         FoodItemResponse dto = new FoodItemResponse();
         dto.setName(food.getName());
         dto.setImageUrl(food.getImageUrl());
-        // nutrients 매핑
+        // nutrients 매핑: key에서 단위(괄호 포함)를 제거
         if (food.getNutrients() != null) {
             List<com.capstone.backend.dto.NutrientIntake> nutrients = food.getNutrients().entrySet().stream()
-                .map(entry -> new com.capstone.backend.dto.NutrientIntake(entry.getKey(), "", entry.getValue()))
+                .map(entry -> {
+                    String nameOnly = entry.getKey().replaceAll("[\\(\\[].*?[\\)\\]]", "").trim();
+                    return new com.capstone.backend.dto.NutrientIntake(nameOnly, "", entry.getValue());
+                })
                 .collect(Collectors.toList());
             dto.setNutrients(nutrients);
         } else {

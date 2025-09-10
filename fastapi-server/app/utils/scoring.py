@@ -14,10 +14,19 @@ def compute_score(
 
 
     import logging
+    def normalize_key(key):
+        import re
+        return re.sub(r"[\(\[].*?[\)\]]", "", key).replace(" ", "").lower()
+
+    norm_food_nutrients = {normalize_key(k): v for k, v in food_nutrients.items()}
+    norm_intake_map = {normalize_key(k): v for k, v in intake_map.items()}
+
     for nutrient, (relation, weight) in weight_map.items():
-        food_val = food_nutrients.get(nutrient)
-        target_val = intake_map.get(nutrient, 0)
-        logging.info(f"[compute_score] nutrient: '{nutrient}', food_val: {food_val}, target_val: {target_val}")
+        norm_nutrient = normalize_key(nutrient)
+        food_val = norm_food_nutrients.get(norm_nutrient)
+        target_val = norm_intake_map.get(norm_nutrient, 0)
+        import logging
+        logging.info(f"[compute_score] nutrient: '{nutrient}' (정규화: '{norm_nutrient}'), food_val: {food_val}, target_val: {target_val}")
         logging.info(f"[compute_score] food_nutrients.keys(): {list(food_nutrients.keys())}")
         logging.info(f"[compute_score] intake_map.keys(): {list(intake_map.keys())}")
         if food_val is None or target_val is None or target_val == 0:
