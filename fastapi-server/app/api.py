@@ -37,9 +37,11 @@ def recommend_weekly_meal(request: HealthInfoRequest):
     try:
         recommended_vector, restricted_vector = vectorize_query_from_health_info(request)
         food_candidates = search_similar_foods(recommended_vector, restricted_vector, request)
+        logging.info(f"[api.py] food_candidates 개수: {len(food_candidates)}")
 
         user_dict = request.dict()
         foods = [f.dict() for f in food_candidates]
+        logging.info(f"[api.py] foods(dict 변환 후) 개수: {len(foods)}")
 
         gpt_results = ask_chatgpt_weekly(user_dict, foods)
 
@@ -54,7 +56,6 @@ def recommend_weekly_meal(request: HealthInfoRequest):
 
         logging.info(f"✅ 최종 반환 결과: {json.dumps({'meals': {k: v.dict() for k, v in meals.items()}}, ensure_ascii=False, indent=2)}")
         return {"meals": meals}
-
     except Exception as e:
         logging.error(f"WEEKLY GPT 추천 실패: {str(e)}")
         raise HTTPException(status_code=500, detail="GPT 기반 식단 추천 중 오류 발생")
