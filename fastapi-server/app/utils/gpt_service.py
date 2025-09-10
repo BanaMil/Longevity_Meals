@@ -56,6 +56,7 @@ def build_gpt_prompt_for_day(user: dict, foods: list, date: str) -> str:
 - 세 끼 식사(`breakfast`, `lunch`, `dinner`)를 포함해야 하며,
 - 각 식사는 `밥`, `국`, `반찬 3가지`로 구성됩니다.
 - 아래 JSON 형식과 완전히 일치해야 하며, 설명 없이 JSON 객체만 출력하세요.
+- [추천 가능한 음식 리스트]에 있는 음식만을 가지고 식단을 구성해주세요.
 
 형식:
 {{

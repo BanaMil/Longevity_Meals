@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 from app.models import StatusMapping, HealthInfoRequest, StatusMapping
 
 # 모델 초기화 (한 번만 로드됨)
-model = SentenceTransformer("jhgan/ko-sroberta-multitask")
+model = SentenceTransformer("intfloat/e5-small-v2")
 
 
 def build_query_text(status_list: List[StatusMapping]) -> str:
