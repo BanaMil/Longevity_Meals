@@ -185,6 +185,14 @@ public class FoodService {
                     } catch (NoSuchFieldException | IllegalAccessException ignored) {}
                 }
                 food.setNutrients(nutrientMap);
+                // 로그: 영양소 매핑 결과
+                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소 매핑 결과: {}", food.getName(), nutrientMap);
+
+                // 재료 로그
+                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 재료: {}", food.getName(), food.getIngredients());
+                // 레시피 로그
+                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 레시피: {}", food.getName(), food.getRecipe());
+
                 return food;
             })
             .orElseGet(() -> {
@@ -193,6 +201,7 @@ public class FoodService {
                 food.setNutrients(new HashMap<>());
                 food.setIngredients(new ArrayList<>());
                 food.setRecipe("");
+                org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소/재료/레시피 정보 없음 (빈 Food 반환)", name);
                 return food;
             });
     }
