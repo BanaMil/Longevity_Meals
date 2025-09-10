@@ -62,20 +62,19 @@ public class FoodService {
         }
         food.setIngredients(ingredients);
 
-        // recipe 매핑: "레시피 1", "레시피 2" ... 를 한 줄씩 합침
-        StringBuilder recipeBuilder = new StringBuilder();
+        // recipe 매핑: "레시피 1", "레시피 2" ... 를 List<String>으로 저장
+        java.util.List<String> recipeList = new java.util.ArrayList<>();
         int recipeIdx = 1;
         while (true) {
             String key = "레시피 " + recipeIdx;
             if (!doc.containsKey(key)) break;
             String step = doc.getString(key);
             if (step != null && !step.isBlank()) {
-                if (recipeBuilder.length() > 0) recipeBuilder.append("\n");
-                recipeBuilder.append(step);
+                recipeList.add(step.trim());
             }
             recipeIdx++;
         }
-        food.setRecipe(recipeBuilder.toString());
+        food.setRecipe(recipeList);
 
         return food;
     }
@@ -169,7 +168,7 @@ public class FoodService {
             food.setName(name);
             food.setNutrients(new HashMap<>());
             food.setIngredients(new ArrayList<>());
-            food.setRecipe("");
+            food.setRecipe(java.util.List.of());
             org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소/재료/레시피 정보 없음 (빈 Food 반환)", name);
             return food;
         }
