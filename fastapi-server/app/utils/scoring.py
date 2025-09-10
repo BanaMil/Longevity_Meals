@@ -8,9 +8,50 @@ def compute_score(
 ) -> float:
 
     import logging
+
     def normalize_key(key):
         import re
-        return re.sub(r"[\(\[].*?[\)\]]", "", key).replace(" ", "").lower()
+        # Remove units and content in parentheses/brackets
+        key = re.sub(r"[\(\[].*?[\)\]]", "", key)
+        # Remove all spaces and special characters
+        key = re.sub(r"[\s\-_/]", "", key)
+        key = key.lower()
+        # Canonical mapping for common nutrients
+        mapping = {
+            '비타민e': '비타민e',
+            '비타민e(mg)': '비타민e',
+            '비타민 e': '비타민e',
+            '비타민b1': '비타민b1',
+            '비타민b2': '비타민b2',
+            '비타민b6': '비타민b6',
+            '비타민b12': '비타민b12',
+            '비타민c': '비타민c',
+            '비타민a': '비타민a',
+            '비타민d': '비타민d',
+            '엽산': '엽산',
+            '아연': '아연',
+            '칼슘': '칼슘',
+            '철': '철',
+            '마그네슘': '마그네슘',
+            '칼륨': '칼륨',
+            '나트륨': '나트륨',
+            '에너지': '에너지',
+            '단백질': '단백질',
+            '지방': '지방',
+            '탄수화물': '탄수화물',
+            '당류': '당류',
+            '식이섬유': '식이섬유',
+            '포화지방산': '포화지방산',
+            '트랜스지방산': '트랜스지방산',
+            '불포화지방': '불포화지방',
+            '오메가3지방산': '오메가3지방산',
+            '콜레스테롤': '콜레스테롤',
+        }
+        # Try to map to canonical form
+        for variant, canon in mapping.items():
+            if variant in key:
+                return canon
+        return key
 
     norm_food_nutrients = {normalize_key(k): v for k, v in food_nutrients.items()}
     norm_intake_map = {normalize_key(k): v for k, v in {p.nutrient: p.amount for p in personalized_intake}.items()}
