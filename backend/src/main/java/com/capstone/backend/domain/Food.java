@@ -41,6 +41,8 @@ public class Food {
     @Field("image_url")
     private String imageUrl;
 
+    private int servingCount;
+
     @Field("recipe")
     private List<String> recipe;
 

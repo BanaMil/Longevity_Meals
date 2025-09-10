@@ -25,8 +25,11 @@ public class MealMapper {
         }
         // ingredients 매핑: Food의 List<Ingredient>를 그대로 전달
         dto.setIngredients(food.getIngredients() != null ? food.getIngredients() : List.of());
-    // recipe 매핑: Food의 List<String>을 그대로 전달
-    dto.setRecipe(food.getRecipe() != null ? food.getRecipe() : List.of());
+        // servingCount 매핑: Food의 servingCount를 그대로 전달, 없으면 1로 기본 설정
+        dto.setServingCount(food.getServingCount() > 0 ? food.getServingCount() : 1);
+        // recipe 매핑: Food의 List<String>을 그대로 전달
+        dto.setRecipeSteps(food.getRecipe() != null ? food.getRecipe() : List.of());
+    
         return dto;
     }
 

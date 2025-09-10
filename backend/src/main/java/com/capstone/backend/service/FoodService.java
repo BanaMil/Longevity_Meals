@@ -168,6 +168,7 @@ public class FoodService {
             food.setName(name);
             food.setNutrients(new HashMap<>());
             food.setIngredients(new ArrayList<>());
+            food.setServingCount(0);
             food.setRecipe(java.util.List.of());
             org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소/재료/레시피 정보 없음 (빈 Food 반환)", name);
             return food;
