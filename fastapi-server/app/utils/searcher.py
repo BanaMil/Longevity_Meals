@@ -64,7 +64,7 @@ def search_similar_foods(
 
     for res in recommended_results:
         payload = res.payload
-        food_id = payload.get("food_id") or payload.get("id")
+        food_id = payload.get("food_id") or payload.get("id") or payload.get("name")
         logging.info(f"[search_similar_foods] 추천 후보 food_id: {food_id}, name: {payload.get('name')}")
         if food_id in food_map:
             logging.info(f"[search_similar_foods] (중복) 이미 존재하는 food_id: {food_id}, name: {payload.get('name')}")
@@ -80,7 +80,7 @@ def search_similar_foods(
 
     for res in restricted_results:
         payload = res.payload
-        food_id = payload.get("food_id") or payload.get("id")
+        food_id = payload.get("food_id") or payload.get("id") or payload.get("name")
         logging.info(f"[search_similar_foods] 제한 후보 food_id: {food_id}, name: {payload.get('name')}")
         if food_id in food_map:
             logging.info(f"[search_similar_foods] (중복) 이미 존재하는 food_id: {food_id}, name: {payload.get('name')}")
