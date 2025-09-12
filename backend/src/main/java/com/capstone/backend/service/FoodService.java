@@ -189,4 +189,26 @@ public class FoodService {
         return foodRepository.findAll();
     }
 
+    /* 특정 재료명이 포함된 음식 리스트 반환 */
+    public List<Food> findByIngredientName(String ingredientName) {
+        Query query = new Query(Criteria.where("재료.name").is(ingredientName));
+        List<Document> docs = mongoTemplate.find(query, Document.class, "foodDB");
+        List<Food> foods = new ArrayList<>();
+        for (Document doc : docs) {
+            foods.add(convertDocumentToFood(doc));
+        }
+        return foods;
+    }
+
+    /* 여러 재료명 중 하나라도 포함된 음식 리스트 반환 (OR 조건) */
+    public List<Food> findByIngredientNames(List<String> ingredientNames) {
+        Query query = new Query(Criteria.where("재료.name").in(ingredientNames));
+        List<Document> docs = mongoTemplate.find(query, Document.class, "foodDB");
+        List<Food> foods = new ArrayList<>();
+        for (Document doc : docs) {
+            foods.add(convertDocumentToFood(doc));
+        }
+        return foods;
+    }
+
 }
