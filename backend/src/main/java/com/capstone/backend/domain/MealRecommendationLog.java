@@ -3,7 +3,9 @@ package com.capstone.backend.domain;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.capstone.backend.domain.enums.DeliveryStatus;
 import com.capstone.backend.dto.FoodWithIntake;
 
 import java.time.LocalDate;
@@ -23,11 +25,21 @@ public class MealRecommendationLog {
     private List<FoodWithIntake> lunch;
     private List<FoodWithIntake> dinner;
 
+    // 추가된 필드
+    @Field("delivery_requested")
+    private boolean deliveryRequested; // 배송 신청 여부
+
+    @Field("delivery_status")
+    private DeliveryStatus deliveryStatus; // 배송 상태
+
     public MealRecommendationLog(String userid, LocalDate date, List<FoodWithIntake> breakfast, List<FoodWithIntake> lunch, List<FoodWithIntake> dinner) {
         this.userId = userid;
         this.date = date;
         this.breakfast = breakfast;
         this.lunch = lunch;
         this.dinner = dinner;
+        this.deliveryRequested = false;
+        this.deliveryStatus = DeliveryStatus.NONE;
     }
+    
 }
