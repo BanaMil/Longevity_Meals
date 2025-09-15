@@ -30,6 +30,7 @@ public class SecurityConfig {
             .requestMatchers("/api/meals/today").permitAll()
             .requestMatchers("/api/meals/weekly/**").permitAll()
             .requestMatchers("/api/meals/recommend").permitAll()
+            .requestMatchers("/api/foods/**").permitAll()
                 .anyRequest().authenticated()
             )
         .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
