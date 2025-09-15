@@ -211,4 +211,16 @@ public class FoodService {
         return foods;
     }
 
+    // 모든 재료명이 포함된 음식 리스트 반환 (AND 조건)
+    public List<Food> findByAllIngredientNames(List<String> ingredientNames) {
+        // "재료.name" 필드에 모든 ingredientNames가 포함된 음식만 조회
+        Query query = new Query(Criteria.where("재료.name").all(ingredientNames));
+        List<Document> docs = mongoTemplate.find(query, Document.class, "foodDB");
+        List<Food> foods = new ArrayList<>();
+        for (Document doc : docs) {
+            foods.add(convertDocumentToFood(doc));
+        }
+        return foods;
+    }
+
 }
