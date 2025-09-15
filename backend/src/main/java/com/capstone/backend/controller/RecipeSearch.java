@@ -1,7 +1,9 @@
 package com.capstone.backend.controller;
 
 import com.capstone.backend.domain.Food;
+import com.capstone.backend.dto.FoodItemResponse;
 import com.capstone.backend.service.FoodService;
+import com.capstone.backend.mapper.MealMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -15,34 +17,38 @@ import java.util.List;
 public class RecipeSearch {
 
     private final FoodService foodService;
+    private final MealMapper mealMapper;
 
     @GetMapping("/search")
-    public ResponseEntity<List<Food>> search(@RequestParam String query) {
+    public ResponseEntity<List<FoodItemResponse>> search(@RequestParam String query) {
         try {
-            List<Food> result;
+            List<Food> foods;
 
             // 1) 콤마 또는 개행이 있으면 여러 재료 검색
             if (query.contains(",") || query.contains("\n")) {
                 List<String> ingredients = List.of(query.split("[,\\n]"))
                                                .stream().map(String::trim).filter(s -> !s.isEmpty()).toList();
-                result = foodService.findByIngredientNames(ingredients);
+                foods = foodService.findByIngredientNames(ingredients);
             }
             // 2) 공백 포함: 이름 우선, 실패 시 공백 분할 재료 검색
             else if (query.contains(" ")) {
-                result = foodService.findByNames(List.of(query));
-                if (result.isEmpty()) {
+                foods = foodService.findByNames(List.of(query));
+                if (foods.isEmpty()) {
                     List<String> ingredients = List.of(query.split("\\s+"))
                                                    .stream().map(String::trim).filter(s -> !s.isEmpty()).toList();
-                    result = foodService.findByIngredientNames(ingredients);
+                    foods = foodService.findByIngredientNames(ingredients);
                 }
             }
             // 3) 그 외: 이름 우선, 실패 시 단일 재료 검색
             else {
-                result = foodService.findByNames(List.of(query));
-                if (result.isEmpty()) {
-                    result = foodService.findByIngredientName(query);
+                foods = foodService.findByNames(List.of(query));
+                if (foods.isEmpty()) {
+                    foods = foodService.findByIngredientName(query);
                 }
             }
+            List<FoodItemResponse> result = foods.stream()
+                                                 .map(MealMapper::toResponse)
+                                                 .toList();
 
             if (result == null || result.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
