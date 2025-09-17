@@ -34,13 +34,13 @@ public class DeliveryController {
         return ResponseEntity.ok(Map.of("message", "배송 신청 반영 완료")); // 200
     }
 
-	// 배송 상태 조회
+	// // 배송 상태 조회
 	// @GetMapping("/status")
 	// public DeliveryStatus getDeliveryStatus(@RequestParam String userId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 	// 	return deliveryService.getDeliveryStatus(userId, date);
 	// }
 
-	// 배송 상태 변경 (관리자/시스템용)
+	// // 배송 상태 변경 (관리자/시스템용)
 	// @PostMapping("/update-status")
 	// public String updateDeliveryStatus(@RequestParam String userId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @RequestParam DeliveryStatus status) {
 	// 	boolean result = deliveryService.updateDeliveryStatus(userId, date, status);
