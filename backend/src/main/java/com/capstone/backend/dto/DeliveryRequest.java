@@ -13,7 +13,6 @@ public class DeliveryRequest {
     @NotBlank
     private String userId;
 
-    @NotNull
     private Map<String, List<MealSlot>> requestPayload; // key: yyyy-MM-dd
 
     public String getUserId() { return userId; }
