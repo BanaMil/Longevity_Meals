@@ -27,11 +27,11 @@ public class MealRecommendationLog {
 
     // 추가된 필드
     @Field("delivery_breakfast")
-    private boolean delivery_Breakfast; // 아침 배송 요청 여부
+    private boolean deliveryBreakfast; // 아침 배송 요청 여부
     @Field("delivery_lunch")
-    private boolean delivery_Lunch;     // 점심 배송 요청 여부
+    private boolean deliveryLunch;     // 점심 배송 요청 여부
     @Field("delivery_dinner")
-    private boolean delivery_Dinner;    // 저녁 배송 요청 여부
+    private boolean deliveryDinner;    // 저녁 배송 요청 여부
 
     @Field("delivery_breakfast_status")
     private DeliveryStatus deliveryBreakfastStatus; // 아침 배송 상태

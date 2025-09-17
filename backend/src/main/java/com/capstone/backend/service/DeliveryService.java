@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
@@ -42,7 +44,11 @@ public class DeliveryService {
 
             Query q = Query.query(
                 Criteria.where("userId").is(userId)
-                        .and("date").is(LocalDate.parse(dateStr))
+                        .and("date").is(
+                            Date.from(LocalDate.parse(dateStr)
+                            .atStartOfDay(java.time.ZoneId.systemDefault()
+                            ).toInstant())
+                        )
             );
 
             Update u = new Update();
