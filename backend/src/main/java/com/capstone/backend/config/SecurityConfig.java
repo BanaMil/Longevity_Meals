@@ -31,6 +31,7 @@ public class SecurityConfig {
             .requestMatchers("/api/meals/weekly/**").permitAll()
             .requestMatchers("/api/meals/recommend").permitAll()
             .requestMatchers("/api/foods/**").permitAll()
+            .requestMatchers("/api/delivery/**").permitAll()
                 .anyRequest().authenticated()
             )
         .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
