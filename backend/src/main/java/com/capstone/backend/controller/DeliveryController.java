@@ -30,6 +30,7 @@ public class DeliveryController {
 	public ResponseEntity<Map<String, Object>> requestDelivery(
             @RequestBody @Valid DeliveryRequest body
     ) {
+        log.info("=== [배송 요청] userId: {}", body.getUserid());
 		deliveryService.applySelections(body);
         return ResponseEntity.ok(Map.of("message", "배송 신청 반영 완료")); // 200
     }
