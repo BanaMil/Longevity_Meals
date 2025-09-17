@@ -38,21 +38,25 @@ public class RecipeSearch {
                     foods = foodService.findByAllIngredientNames(ingredients);
                 }
             }
-            // 3) 그 외: 이름 우선, 실패 시 단일 재료 검색
+            // 3) 단일어: 음식명 → 음식명에 포함된 음식 → 재료
             else {
+                // 1. 완전 일치 음식명
                 foods = foodService.findByNames(List.of(query));
+                // 2. 음식명에 단어가 포함된 음식
+                if (foods.isEmpty()) {
+                    foods = foodService.findByNameContains(query);
+                }
+                // 3. 재료에 포함된 음식
                 if (foods.isEmpty()) {
                     foods = foodService.findByIngredientName(query);
                 }
             }
 
             if (foods == null || foods.isEmpty()) {
-                // 정보가 없을 때 메시지 반환
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(java.util.Map.of("message", "정보가 없습니다."));
             }
 
-            // 각 음식의 재료와 레시피 로그 출력
             for (Food food : foods) {
                 System.out.println("[LOG] " + food.getName() + " 재료: " + food.getIngredients());
                 System.out.println("[LOG] " + food.getName() + " 레시피: " + food.getRecipe());

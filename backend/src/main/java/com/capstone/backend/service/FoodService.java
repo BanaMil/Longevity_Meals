@@ -223,4 +223,15 @@ public class FoodService {
         return foods;
     }
 
+    // 식품명에 키워드가 포함된 음식 리스트 반환 (대소문자 구분 없음)
+    public List<Food> findByNameContains(String keyword) {
+        Query query = new Query(Criteria.where("식품명").regex(".*" + keyword + ".*"));
+        List<Document> docs = mongoTemplate.find(query, Document.class, "foodDB");
+        List<Food> foods = new ArrayList<>();
+        for (Document doc : docs) {
+            foods.add(convertDocumentToFood(doc));
+        }
+        return foods;
+    }
+
 }
