@@ -49,9 +49,9 @@ public class DeliveryService {
 
             for (MealSlot slot : slots) {
                 switch (slot) {
-                    case BREAKFAST -> u.set("delivery_breakfast_status", DeliveryStatus.REQUESTED);
-                    case LUNCH     -> u.set("delivery_lunch_status", DeliveryStatus.REQUESTED);
-                    case DINNER    -> u.set("delivery_dinner_status", DeliveryStatus.REQUESTED);
+                    case BREAKFAST -> u.set("delivery_breakfast_status", delivery_Breakfast.true);
+                    case LUNCH     -> u.set("delivery_lunch_status", delivery_Lunch.true);
+                    case DINNER    -> u.set("delivery_dinner_status", delivery_Dinner.true);
                 }
             }
 

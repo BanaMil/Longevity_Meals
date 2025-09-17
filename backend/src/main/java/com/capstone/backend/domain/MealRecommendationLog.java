@@ -46,8 +46,12 @@ public class MealRecommendationLog {
         this.breakfast = breakfast;
         this.lunch = lunch;
         this.dinner = dinner;
-        this.deliveryRequested = false;
-        this.deliveryStatus = DeliveryStatus.NONE;
+        this.delivery_Breakfast = false;
+        this.delivery_Lunch = false;
+        this.delivery_Dinner = false;
+        this.deliveryBreakfastStatus = DeliveryStatus.NONE;
+        this.deliveryLunchStatus = DeliveryStatus.NONE;
+        this.deliveryDinnerStatus = DeliveryStatus.NONE;
     }
     
 }
