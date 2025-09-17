@@ -42,20 +42,20 @@ public class DeliveryService {
 
             Query q = Query.query(
                 Criteria.where("userId").is(userId)
-                        .and("date").is(dateStr) // 날짜는 기존 설계대로 문자열 "yyyy-MM-dd"
+                        .and("date").is(LocalDate.parse(dateStr))
             );
 
-            Update u = new Update().set("delivery.updatedAt", Instant.now().toString());
+            Update u = new Update();
+
             for (MealSlot slot : slots) {
                 switch (slot) {
-                    case BREAKFAST -> u.set("delivery.breakfast", true);
-                    case LUNCH     -> u.set("delivery.lunch", true);
-                    case DINNER    -> u.set("delivery.dinner", true);
+                    case BREAKFAST -> u.set("delivery_breakfast_status", DeliveryStatus.REQUESTED);
+                    case LUNCH     -> u.set("delivery_lunch_status", DeliveryStatus.REQUESTED);
+                    case DINNER    -> u.set("delivery_dinner_status", DeliveryStatus.REQUESTED);
                 }
             }
 
-            // DailyMeals 엔티티를 사용 중이라면 클래스 타입으로, 컬렉션명을 쓴다면 "dailyMeals"로 교체
-            mongoTemplate.upsert(q, u, "dailyMeals");
+            mongoTemplate.upsert(q, u, "meal_recommendation_logs");
         });
     }
 

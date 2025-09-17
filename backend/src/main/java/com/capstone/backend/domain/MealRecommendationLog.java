@@ -26,11 +26,19 @@ public class MealRecommendationLog {
     private List<FoodWithIntake> dinner;
 
     // 추가된 필드
-    @Field("delivery_requested")
-    private boolean deliveryRequested; // 배송 신청 여부
+    @Field("delivery_breakfast")
+    private boolean delivery_Breakfast; // 아침 배송 요청 여부
+    @Field("delivery_lunch")
+    private boolean delivery_Lunch;     // 점심 배송 요청 여부
+    @Field("delivery_dinner")
+    private boolean delivery_Dinner;    // 저녁 배송 요청 여부
 
-    @Field("delivery_status")
-    private DeliveryStatus deliveryStatus; // 배송 상태
+    @Field("delivery_breakfast_status")
+    private DeliveryStatus deliveryBreakfastStatus; // 아침 배송 상태
+    @Field("delivery_lunch_status")
+    private DeliveryStatus deliveryLunchStatus;     // 점심 배송 상태
+    @Field("delivery_dinner_status")
+    private DeliveryStatus deliveryDinnerStatus;    // 저녁 배송 상태
 
     public MealRecommendationLog(String userid, LocalDate date, List<FoodWithIntake> breakfast, List<FoodWithIntake> lunch, List<FoodWithIntake> dinner) {
         this.userId = userid;
