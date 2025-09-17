@@ -40,15 +40,22 @@ public class RecipeSearch {
             }
             // 3) 단일어: 음식명 → 음식명에 포함된 음식 → 재료
             else {
-                // 1. 완전 일치 음식명
                 foods = foodService.findByNames(List.of(query));
-                // 2. 음식명에 단어가 포함된 음식
                 if (foods.isEmpty()) {
-                    foods = foodService.findByNameContains(query);
-                }
-                // 3. 재료에 포함된 음식
-                if (foods.isEmpty()) {
-                    foods = foodService.findByIngredientName(query);
+                    // 음식명에 단어가 포함된 음식과 재료에 포함된 음식 합치기
+                    List<Food> nameContains = foodService.findByNameContains(query);
+                    List<Food> ingredientFoods = foodService.findByIngredientName(query);
+
+                    // 중복 제거 (음식명 기준)
+                    java.util.Set<String> names = new java.util.HashSet<>();
+                    List<Food> merged = new java.util.ArrayList<>();
+                    for (Food f : nameContains) {
+                        if (names.add(f.getName())) merged.add(f);
+                    }
+                    for (Food f : ingredientFoods) {
+                        if (names.add(f.getName())) merged.add(f);
+                    }
+                    foods = merged;
                 }
             }
 
