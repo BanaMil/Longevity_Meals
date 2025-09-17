@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.Map;
 import org.springframework.data.mongodb.core.query.Update;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DeliveryService {
