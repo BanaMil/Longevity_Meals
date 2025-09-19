@@ -34,14 +34,14 @@ public class DeliveryService {
 	public void applySelections(DeliveryRequest req) {
         log.info("=== [배송 신청 반영] userId: {}", req.getUserId());
         String userId = req.getUserId();
-        Map<String, List<String>> payload = req.getRequestPayload();
+        Map<String, List<String>> requests = req.getRequests();
 
-        // requestPayload 전체 로그
-        log.info("[배송 신청] requestPayload: {}", payload);
+        // requests 전체 로그
+        log.info("[배송 신청] requests: {}", requests);
 
-        if (payload == null || payload.isEmpty()) return;
+        if (requests == null || requests.isEmpty()) return;
 
-        payload.forEach((dateStr, slots) -> {
+        requests.forEach((dateStr, slots) -> {
             if (dateStr == null || dateStr.isBlank() || slots == null) return;
 
             // 각 날짜별 MealSlot 로그

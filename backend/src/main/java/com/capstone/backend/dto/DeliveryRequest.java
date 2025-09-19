@@ -8,11 +8,11 @@ public class DeliveryRequest {
     @NotBlank
     private String userId;
 
-    private Map<String, List<String>> requestPayload; // key: yyyy-MM-dd
+    private Map<String, List<String>> requests; // key: yyyy-MM-dd
 
     public String getUserId() { return userId; }
-    public Map<String, List<String>> getRequestPayload() { return requestPayload; }
+    public Map<String, List<String>> getRequests() { return requests; }
 
     public void setUserId(String userId) { this.userId = userId; }
-    public void setRequestPayload(Map<String, List<String>> requestPayload) { this.requestPayload = requestPayload; }
+    public void setRequests(Map<String, List<String>> requests) { this.requests = requests; }
 }
