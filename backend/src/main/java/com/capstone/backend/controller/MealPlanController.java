@@ -80,7 +80,7 @@ public class MealPlanController {
     public MealResponse getTodayMeal(
         @RequestBody RecommendRequest request
     ) {
-        log.info("=== /today api 호출 성공 ===");
+        // log.info("=== /today api 호출 성공 ===");
         String userId = request.getUserid();
         return mealPlanService.getTodayMeal(userId);
     }

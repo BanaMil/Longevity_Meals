@@ -37,7 +37,10 @@ public class AuthController {
                 request.getPassword(),
                 request.getBirthdate(),
                 request.getPhone(),
-                request.getAddress()
+                request.getAddress(),
+                request.getAddressRoad(),
+                request.getAddressJibun(),
+                request.getPostCode()
             );
             return ResponseEntity.ok(new ApiResponse<>(true, "회원가입 성공", null));
         } catch (RuntimeException e){

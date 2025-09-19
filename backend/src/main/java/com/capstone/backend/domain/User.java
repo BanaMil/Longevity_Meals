@@ -21,7 +21,12 @@ public class User {
     private String password;
     private LocalDate birthdate;
     private String phone;
-    private String address;
+    
+    // 주소 정책 필드
+    private String address;       // 호환(대표) = addressRoad
+    private String addressRoad;   // 대표(도로명)
+    private String addressJibun;  // 보조(지번)
+    private String postCode;      // 우편번호
     
     @Builder.Default
     private boolean healthInfoSubmitted = false;

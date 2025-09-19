@@ -137,45 +137,45 @@ public class MealPlanService {
 
     public MealResponse getTodayMeal(String userId) {
         LocalDate today = LocalDate.now();
-        log.info("[getTodayMeal] 오늘 날짜: {}", today);
+        // log.info("[getTodayMeal] 오늘 날짜: {}", today);
         MealRecommendationLog recommendLog = logRepository.findByUserIdAndDate(userId, today)
             .orElseThrow(() -> new NoSuchElementException("오늘 식단 없음: " + userId));
 
-        log.info("[getTodayMeal] userId={}의 추천 로그 조회 성공", userId);
+        // log.info("[getTodayMeal] userId={}의 추천 로그 조회 성공", userId);
 
         // rice/soup/sideDishes 분할
         List<FoodWithIntake> selected = recommendLog.getBreakfast(); // 기본값: 아침
         java.time.LocalTime now = java.time.LocalTime.now();
-        log.info("[getTodayMeal] 현재 시각: {}", now);
+        // log.info("[getTodayMeal] 현재 시각: {}", now);
         if (now.isBefore(java.time.LocalTime.of(10, 0))) {
             selected = recommendLog.getBreakfast();
-            log.info("[getTodayMeal] 아침 식단 선택");
+            // log.info("[getTodayMeal] 아침 식단 선택");
         } else if (now.isBefore(java.time.LocalTime.of(16, 0))) {
             selected = recommendLog.getLunch();
-            log.info("[getTodayMeal] 점심 식단 선택");
+            // log.info("[getTodayMeal] 점심 식단 선택");
         } else {
             selected = recommendLog.getDinner();
-            log.info("[getTodayMeal] 저녁 식단 선택");
+            // log.info("[getTodayMeal] 저녁 식단 선택");
         }
 
-        log.info("[getTodayMeal] 선택된 식단: {}", selected.stream().map(FoodWithIntake::getName).toList());
+        // log.info("[getTodayMeal] 선택된 식단: {}", selected.stream().map(FoodWithIntake::getName).toList());
 
         // rice/soup/sideDishes 분할
         Food rice = foodService.findByName(selected.get(0).getName());
-        log.info("[getTodayMeal] 밥: {}", rice.getName());
+        // log.info("[getTodayMeal] 밥: {}", rice.getName());
         Food soup = foodService.findByName(selected.get(1).getName());
-        log.info("[getTodayMeal] 국: {}", soup.getName());
+        // log.info("[getTodayMeal] 국: {}", soup.getName());
         List<Food> sides = selected.subList(2, selected.size()).stream()
             .map(f -> foodService.findByName(f.getName()))
             .collect(Collectors.toList());
-        log.info("[getTodayMeal] 반찬: {}", sides.stream().map(Food::getName).toList());
+        // log.info("[getTodayMeal] 반찬: {}", sides.stream().map(Food::getName).toList());
 
         MealResponse response = new MealResponse(
             MealMapper.toResponse(rice),
             MealMapper.toResponse(soup),
             sides.stream().map(MealMapper::toResponse).collect(Collectors.toList())
         );
-        log.info("[getTodayMeal] MealResponse 생성 완료");
+        // log.info("[getTodayMeal] MealResponse 생성 완료");
         return response;
     }
 

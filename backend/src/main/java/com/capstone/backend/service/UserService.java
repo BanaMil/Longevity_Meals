@@ -17,7 +17,16 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void register(String username, String userid, String password, String birthdate, String phone, String address) {
+    public void register(
+        String username, 
+        String userid, 
+        String password, 
+        String birthdate, 
+        String phone, 
+        String address, 
+        String addressRoad, 
+        String addressJibun, 
+        String postCode) {
         if (userRepository.findById(userid).isPresent()) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
