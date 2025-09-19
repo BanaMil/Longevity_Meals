@@ -2,7 +2,6 @@ package com.capstone.backend.service;
 
 import com.capstone.backend.domain.MealRecommendationLog;
 import com.capstone.backend.domain.enums.DeliveryStatus;
-import com.capstone.backend.dto.DeliveryRequest.MealSlot;
 import com.capstone.backend.repository.MealRecommendationLogRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class DeliveryService {
 	public void applySelections(DeliveryRequest req) {
         log.info("=== [배송 신청 반영] userId: {}", req.getUserId());
         String userId = req.getUserId();
-        Map<String, List<MealSlot>> payload = req.getRequestPayload();
+        Map<String, List<String>> payload = req.getRequestPayload();
 
         // requestPayload 전체 로그
         log.info("[배송 신청] requestPayload: {}", payload);
@@ -59,12 +58,12 @@ public class DeliveryService {
 
             Update u = new Update();
 
-            for (MealSlot slot : slots) {
+            for (String slot : slots) {
                 log.info("[배송 신청] 날짜: {}, MealSlot: {}", dateStr, slot); // 각 MealSlot 로그
                 switch (slot) {
-                    case BREAKFAST -> u.set("delivery_breakfast", true);
-                    case LUNCH     -> u.set("delivery_lunch", true);
-                    case DINNER    -> u.set("delivery_dinner", true);
+                    case "breakfast" -> u.set("delivery_breakfast", true);
+                    case "lunch"     -> u.set("delivery_lunch", true);
+                    case "dinner"    -> u.set("delivery_dinner", true);
                 }
             }
 
