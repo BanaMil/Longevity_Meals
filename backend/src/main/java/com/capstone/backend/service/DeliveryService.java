@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import com.capstone.backend.dto.DeliveryRequest;
 import com.capstone.backend.dto.FoodWithIntake;
 import com.capstone.backend.domain.DailyMeals;
+import com.capstone.backend.domain.enums.DeliveryStatus;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,6 @@ public class DeliveryService {
         requests.forEach((dateStr, slots) -> {
             if (dateStr == null || dateStr.isBlank() || slots == null) return;
 
-            // 각 날짜별 MealSlot 로그
             log.info("[배송 신청] 날짜: {}, MealSlots: {}", dateStr, slots);
 
             Query q = Query.query(
@@ -61,11 +61,20 @@ public class DeliveryService {
             Update u = new Update();
 
             for (String slot : slots) {
-                log.info("[배송 신청] 날짜: {}, MealSlot: {}", dateStr, slot); // 각 MealSlot 로그
+                log.info("[배송 신청] 날짜: {}, MealSlot: {}", dateStr, slot);
                 switch (slot) {
-                    case "breakfast" -> u.set("delivery_breakfast", true);
-                    case "lunch"     -> u.set("delivery_lunch", true);
-                    case "dinner"    -> u.set("delivery_dinner", true);
+                    case "breakfast" -> {
+                        u.set("delivery_breakfast", true);
+                        u.set("delivery_breakfast_status", DeliveryStatus.IN_TRANSIT);
+                    }
+                    case "lunch" -> {
+                        u.set("delivery_lunch", true);
+                        u.set("delivery_lunch_status", DeliveryStatus.IN_TRANSIT);
+                    }
+                    case "dinner" -> {
+                        u.set("delivery_dinner", true);
+                        u.set("delivery_dinner_status", DeliveryStatus.IN_TRANSIT);
+                    }
                 }
             }
 
