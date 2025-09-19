@@ -37,7 +37,7 @@ public class DeliveryController {
 	// 배송 상태 조회
 	@GetMapping("/in-transit/{userId}")
 	public Map<String, DeliveryStatus> getDeliveryStatus(
-		@RequestParam String userId,
+		@PathVariable String userId,
 		@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
 	) {
 		return deliveryService.getDeliveryStatus(userId, date);
