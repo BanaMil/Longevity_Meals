@@ -37,10 +37,16 @@ public class DeliveryService {
         String userId = req.getUserId();
         Map<String, List<MealSlot>> payload = req.getRequestPayload();
 
+        // requestPayload 전체 로그
+        log.info("[배송 신청] requestPayload: {}", payload);
+
         if (payload == null || payload.isEmpty()) return;
 
         payload.forEach((dateStr, slots) -> {
             if (dateStr == null || dateStr.isBlank() || slots == null) return;
+
+            // 각 날짜별 MealSlot 로그
+            log.info("[배송 신청] 날짜: {}, MealSlots: {}", dateStr, slots);
 
             Query q = Query.query(
                 Criteria.where("userId").is(userId)
@@ -54,6 +60,7 @@ public class DeliveryService {
             Update u = new Update();
 
             for (MealSlot slot : slots) {
+                log.info("[배송 신청] 날짜: {}, MealSlot: {}", dateStr, slot); // 각 MealSlot 로그
                 switch (slot) {
                     case BREAKFAST -> u.set("delivery_breakfast", true);
                     case LUNCH     -> u.set("delivery_lunch", true);
@@ -67,11 +74,22 @@ public class DeliveryService {
 
 
 
-	// 배송 상태 조회
-	// public DeliveryStatus getDeliveryStatus(String userId, LocalDate date) {
-	// 	Optional<MealRecommendationLog> logOpt = mealRecommendationLogRepository.findByUserIdAndDate(userId, date);
-	// 	return logOpt.map(MealRecommendationLog::getDeliveryStatus).orElse(DeliveryStatus.NONE);
-	// }
+	// 배송 상태 조회 (아침/점심/저녁 각각 반환)
+	public Map<String, DeliveryStatus> getDeliveryStatus(String userId, LocalDate date) {
+		Optional<MealRecommendationLog> logOpt = mealRecommendationLogRepository.findByUserIdAndDate(userId, date);
+		Map<String, DeliveryStatus> statusMap = new java.util.HashMap<>();
+		if (logOpt.isPresent()) {
+			MealRecommendationLog log = logOpt.get();
+			statusMap.put("breakfast", log.getDeliveryBreakfastStatus());
+			statusMap.put("lunch", log.getDeliveryLunchStatus());
+			statusMap.put("dinner", log.getDeliveryDinnerStatus());
+		} else {
+			statusMap.put("breakfast", DeliveryStatus.NONE);
+			statusMap.put("lunch", DeliveryStatus.NONE);
+			statusMap.put("dinner", DeliveryStatus.NONE);
+		}
+		return statusMap;
+	}
 
 	// 배송 상태 변경 (관리자/시스템용)
 	// public boolean updateDeliveryStatus(String userId, LocalDate date, DeliveryStatus status) {
