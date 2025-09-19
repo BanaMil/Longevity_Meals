@@ -1,7 +1,9 @@
 package com.capstone.backend.controller;
 
 import com.capstone.backend.domain.enums.DeliveryStatus;
+import com.capstone.backend.domain.DailyMeals;
 import com.capstone.backend.dto.DeliveryRequest;
+import com.capstone.backend.dto.FoodWithIntake;
 import com.capstone.backend.service.DeliveryService;
 
 import jakarta.validation.Valid;
@@ -35,12 +37,20 @@ public class DeliveryController {
     }
 
 	// 배송 상태 조회
-	@GetMapping("/in-transit/{userId}")
+	@GetMapping("/delivery-status/{userId}")
 	public Map<String, DeliveryStatus> getDeliveryStatus(
 		@PathVariable String userId,
 		@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
 	) {
 		return deliveryService.getDeliveryStatus(userId, date);
+	}
+
+	// 배송 중인 식단 조회 (여러 날짜)
+	@GetMapping("/in-transit/{userId}")
+	public Map<String, DailyMeals> getInTransitMeals(
+		@PathVariable String userId
+	) {
+		return deliveryService.getInTransitMeals(userId);
 	}
 
 	// // 배송 상태 변경 (관리자/시스템용)

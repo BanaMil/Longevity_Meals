@@ -7,6 +7,8 @@ import com.capstone.backend.repository.MealRecommendationLogRepository;
 import lombok.RequiredArgsConstructor;
 
 import com.capstone.backend.dto.DeliveryRequest;
+import com.capstone.backend.dto.FoodWithIntake;
+import com.capstone.backend.domain.DailyMeals;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -88,6 +90,33 @@ public class DeliveryService {
 			statusMap.put("dinner", DeliveryStatus.NONE);
 		}
 		return statusMap;
+	}
+
+	// 배송 중인 식단 조회 (userId의 IN_TRANSIT 상태인 날짜별 식단 반환)
+	public Map<String, DailyMeals> getInTransitMeals(String userId) {
+		List<MealRecommendationLog> logs = mealRecommendationLogRepository.findByUserIdAndDateAfter(userId, LocalDate.now().minusDays(7));
+		Map<String, DailyMeals> result = new java.util.HashMap<>();
+		for (MealRecommendationLog log : logs) {
+			boolean hasInTransit =
+				log.getDeliveryBreakfastStatus() == DeliveryStatus.IN_TRANSIT ||
+				log.getDeliveryLunchStatus() == DeliveryStatus.IN_TRANSIT ||
+				log.getDeliveryDinnerStatus() == DeliveryStatus.IN_TRANSIT;
+			if (hasInTransit) {
+				DailyMeals daily = new DailyMeals();
+				daily.setBreakfast(
+					log.getDeliveryBreakfastStatus() == DeliveryStatus.IN_TRANSIT ? log.getBreakfast() : List.of()
+				);
+				daily.setLunch(
+					log.getDeliveryLunchStatus() == DeliveryStatus.IN_TRANSIT ? log.getLunch() : List.of()
+				);
+				daily.setDinner(
+					log.getDeliveryDinnerStatus() == DeliveryStatus.IN_TRANSIT ? log.getDinner() : List.of()
+				);
+				daily.setDate(log.getDate().toString());
+				result.put(log.getDate().toString(), daily);
+			}
+		}
+		return result;
 	}
 
 	// 배송 상태 변경 (관리자/시스템용)
