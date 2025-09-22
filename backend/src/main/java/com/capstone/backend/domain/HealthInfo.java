@@ -17,7 +17,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class HealthInfo {
     @Id
     private String id;

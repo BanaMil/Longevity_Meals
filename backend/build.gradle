@@ -50,6 +50,10 @@ dependencies {
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
 
+	// Google Cloud Document AI
+    implementation 'com.google.cloud:google-cloud-document-ai:2.20.0'
+    implementation 'com.google.cloud:google-cloud-core:2.8.20'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.19.0'
 }
 
 tasks.named('test') {

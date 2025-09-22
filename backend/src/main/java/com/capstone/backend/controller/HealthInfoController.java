@@ -6,15 +6,18 @@ import com.capstone.backend.service.HealthInfoService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/health")
 @RequiredArgsConstructor
@@ -30,13 +33,29 @@ public class HealthInfoController {
     }
     
     @PostMapping("/upload")
-    public String uploadHealthImage(@RequestParam("userId") String userId,
-                                    @RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<ApiResponse<List<String>>> uploadHealthImage(
+        @RequestParam("userId") String userId,
+        @RequestParam("image") MultipartFile image) throws IOException {
+        
+        log.info("[건강검진 결과서 업로드] userId: {}, 파일명: {}", userId, image.getOriginalFilename());
+        
+        // 임시 파일 생성
         File tempFile = File.createTempFile("healthscan", ".png");
         image.transferTo(tempFile);
 
-        healthInfoService.extractAndSaveDiseasesFromImage(userId, tempFile);
-        return "질병 정보 저장 완료";
+        try {
+            // Google Document AI로 질병 정보 추출 및 저장
+            healthInfoService.extractAndSaveDiseasesFromImage(userId, tempFile);
+            
+            // 업데이트된 질병 목록 반환
+            com.capstone.backend.domain.HealthInfo updatedInfo = healthInfoService.getHealthInfoByUserId(userId);
+            List<String> diseases = updatedInfo != null ? updatedInfo.getDiseases() : List.of();
+            
+            return ResponseEntity.ok(new ApiResponse<>(true, "건강검진 결과서 분석 완료", diseases));
+        } finally {
+            // 임시 파일 삭제
+            tempFile.delete();
+        }
     }
 }
 
