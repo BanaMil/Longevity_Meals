@@ -80,32 +80,63 @@ public class HealthInfoService {
     public void extractAndSaveDiseasesFromImage(String userId, File imageFile) throws IOException {
         logger.info("[건강검진 결과서 분석] userId: {}, 파일: {}", userId, imageFile.getName());
         
-        // Google Document AI로 텍스트 추출
-        String extractedText = googleDocumentService.extractTextFromImage(imageFile);
-        logger.info("[텍스트 추출 완료] 추출된 텍스트 길이: {}", extractedText.length());
-        
-        // 추출된 텍스트에서 질병명 파싱
-        List<String> diseases = googleDocumentService.extractDiseases(extractedText);
-        logger.info("[질병 추출 완료] 발견된 질병: {}", diseases);
-        
-        // 기존 건강정보에 질병 추가
-        HealthInfo healthInfo = getHealthInfoByUserId(userId);
-        if (healthInfo != null) {
-            List<String> existingDiseases = new ArrayList<>(healthInfo.getDiseases());
-            for (String disease : diseases) {
-                if (!existingDiseases.contains(disease)) {
-                    existingDiseases.add(disease);
-                }
+        try {
+            // Google Document AI로 텍스트 추출
+            String extractedText = googleDocumentService.extractTextFromImage(imageFile);
+            logger.info("[텍스트 추출 완료] 추출된 텍스트 길이: {}", extractedText.length());
+            
+            // 추출된 텍스트에서 질병명 파싱
+            List<String> diseases = googleDocumentService.extractDiseases(extractedText);
+            logger.info("[질병 추출 완료] 발견된 질병: {}", diseases);
+            
+            // 기존 건강정보 조회 시도
+            logger.info("[건강정보 조회 시작] userId: {}", userId);
+            HealthInfo healthInfo = null;
+            try {
+                healthInfo = getHealthInfoByUserId(userId);
+                logger.info("[건강정보 조회 성공] userId: {}, 기존 질병 개수: {}", userId, healthInfo.getDiseases().size());
+            } catch (Exception e) {
+                logger.warn("[건강정보 조회 실패] userId: {}, 오류: {}", userId, e.getMessage());
             }
-            healthInfo.setDiseases(existingDiseases);
-            healthInfoRepository.save(healthInfo);
-            logger.info("[건강정보 업데이트] userId: {}, 최종 질병 목록: {}", userId, existingDiseases);
-        } else {
-            logger.warn("[건강정보 없음] userId: {}의 기본 건강정보가 없습니다. 질병만 저장합니다.", userId);
-            HealthInfo newHealthInfo = new HealthInfo();
-            newHealthInfo.setUserid(userId);
-            newHealthInfo.setDiseases(diseases);
-            healthInfoRepository.save(newHealthInfo);
+            
+            if (healthInfo != null) {
+                logger.info("[기존 건강정보 업데이트 시작] userId: {}", userId);
+                List<String> existingDiseases = new ArrayList<>(healthInfo.getDiseases());
+                logger.info("[기존 질병 목록] {}", existingDiseases);
+                
+                for (String disease : diseases) {
+                    if (!existingDiseases.contains(disease)) {
+                        existingDiseases.add(disease);
+                        logger.info("[질병 추가] {}", disease);
+                    } else {
+                        logger.info("[질병 중복] {} (이미 존재)", disease);
+                    }
+                }
+                
+                logger.info("[질병 목록 설정 시작] 최종 질병 목록: {}", existingDiseases);
+                healthInfo.setDiseases(existingDiseases);
+                
+                logger.info("[건강정보 저장 시작] userId: {}", userId);
+                healthInfoRepository.save(healthInfo);
+                logger.info("[건강정보 저장 완료] userId: {}, 최종 질병 목록: {}", userId, existingDiseases);
+            } else {
+                logger.warn("[새 건강정보 생성 시작] userId: {}의 기본 건강정보가 없습니다.", userId);
+                HealthInfo newHealthInfo = new HealthInfo();
+                newHealthInfo.setUserid(userId);
+                newHealthInfo.setDiseases(diseases);
+                
+                logger.info("[새 건강정보 저장 시작] userId: {}, 질병 목록: {}", userId, diseases);
+                healthInfoRepository.save(newHealthInfo);
+                logger.info("[새 건강정보 저장 완료] userId: {}", userId);
+            }
+            
+            logger.info("[건강검진 결과서 분석 전체 완료] userId: {}", userId);
+            
+        } catch (Exception e) {
+            logger.error("[건강검진 결과서 분석 실패] userId: {}, 오류 유형: {}, 오류 메시지: {}", 
+                        userId, e.getClass().getSimpleName(), e.getMessage());
+            logger.error("[스택 트레이스]", e);
+            throw e;
         }
     }
 }
