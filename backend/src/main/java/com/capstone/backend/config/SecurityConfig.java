@@ -26,6 +26,7 @@ public class SecurityConfig {
             .requestMatchers("/api/auth/**").permitAll() // 하늘 수정
             .requestMatchers("/api/health/health_info").permitAll()
             .requestMatchers("/api/health/analysis/**").permitAll()
+            .requestMatchers("/api/health/upload").permitAll()
             .requestMatchers("/ocr/upload").permitAll()
             .requestMatchers("/api/meals/today").permitAll()
             .requestMatchers("/api/meals/weekly/**").permitAll()
