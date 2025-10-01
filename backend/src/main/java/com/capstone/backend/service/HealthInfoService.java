@@ -42,6 +42,7 @@ public class HealthInfoService {
 
     public void saveHealthInfo(String userId, HealthInfoRequest request) { // 사용자가 직접 입력한 정보 저장
         logger.info("[건강정보 저장] userId: {}", userId);
+        logger.info("[입력된 질병 목록] {}", request.getDiseases());
         
         // 기존 건강정보 조회
         HealthInfo existingHealthInfo = null;
@@ -53,8 +54,19 @@ public class HealthInfoService {
         }
         
         // 영양소 분석 및 개인화 섭취량 계산
+        logger.info("[영양소 분석 시작] 질병 목록: {}", request.getDiseases());
         List<NutrientStatusMapping> statusList = analyzer.analyze(request.getDiseases());
+        logger.info("[영양소 분석 완료] StatusList 개수: {}", statusList != null ? statusList.size() : "null");
+        if (statusList != null) {
+            for (NutrientStatusMapping status : statusList) {
+                logger.info("[StatusMapping] 영양소: {}, 상태: {}, 가중치: {}", 
+                           status.getNutrient(), status.getStatus(), status.getWeight());
+            }
+        }
+        
+        logger.info("[개인화 섭취량 계산 시작] StatusList: {}, 성별: {}", statusList, request.getGender());
         List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, request.getGender());
+        logger.info("[개인화 섭취량 계산 완료] PersonalizedIntake 개수: {}", personalizedIntake != null ? personalizedIntake.size() : "null");
         
         HealthInfo healthInfo;
         
@@ -79,13 +91,19 @@ public class HealthInfoService {
             healthInfo.setDiseases(mergedDiseases);
             healthInfo.setAllergies(request.getAllergies());
             healthInfo.setDislikes(request.getDislikes());
+            
+            logger.info("[StatusList 설정 전] 기존 StatusList: {}", healthInfo.getStatusList());
             healthInfo.setStatusList(statusList);
+            logger.info("[StatusList 설정 후] 새 StatusList: {}", healthInfo.getStatusList());
+            
             healthInfo.setPersonalizedIntake(personalizedIntake);
             
             logger.info("[건강정보 업데이트 완료] 최종 질병 목록: {}", mergedDiseases);
         } else {
             // 새 건강정보 생성
             logger.info("[새 건강정보 생성] userId: {}", userId);
+            logger.info("[Builder로 생성할 StatusList] {}", statusList);
+            
             healthInfo = HealthInfo.builder()
                     .userid(userId)
                     .gender(request.getGender())
@@ -97,6 +115,8 @@ public class HealthInfoService {
                     .statusList(statusList)
                     .personalizedIntake(personalizedIntake)
                     .build();
+            
+            logger.info("[Builder 생성 후 StatusList] {}", healthInfo.getStatusList());
         }
         
         // 사용자 상태 업데이트
@@ -104,10 +124,17 @@ public class HealthInfoService {
             .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
         user.setHealthInfoSubmitted(true);
         
+        // 저장 전 최종 확인
+        logger.info("[저장 전 최종 StatusList] {}", healthInfo.getStatusList());
+        logger.info("[저장 전 최종 PersonalizedIntake] {}", healthInfo.getPersonalizedIntake());
+        
         // 저장
-        healthInfoRepository.save(healthInfo);
+        HealthInfo savedHealthInfo = healthInfoRepository.save(healthInfo);
         userRepository.save(user);
         
+        // 저장 후 확인
+        logger.info("[저장 후 StatusList] {}", savedHealthInfo.getStatusList());
+        logger.info("[저장 후 PersonalizedIntake] {}", savedHealthInfo.getPersonalizedIntake());
         logger.info("[건강정보 저장 완료] userId: {}", userId);
     }
 

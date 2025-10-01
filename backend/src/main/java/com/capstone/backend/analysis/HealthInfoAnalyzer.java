@@ -5,6 +5,7 @@ import com.capstone.backend.domain.NutrientStatusMapping;
 import com.capstone.backend.domain.enums.NutrientRelation;
 import com.capstone.backend.repository.DiseaseNutrientRelationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -12,31 +13,50 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class HealthInfoAnalyzer {
 
     private final DiseaseNutrientRelationRepository relationRepo;
 
     public List<NutrientStatusMapping> analyze(List<String> diseases) {
-        Map<String, List<DiseaseNutrientRelation>> relationMap = new HashMap<>();
+        log.info("[HealthInfoAnalyzer] 분석 시작 - 질병 목록: {}", diseases);
 
-        // 1. 질병별로 관계 리스트 수집
-        for (String disease : diseases) {
-            List<DiseaseNutrientRelation> relations = relationRepo.findByDisease(disease);
-            for (DiseaseNutrientRelation rel : relations) {
-                relationMap.computeIfAbsent(rel.getNutrient(), k -> new ArrayList<>()).add(rel);
-            }
+        if (diseases == null || diseases.isEmpty()) {
+            log.warn("[HealthInfoAnalyzer] 질병 목록이 비어있음");
+            return new ArrayList<>();
         }
 
-        // 2. 영양소별 relation 및 modifier 병합
+        List<NutrientStatusMapping> statusList = new ArrayList<>();
+
+        for (String disease : diseases) {
+            log.info("[HealthInfoAnalyzer] 질병 분석 중: {}", disease);
+            // 질병별 영양소 매핑 로직
+            // 예시: 당뇨병이면 당류 제한, 단백질 권장 등
+        }
+
+        log.info("[HealthInfoAnalyzer] 분석 완료 - StatusList 개수: {}", statusList.size());
+        return statusList;
+    }
+    public List<NutrientStatusMapping> aggregateNutrientStatuses(List<String> diseases) {
+        if (diseases == null || diseases.isEmpty()) {
+            log.warn("[HealthInfoAnalyzer] 질병 목록이 비어있음");
+            return new ArrayList<>();
+        }
+
+        Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDiseases(diseases)
+                .stream()
+                .collect(Collectors.groupingBy(DiseaseNutrientRelation::getNutrient));
+
         List<NutrientStatusMapping> result = new ArrayList<>();
-        for (Map.Entry<String, List<DiseaseNutrientRelation>> entry : relationMap.entrySet()) {
+
+        for (Map.Entry<String, List<DiseaseNutrientRelation>> entry : groupedByNutrient.entrySet()) {
             String nutrient = entry.getKey();
             List<DiseaseNutrientRelation> related = entry.getValue();
 
-            // (a) relation 병합: 가장 높은 우선순위
+            // (a) relation 병합: 가장 높은 우선순위 사용
             NutrientRelation finalRelation = related.stream()
                     .map(DiseaseNutrientRelation::getRelation)
-                    .max(Comparator.comparingInt(this::priorityOf))
+                    .reduce(NutrientRelation::higher)
                     .orElse(NutrientRelation.NEUTRAL);
 
             // (b) modifier 병합: Multiplicative
@@ -44,12 +64,6 @@ public class HealthInfoAnalyzer {
                     .map(DiseaseNutrientRelation::getModifier)
                     .filter(Objects::nonNull)
                     .reduce(1.0, (a, b) -> a * b);
-
-            // (c) weight: 가장 높은 값 사용
-            double finalWeight = related.stream()
-                    .mapToDouble(DiseaseNutrientRelation::getModifier)
-                    .max()
-                    .orElse(1.0);
 
             result.add(new NutrientStatusMapping(nutrient, finalRelation, finalWeight, finalModifier));
         }
