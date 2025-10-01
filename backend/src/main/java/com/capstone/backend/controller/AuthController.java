@@ -29,24 +29,37 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<Object>> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<ApiResponse<Object>> register(@RequestBody RegisterRequest req){
           try {
-            userService.register(
-                request.getUsername(),
-                request.getUserid(),
-                request.getPassword(),
-                request.getBirthdate(),
-                request.getPhone(),
-                request.getAddress(),
-                request.getAddressRoad(),
-                request.getAddressJibun(),
-                request.getPostCode()
-            );
+            userService.register(req);
             return ResponseEntity.ok(new ApiResponse<>(true, "회원가입 성공", null));
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
+    
+    @GetMapping("/users/{userid}/addresses")
+    public ResponseEntity<?> list(@PathVariable String userid) {
+        var u = userRepository.findByUserid(userid)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        return ResponseEntity.ok(u.getAddresses());
+    }
+
+    @PostMapping("/users/{userid}/addresses")
+    public ResponseEntity<?> add(@PathVariable String userid,
+                                 @RequestBody AddressRequest req) {
+        var u = userService.addAddress(userid, req);
+        return ResponseEntity.status(201).body(u.getAddresses());
+    }
+
+    @PutMapping("/users/{userid}/addresses/current")
+    public ResponseEntity<?> setCurrent(@PathVariable String userid,
+                                        @RequestBody AddressRequest req) {
+        userService.setCurrentAddress(userid, req);
+        return ResponseEntity.ok().build();
+    }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest request) {

@@ -27,9 +27,13 @@ public class User {
     private String addressRoad;   // 대표(도로명)
     private String addressJibun;  // 보조(지번)
     private String postCode;      // 우편번호
+    private String addressDetail; // 상세주소 (동/호 등)
     
     @Builder.Default
     private boolean healthInfoSubmitted = false;
+
+    @Builder.Default
+    private List<Address> addresses = new java.util.ArrayList<>();
 
     public boolean isHealthInfoSubmitted() {
     return healthInfoSubmitted;
