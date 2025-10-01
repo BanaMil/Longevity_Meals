@@ -23,10 +23,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll() // 하늘 수정
+            .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/check-id").permitAll() // 인증 관련만 허용+
+            .requestMatchers("/api/auth/users/**").permitAll()
             .requestMatchers("/api/health/health_info").permitAll()
             .requestMatchers("/api/health/analysis/**").permitAll()
             .requestMatchers("/api/health/upload").permitAll()
+            .requestMatchers("/api/health/upload-complete").permitAll()
             .requestMatchers("/ocr/upload").permitAll()
             .requestMatchers("/api/meals/today").permitAll()
             .requestMatchers("/api/meals/weekly/**").permitAll()

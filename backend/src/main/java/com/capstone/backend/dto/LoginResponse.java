@@ -7,14 +7,12 @@ import lombok.Getter;
 public class LoginResponse {
     private String userid;
     private String username;
-    private String address;
     private String token;
     private boolean healthInfoSubmitted;
 
-    public LoginResponse(String userid, String username, String address, String token, boolean healthInfoSubmitted) {
+    public LoginResponse(String userid, String username, String token, boolean healthInfoSubmitted) {
         this.userid = userid;
         this.username = username;
-        this.address = address;
         this.token = token;
         this.healthInfoSubmitted = healthInfoSubmitted;
     }

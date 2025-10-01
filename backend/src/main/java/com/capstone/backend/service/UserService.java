@@ -7,8 +7,10 @@ import com.capstone.backend.dto.RegisterRequest;
 import com.capstone.backend.dto.AddressRequest;
 import com.capstone.backend.domain.Address;
 import com.capstone.backend.repository.UserRepository;
+import com.capstone.backend.repository.AddressRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -16,8 +18,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository) {
         this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
     }
 
     public User register(RegisterRequest req) {
@@ -52,6 +55,7 @@ public class UserService {
         return userRepository.save(user); //MongoDB에 저장
     }
 
+    @Transactional
     public User addAddress(String userid, AddressRequest req) {
         User user = userRepository.findByUserid(userid)
             .orElseThrow(() -> new IllegalArgumentException("user not found"));
@@ -67,6 +71,8 @@ public class UserService {
         user.getAddresses().add(addr);
         return userRepository.save(user);
     }
+
+    @Transactional
     public User setCurrentAddress(String userid, AddressRequest req) {
         User user = userRepository.findByUserid(userid)
             .orElseThrow(() -> new IllegalArgumentException("user not found"));

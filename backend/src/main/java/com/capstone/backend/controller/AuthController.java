@@ -44,25 +44,47 @@ public class AuthController {
     
     @GetMapping("/users/{userid}/addresses")
     public ResponseEntity<?> list(@PathVariable String userid) {
-        var u = userRepository.findByUserid(userid)
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
-        return ResponseEntity.ok(u.getAddresses());
+        var user = userRepository.findByUserid(userid)
+            .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+        var list = user.getAddresses().stream()
+            .sorted((a, b) -> Boolean.compare(!a.isDefault(), !b.isDefault())) // 기본주소 먼저
+            .map(AddressResponse::from)
+            .toList();
+
+        return ResponseEntity.ok(list);
     }
+
 
     @PostMapping("/users/{userid}/addresses")
     public ResponseEntity<?> add(@PathVariable String userid,
-                                 @RequestBody AddressRequest req) {
-        var u = userService.addAddress(userid, req);
-        return ResponseEntity.status(201).body(u.getAddresses());
+                                @RequestBody AddressRequest req) {
+        var saved = userService.addAddress(userid, req);
+        // 목록 반환 or 생성 리소스 반환
+        var list = saved.getAddresses().stream().map(AddressResponse::from).toList();
+        return ResponseEntity.status(201).body(list);
+    }
+
+    @GetMapping("/users/{userid}/addresses/current")
+    public ResponseEntity<?> current(@PathVariable String userid) {
+        var user = userRepository.findByUserid(userid)
+            .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+        var cur = user.getAddresses().stream()
+            .filter(Address::isDefault)
+            .findFirst()
+            .orElse(null);
+
+        return ResponseEntity.ok(cur == null ? null : AddressResponse.from(cur));
     }
 
     @PutMapping("/users/{userid}/addresses/current")
-    public ResponseEntity<?> setCurrent(@PathVariable String userid,
+    public ResponseEntity<?> changeCurrent(@PathVariable String userid,
                                         @RequestBody AddressRequest req) {
-        userService.setCurrentAddress(userid, req);
-        return ResponseEntity.ok().build();
+        var saved = userService.changeCurrentAddress(userid, req);
+        var cur = saved.getAddresses().stream().filter(Address::isDefault).findFirst().orElse(null);
+        return ResponseEntity.ok(cur == null ? null : AddressResponse.from(cur));
     }
-
 
 
     @PostMapping("/login")
