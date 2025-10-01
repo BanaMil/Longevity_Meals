@@ -24,10 +24,12 @@ public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")

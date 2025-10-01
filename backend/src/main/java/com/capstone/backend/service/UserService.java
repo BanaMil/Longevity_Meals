@@ -21,10 +21,10 @@ public class UserService {
     }
 
     public User register(RegisterRequest req) {
-        if (userRepository.findById(userid).isPresent()) {
+        if (userRepository.findById(req.getUserid()).isPresent()) {
             throw new RuntimeException("이미 존재하는 사용자입니다.");
         }
-        String road = firstNonempty(req.getAddressRoad(), req.getAddress());
+        String road = firstNonEmpty(req.getAddressRoad(), req.getAddress());
 
         String encodedPassword = encoder.encode(req.getPassword());
         LocalDate parsedBirthdate = LocalDate.parse(req.getBirthdate());
