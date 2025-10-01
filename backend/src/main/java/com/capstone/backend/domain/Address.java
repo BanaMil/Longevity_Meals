@@ -1,46 +1,24 @@
 package com.capstone.backend.domain;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import com.capstone.backend.domain.User;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "addresses")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Document(collection = "addresses")
+@Data
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder
 public class Address {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @Id
+    private String id;               // MongoDB ObjectId
+    private String userId;           // 사용자 ID 참조
     private String addressRoad;      // 도로명
     private String addressJibun;     // 지번
     private String postCode;         // 우편번호
-
-    @Column(name = "detail_address")
-    private String addressDetail;    // ✅ 상세주소 (동/호 등)
+    private String addressDetail;    // 상세주소
     private boolean isDefault;       // 기본 배송지 여부
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    // getter 메서드 추가 (기존 코드와의 호환성)
-    public String getAddressDetail() {
-        return addressDetail;
-    }
-
-    public void setAddressDetail(String addressDetail) {
-        this.addressDetail = addressDetail;
-    }
 }
