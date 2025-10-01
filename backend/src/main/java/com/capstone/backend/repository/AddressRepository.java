@@ -9,5 +9,5 @@ public interface AddressRepository extends MongoRepository<Address, String> {
     Address findByAddressRoad(String addressRoad);
     Address findByAddressJibun(String addressJibun);
     Address findByPostCode(String postCode);
-    Address findByDetailAddress(String detailAddress);
+    Address findByAddressDetail(String addressDetail);
 }

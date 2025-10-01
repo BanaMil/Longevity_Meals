@@ -17,6 +17,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final AddressRepository addressRepository;
 
     public UserService(UserRepository userRepository, AddressRepository addressRepository) {
         this.userRepository = userRepository;
@@ -73,7 +74,7 @@ public class UserService {
     }
 
     @Transactional
-    public User setCurrentAddress(String userid, AddressRequest req) {
+    public User changeCurrentAddress(String userid, AddressRequest req) {
         User user = userRepository.findByUserid(userid)
             .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
@@ -104,6 +105,7 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
 
     // helpers
     private static String firstNonEmpty(String... ss) {

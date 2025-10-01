@@ -37,39 +37,39 @@ public class HealthInfoAnalyzer {
         log.info("[HealthInfoAnalyzer] 분석 완료 - StatusList 개수: {}", statusList.size());
         return statusList;
     }
-    public List<NutrientStatusMapping> aggregateNutrientStatuses(List<String> diseases) {
-        if (diseases == null || diseases.isEmpty()) {
-            log.warn("[HealthInfoAnalyzer] 질병 목록이 비어있음");
-            return new ArrayList<>();
-        }
+    // public List<NutrientStatusMapping> aggregateNutrientStatuses(List<String> diseases) {
+    //     if (diseases == null || diseases.isEmpty()) {
+    //         log.warn("[HealthInfoAnalyzer] 질병 목록이 비어있음");
+    //         return new ArrayList<>();
+    //     }
 
-        Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDiseases(diseases)
-                .stream()
-                .collect(Collectors.groupingBy(DiseaseNutrientRelation::getNutrient));
+    //     Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDiseases(diseases)
+    //             .stream()
+    //             .collect(Collectors.groupingBy(DiseaseNutrientRelation::getNutrient));
 
-        List<NutrientStatusMapping> result = new ArrayList<>();
+    //     List<NutrientStatusMapping> result = new ArrayList<>();
 
-        for (Map.Entry<String, List<DiseaseNutrientRelation>> entry : groupedByNutrient.entrySet()) {
-            String nutrient = entry.getKey();
-            List<DiseaseNutrientRelation> related = entry.getValue();
+    //     for (Map.Entry<String, List<DiseaseNutrientRelation>> entry : groupedByNutrient.entrySet()) {
+    //         String nutrient = entry.getKey();
+    //         List<DiseaseNutrientRelation> related = entry.getValue();
 
-            // (a) relation 병합: 가장 높은 우선순위 사용
-            NutrientRelation finalRelation = related.stream()
-                    .map(DiseaseNutrientRelation::getRelation)
-                    .reduce(NutrientRelation::higher)
-                    .orElse(NutrientRelation.NEUTRAL);
+    //         // (a) relation 병합: 가장 높은 우선순위 사용
+    //         NutrientRelation finalRelation = related.stream()
+    //                 .map(DiseaseNutrientRelation::getRelation)
+    //                 .reduce(NutrientRelation::higher)
+    //                 .orElse(NutrientRelation.NEUTRAL);
 
-            // (b) modifier 병합: Multiplicative
-            double finalModifier = related.stream()
-                    .map(DiseaseNutrientRelation::getModifier)
-                    .filter(Objects::nonNull)
-                    .reduce(1.0, (a, b) -> a * b);
+    //         // (b) modifier 병합: Multiplicative
+    //         double finalModifier = related.stream()
+    //                 .map(DiseaseNutrientRelation::getModifier)
+    //                 .filter(Objects::nonNull)
+    //                 .reduce(1.0, (a, b) -> a * b);
 
-            result.add(new NutrientStatusMapping(nutrient, finalRelation, finalWeight, finalModifier));
-        }
+    //         result.add(new NutrientStatusMapping(nutrient, finalRelation, finalWeight, finalModifier));
+    //     }
 
-        return result;
-    }
+    //     return result;
+    // }
 
     private int priorityOf(NutrientRelation r) {
         return switch (r) {

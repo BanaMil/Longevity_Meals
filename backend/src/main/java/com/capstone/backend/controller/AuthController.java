@@ -3,10 +3,12 @@ package com.capstone.backend.controller;
 import java.util.Map;
 
 import com.capstone.backend.domain.User;
+import com.capstone.backend.domain.Address;
 import com.capstone.backend.dto.LoginResponse;
 import com.capstone.backend.dto.RegisterRequest;
 import com.capstone.backend.dto.LoginRequest;
 import com.capstone.backend.dto.AddressRequest;
+import com.capstone.backend.dto.AddressResponse;
 import com.capstone.backend.repository.UserRepository;
 import com.capstone.backend.dto.ApiResponse;
 import com.capstone.backend.service.UserService;
@@ -101,7 +103,6 @@ public class AuthController {
             LoginResponse responseData = new LoginResponse(
                 user.getUserid(),
                 user.getUsername(),
-                user.getAddress(),
                 token,
                 user.isHealthInfoSubmitted()
             );
