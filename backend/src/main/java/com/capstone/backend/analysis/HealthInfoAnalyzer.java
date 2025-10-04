@@ -26,50 +26,57 @@ public class HealthInfoAnalyzer {
             return new ArrayList<>();
         }
 
-        List<NutrientStatusMapping> statusList = new ArrayList<>();
-
-        for (String disease : diseases) {
-            log.info("[HealthInfoAnalyzer] 질병 분석 중: {}", disease);
-            // 질병별 영양소 매핑 로직
-            // 예시: 당뇨병이면 당류 제한, 단백질 권장 등
-        }
-
+        // aggregateNutrientStatuses 호출하여 실제 분석 수행
+        List<NutrientStatusMapping> statusList = aggregateNutrientStatuses(diseases);
+        
         log.info("[HealthInfoAnalyzer] 분석 완료 - StatusList 개수: {}", statusList.size());
+        for (NutrientStatusMapping status : statusList) {
+            log.info("[HealthInfoAnalyzer] 매핑 결과: {} -> {}, 가중치: {}, 수정자: {}", 
+                    status.getNutrient(), status.getStatus(), status.getWeight(), status.getModifier());
+        }
+        
         return statusList;
     }
-    // public List<NutrientStatusMapping> aggregateNutrientStatuses(List<String> diseases) {
-    //     if (diseases == null || diseases.isEmpty()) {
-    //         log.warn("[HealthInfoAnalyzer] 질병 목록이 비어있음");
-    //         return new ArrayList<>();
-    //     }
 
-    //     Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDiseases(diseases)
-    //             .stream()
-    //             .collect(Collectors.groupingBy(DiseaseNutrientRelation::getNutrient));
+    public List<NutrientStatusMapping> aggregateNutrientStatuses(List<String> diseases) {
+        if (diseases == null || diseases.isEmpty()) {
+            log.warn("[HealthInfoAnalyzer] 질병 목록이 비어있음");
+            return new ArrayList<>();
+        }
 
-    //     List<NutrientStatusMapping> result = new ArrayList<>();
+        Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDiseases(diseases)
+                .stream()
+                .collect(Collectors.groupingBy(DiseaseNutrientRelation::getNutrient));
 
-    //     for (Map.Entry<String, List<DiseaseNutrientRelation>> entry : groupedByNutrient.entrySet()) {
-    //         String nutrient = entry.getKey();
-    //         List<DiseaseNutrientRelation> related = entry.getValue();
+        List<NutrientStatusMapping> result = new ArrayList<>();
 
-    //         // (a) relation 병합: 가장 높은 우선순위 사용
-    //         NutrientRelation finalRelation = related.stream()
-    //                 .map(DiseaseNutrientRelation::getRelation)
-    //                 .reduce(NutrientRelation::higher)
-    //                 .orElse(NutrientRelation.NEUTRAL);
+        for (Map.Entry<String, List<DiseaseNutrientRelation>> entry : groupedByNutrient.entrySet()) {
+            String nutrient = entry.getKey();
+            List<DiseaseNutrientRelation> related = entry.getValue();
 
-    //         // (b) modifier 병합: Multiplicative
-    //         double finalModifier = related.stream()
-    //                 .map(DiseaseNutrientRelation::getModifier)
-    //                 .filter(Objects::nonNull)
-    //                 .reduce(1.0, (a, b) -> a * b);
+            // (a) relation 병합: 가장 높은 우선순위 사용
+            NutrientRelation finalRelation = related.stream()
+                    .map(DiseaseNutrientRelation::getRelation)
+                    .reduce(NutrientRelation::higher)
+                    .orElse(NutrientRelation.NEUTRAL);
 
-    //         result.add(new NutrientStatusMapping(nutrient, finalRelation, finalWeight, finalModifier));
-    //     }
+            // (b) modifier 병합: Multiplicative
+            double finalModifier = related.stream()
+                    .map(DiseaseNutrientRelation::getModifier)
+                    .filter(Objects::nonNull)
+                    .reduce(1.0, (a, b) -> a * b);
 
-    //     return result;
-    // }
+            // (c) weight 계산 (기본값 0.5)
+            double finalWeight = 0.5;
+
+            // NutrientRelation을 String으로 변환
+            String statusString = finalRelation.toString(); // "RECOMMENDED", "RESTRICTED" 등
+
+            result.add(new NutrientStatusMapping(nutrient, statusString, finalWeight, finalModifier));
+        }
+
+        return result;
+    }
 
     private int priorityOf(NutrientRelation r) {
         return switch (r) {
@@ -79,4 +86,4 @@ public class HealthInfoAnalyzer {
             case NEUTRAL -> 0;
         };
     }
-} 
+}
