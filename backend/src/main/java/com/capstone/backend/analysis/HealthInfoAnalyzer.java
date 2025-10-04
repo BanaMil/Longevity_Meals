@@ -44,8 +44,16 @@ public class HealthInfoAnalyzer {
             return new ArrayList<>();
         }
 
-        Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDiseases(diseases)
-                .stream()
+        // 모든 질병에 대한 관계를 수집
+        List<DiseaseNutrientRelation> allRelations = new ArrayList<>();
+        for (String disease : diseases) {
+            List<DiseaseNutrientRelation> diseaseRelations = relationRepo.findByDisease(disease);
+            allRelations.addAll(diseaseRelations);
+            log.info("[HealthInfoAnalyzer] 질병 '{}' 관련 영양소 관계 개수: {}", disease, diseaseRelations.size());
+        }
+
+        // 영양소별로 그룹화
+        Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = allRelations.stream()
                 .collect(Collectors.groupingBy(DiseaseNutrientRelation::getNutrient));
 
         List<NutrientStatusMapping> result = new ArrayList<>();
@@ -71,6 +79,8 @@ public class HealthInfoAnalyzer {
 
             // NutrientRelation enum을 직접 사용
             result.add(new NutrientStatusMapping(nutrient, finalRelation, finalWeight, finalModifier));
+            log.info("[HealthInfoAnalyzer] 영양소 '{}' 최종 관계: {}, 가중치: {}, 수정자: {}", 
+                    nutrient, finalRelation, finalWeight, finalModifier);
         }
 
         return result;
