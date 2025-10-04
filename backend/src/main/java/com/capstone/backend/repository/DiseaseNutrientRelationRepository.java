@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface DiseaseNutrientRelationRepository extends MongoRepository<DiseaseNutrientRelation, String> {
     List<DiseaseNutrientRelation> findByDisease(String disease);
+    List<DiseaseNutrientRelation> findByNutrient(String nutrient);
+    List<DiseaseNutrientRelation> findByDiseases(List<String> diseases);
 }
