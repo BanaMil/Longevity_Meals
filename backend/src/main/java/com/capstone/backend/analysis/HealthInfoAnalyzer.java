@@ -44,7 +44,7 @@ public class HealthInfoAnalyzer {
             return new ArrayList<>();
         }
 
-        Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDiseases(diseases)
+        Map<String, List<DiseaseNutrientRelation>> groupedByNutrient = relationRepo.findByDisease(diseases)
                 .stream()
                 .collect(Collectors.groupingBy(DiseaseNutrientRelation::getNutrient));
 
