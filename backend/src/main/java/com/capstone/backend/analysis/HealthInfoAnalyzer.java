@@ -69,10 +69,8 @@ public class HealthInfoAnalyzer {
             // (c) weight 계산 (기본값 0.5)
             double finalWeight = 0.5;
 
-            // NutrientRelation을 String으로 변환
-            String statusString = finalRelation.toString(); // "RECOMMENDED", "RESTRICTED" 등
-
-            result.add(new NutrientStatusMapping(nutrient, statusString, finalWeight, finalModifier));
+            // NutrientRelation enum을 직접 사용
+            result.add(new NutrientStatusMapping(nutrient, finalRelation, finalWeight, finalModifier));
         }
 
         return result;
@@ -85,5 +83,7 @@ public class HealthInfoAnalyzer {
             case RESTRICTED -> 3;
             case NEUTRAL -> 0;
         };
+    }
+}
     }
 }

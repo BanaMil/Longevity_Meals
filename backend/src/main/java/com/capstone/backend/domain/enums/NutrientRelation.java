@@ -35,4 +35,24 @@ public enum NutrientRelation {
         }
         return NEUTRAL;
     }
+
+    // 우선순위가 높은 것을 반환 (RESTRICTED > CAUTION > RECOMMENDED > NEUTRAL)
+    public static NutrientRelation higher(NutrientRelation a, NutrientRelation b) {
+        if (a == null) return b;
+        if (b == null) return a;
+
+        int priorityA = getPriority(a);
+        int priorityB = getPriority(b);
+
+        return priorityA >= priorityB ? a : b;
+    }
+
+    private static int getPriority(NutrientRelation relation) {
+        return switch (relation) {
+            case RESTRICTED -> 3;
+            case CAUTION -> 2;
+            case RECOMMENDED -> 1;
+            case NEUTRAL -> 0;
+        };
+    }
 }
