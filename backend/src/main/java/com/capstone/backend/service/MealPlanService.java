@@ -54,7 +54,8 @@ public class MealPlanService {
     private final DailyMealsRepository dailyMealsRepository;
 
     public boolean hasExistingMealPlan(String userId) {
-        return logRepository.existsByUserId(userId);
+        LocalDate today = LocalDate.now();
+        return logRepository.existsByUserIdAndDate(userId, today);
     }
 
     public void createAndSaveWeeklyMeal(String userId) {
@@ -551,4 +552,4 @@ public class MealPlanService {
 //         );
 //     }
 
-    
+
