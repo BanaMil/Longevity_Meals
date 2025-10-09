@@ -40,10 +40,10 @@ public class HealthInfoService {
     private GoogleDocumentService googleDocumentService;
 
 
-    public void saveHealthInfo(String userId, HealthInfoRequest request) { // 사용자가 직접 입력한 정보 저장
+    public void saveHealthInfo(String userId, HealthInfoRequest request) {
         logger.info("[건강정보 저장] userId: {}", userId);
         logger.info("[입력된 질병 목록] {}", request.getDiseases());
-        
+
         // 기존 건강정보 조회
         HealthInfo existingHealthInfo = null;
         try {
@@ -52,10 +52,22 @@ public class HealthInfoService {
         } catch (Exception e) {
             logger.info("[새 건강정보 생성 예정] userId: {}, 기존 정보 없음", userId);
         }
-        
-        // 영양소 분석 및 개인화 섭취량 계산
-        logger.info("[영양소 분석 시작] 질병 목록: {}", request.getDiseases());
-        List<NutrientStatusMapping> statusList = analyzer.analyze(request.getDiseases());
+
+        // 기존 질병 + 직접 입력 질병 통합
+        List<String> mergedDiseases = new ArrayList<>();
+        if (existingHealthInfo != null && existingHealthInfo.getDiseases() != null) {
+            mergedDiseases.addAll(existingHealthInfo.getDiseases());
+        }
+        for (String disease : request.getDiseases()) {
+            if (!mergedDiseases.contains(disease)) {
+                mergedDiseases.add(disease);
+                logger.info("[질병 추가] {}", disease);
+            }
+        }
+
+        // 영양소 분석 및 개인화 섭취량 계산 (통합 질병 기준)
+        logger.info("[영양소 분석 시작] 통합 질병 목록: {}", mergedDiseases);
+        List<NutrientStatusMapping> statusList = analyzer.analyze(mergedDiseases);
         logger.info("[영양소 분석 완료] StatusList 개수: {}", statusList != null ? statusList.size() : "null");
         if (statusList != null) {
             for (NutrientStatusMapping status : statusList) {
@@ -63,27 +75,18 @@ public class HealthInfoService {
                            status.getNutrient(), status.getStatus(), status.getWeight());
             }
         }
-        
+
         logger.info("[개인화 섭취량 계산 시작] StatusList: {}, 성별: {}", statusList, request.getGender());
         List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, request.getGender());
         logger.info("[개인화 섭취량 계산 완료] PersonalizedIntake 개수: {}", personalizedIntake != null ? personalizedIntake.size() : "null");
-        
+
         HealthInfo healthInfo;
-        
+
         if (existingHealthInfo != null) {
             // 기존 정보 업데이트
             logger.info("[기존 건강정보 업데이트] userId: {}", userId);
             healthInfo = existingHealthInfo;
-            
-            // 기존 질병과 새 질병 병합 (중복 제거)
-            List<String> mergedDiseases = new ArrayList<>(existingHealthInfo.getDiseases());
-            for (String disease : request.getDiseases()) {
-                if (!mergedDiseases.contains(disease)) {
-                    mergedDiseases.add(disease);
-                    logger.info("[질병 추가] {}", disease);
-                }
-            }
-            
+
             // 정보 업데이트
             healthInfo.setGender(request.getGender());
             healthInfo.setHeight(request.getHeight());
@@ -91,50 +94,45 @@ public class HealthInfoService {
             healthInfo.setDiseases(mergedDiseases);
             healthInfo.setAllergies(request.getAllergies());
             healthInfo.setDislikes(request.getDislikes());
-            
-            logger.info("[StatusList 설정 전] 기존 StatusList: {}", healthInfo.getStatusList());
-            // 중복 계산 제거: 이미 위에서 statusList를 계산함
             healthInfo.setStatusList(statusList);
-            logger.info("[StatusList 설정 후] 새 StatusList: {}", healthInfo.getStatusList());
-            
             healthInfo.setPersonalizedIntake(personalizedIntake);
-            
+
             logger.info("[건강정보 업데이트 완료] 최종 질병 목록: {}", mergedDiseases);
         } else {
             // 새 건강정보 생성
             logger.info("[새 건강정보 생성] userId: {}", userId);
             logger.info("[Builder로 생성할 StatusList] {}", statusList);
-            
+
             healthInfo = HealthInfo.builder()
                     .userid(userId)
                     .gender(request.getGender())
                     .height(request.getHeight())
                     .weight(request.getWeight())
-                    .diseases(request.getDiseases())
+                    .diseases(mergedDiseases)
                     .allergies(request.getAllergies())
                     .dislikes(request.getDislikes())
                     .statusList(statusList)
                     .personalizedIntake(personalizedIntake)
                     .build();
-            
+
             logger.info("[Builder 생성 후 StatusList] {}", healthInfo.getStatusList());
         }
-        
+
         // 사용자 상태 업데이트
         User user = userRepository.findByUserid(userId)
             .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
         user.setHealthInfoSubmitted(true);
-        
+
         // 저장 전 최종 확인
         logger.info("[저장 전 최종 StatusList] {}", healthInfo.getStatusList());
         logger.info("[저장 전 최종 PersonalizedIntake] {}", healthInfo.getPersonalizedIntake());
-        
+
         // 저장
         HealthInfo savedHealthInfo = healthInfoRepository.save(healthInfo);
         logger.info("[저장 후 HealthInfo] {}", savedHealthInfo);
         HealthInfo reloaded = healthInfoRepository.findByUserid(userId).orElse(null);
         logger.info("[MongoDB에서 재조회] {}", reloaded);
-        
+
         // 저장 후 확인
         logger.info("[저장 후 StatusList] {}", savedHealthInfo.getStatusList());
         logger.info("[저장 후 PersonalizedIntake] {}", savedHealthInfo.getPersonalizedIntake());
@@ -172,7 +170,7 @@ public class HealthInfoService {
                 }
                 healthInfo.setDiseases(existingDiseases);
 
-                // ✅ StatusList와 PersonalizedIntake 재계산
+                // ✅ 기존 질병 + 사진 분석 질병 통합 후 재계산
                 List<NutrientStatusMapping> statusList = analyzer.analyze(existingDiseases);
                 healthInfo.setStatusList(statusList);
 
