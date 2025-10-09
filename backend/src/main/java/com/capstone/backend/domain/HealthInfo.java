@@ -19,7 +19,6 @@ import java.util.Map;
 public class HealthInfo {
     @Id
     private String id;
-    
     private String userid;
     private String gender;
     private Double height;
@@ -27,10 +26,10 @@ public class HealthInfo {
     private List<String> diseases;
     private List<String> allergies;
     private List<String> dislikes;
-    
-    @Field("statusList")  // MongoDB 필드명 명시
+
+    @Field("statusList")
     private List<NutrientStatusMapping> statusList;
-    
-    @Field("personalizedIntake")  // MongoDB 필드명 명시
+
+    @Field("personalizedIntake")
     private List<PersonalizedIntake> personalizedIntake;
 }

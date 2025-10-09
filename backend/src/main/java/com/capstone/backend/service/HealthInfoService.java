@@ -146,18 +146,12 @@ public class HealthInfoService {
 
     public void extractAndSaveDiseasesFromImage(String userId, File imageFile) throws IOException {
         logger.info("[건강검진 결과서 분석] userId: {}, 파일: {}", userId, imageFile.getName());
-        
         try {
-            // Google Document AI로 텍스트 추출
             String extractedText = googleDocumentService.extractTextFromImage(imageFile);
             logger.info("[텍스트 추출 완료] 추출된 텍스트 길이: {}", extractedText.length());
-            
-            // 추출된 텍스트에서 질병명 파싱
             List<String> diseases = googleDocumentService.extractDiseases(extractedText);
             logger.info("[질병 추출 완료] 발견된 질병: {}", diseases);
-            
-            // 기존 건강정보 조회 시도
-            logger.info("[건강정보 조회 시작] userId: {}", userId);
+
             HealthInfo healthInfo = null;
             try {
                 healthInfo = getHealthInfoByUserId(userId);
@@ -165,74 +159,49 @@ public class HealthInfoService {
             } catch (Exception e) {
                 logger.warn("[건강정보 조회 실패] userId: {}, 오류: {}", userId, e.getMessage());
             }
-            
+
             if (healthInfo != null) {
-                logger.info("[기존 건강정보 업데이트 시작] userId: {}", userId);
                 List<String> existingDiseases = new ArrayList<>(healthInfo.getDiseases());
-                logger.info("[기존 질병 목록] {}", existingDiseases);
-                
                 for (String disease : diseases) {
                     if (!existingDiseases.contains(disease)) {
                         existingDiseases.add(disease);
-                        logger.info("[질병 추가] {}", disease);
-                    } else {
-                        logger.info("[질병 중복] {} (이미 존재)", disease);
                     }
                 }
-                
-                logger.info("[질병 목록 설정 시작] 최종 질병 목록: {}", existingDiseases);
                 healthInfo.setDiseases(existingDiseases);
-                
+
                 // ✅ StatusList와 PersonalizedIntake 재계산
-                logger.info("[StatusList 재계산 시작] 질병 목록: {}", existingDiseases);
                 List<NutrientStatusMapping> statusList = analyzer.analyze(existingDiseases);
-                logger.info("[StatusList 재계산 완료] StatusList 개수: {}", statusList.size());
-                
-                logger.info("[PersonalizedIntake 재계산 시작] StatusList: {}, 성별: {}", statusList.size(), healthInfo.getGender());
-                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, healthInfo.getGender());
-                logger.info("[PersonalizedIntake 재계산 완료] PersonalizedIntake 개수: {}", personalizedIntake.size());
-                
-                // StatusList와 PersonalizedIntake 업데이트
                 healthInfo.setStatusList(statusList);
+
+                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, healthInfo.getGender());
                 healthInfo.setPersonalizedIntake(personalizedIntake);
-                
-                logger.info("[건강정보 저장 시작] userId: {}", userId);
+
+                logger.info("[저장 전 StatusList] {}", healthInfo.getStatusList());
+                logger.info("[저장 전 PersonalizedIntake] {}", healthInfo.getPersonalizedIntake());
+
                 healthInfoRepository.save(healthInfo);
-                logger.info("[건강정보 저장 완료] userId: {}, 최종 질병 목록: {}", userId, existingDiseases);
             } else {
-                logger.warn("[새 건강정보 생성 시작] userId: {}의 기본 건강정보가 없습니다.", userId);
-                
-                // ✅ 새 건강정보 생성 시에도 StatusList와 PersonalizedIntake 계산
-                logger.info("[새 건강정보 StatusList 계산 시작] 질병 목록: {}", diseases);
+                // 새 HealthInfo 생성
                 List<NutrientStatusMapping> statusList = analyzer.analyze(diseases);
-                logger.info("[새 건강정보 StatusList 계산 완료] StatusList 개수: {}", statusList.size());
-                
-                // 성별이 없으므로 기본값 설정 (또는 별도 입력 받기)
-                String defaultGender = "male"; // 기본값
-                logger.info("[새 건강정보 PersonalizedIntake 계산 시작] StatusList: {}, 기본 성별: {}", statusList.size(), defaultGender);
-                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, defaultGender);
-                logger.info("[새 건강정보 PersonalizedIntake 계산 완료] PersonalizedIntake 개수: {}", personalizedIntake.size());
-                
+                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, "male"); // 기본값
+
                 HealthInfo newHealthInfo = new HealthInfo();
                 newHealthInfo.setUserid(userId);
                 newHealthInfo.setDiseases(diseases);
-                newHealthInfo.setGender(defaultGender);
+                newHealthInfo.setGender("male");
                 newHealthInfo.setStatusList(statusList);
                 newHealthInfo.setPersonalizedIntake(personalizedIntake);
                 newHealthInfo.setAllergies(new ArrayList<>());
                 newHealthInfo.setDislikes(new ArrayList<>());
-                
-                logger.info("[새 건강정보 저장 시작] userId: {}, 질병 목록: {}", userId, diseases);
+
+                logger.info("[저장 전 StatusList] {}", newHealthInfo.getStatusList());
+                logger.info("[저장 전 PersonalizedIntake] {}", newHealthInfo.getPersonalizedIntake());
+
                 healthInfoRepository.save(newHealthInfo);
-                logger.info("[새 건강정보 저장 완료] userId: {}", userId);
             }
-            
             logger.info("[건강검진 결과서 분석 전체 완료] userId: {}", userId);
-            
         } catch (Exception e) {
-            logger.error("[건강검진 결과서 분석 실패] userId: {}, 오류 유형: {}, 오류 메시지: {}", 
-                        userId, e.getClass().getSimpleName(), e.getMessage());
-            logger.error("[스택 트레이스]", e);
+            logger.error("[건강검진 결과서 분석 실패] userId: {}, 오류: {}", userId, e.getMessage());
             throw e;
         }
     }
