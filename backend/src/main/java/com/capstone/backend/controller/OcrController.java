@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -22,10 +23,21 @@ public class OcrController {
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<List<String>>> uploadImage(
-        @RequestParam("userId") String userId,
-        @RequestParam("image") MultipartFile image) throws IOException {
+        @RequestParam(value = "userId", required = false) String userId,
+        @RequestParam(value = "userid", required = false) String userid,
+        @RequestParam("image") MultipartFile image,
+        HttpServletRequest request) throws IOException {
         
-        log.info("[건강검진 결과서 업로드] userId: {}, 파일명: {}", userId, image.getOriginalFilename());
+        String finalUserId = userId != null ? userId : userid;
+        log.info("[건강검진 결과서 업로드] 요청 파라미터 전체: {}", request.getParameterMap());
+        log.info("[건강검진 결과서 업로드] userId: '{}', 파일명: {}", finalUserId, image.getOriginalFilename());
+        
+        // userId 검증
+        if (finalUserId == null || finalUserId.trim().isEmpty()) {
+            log.error("[건강검진 결과서 업로드] userId가 null이거나 빈 문자열입니다");
+            return ResponseEntity.badRequest()
+                .body(new ApiResponse<>(false, "userId가 필요합니다", List.of()));
+        }
         
         // 임시 파일 생성
         File tempFile = File.createTempFile("healthscan", ".png");
@@ -33,18 +45,18 @@ public class OcrController {
 
         try {
             // Google Document AI로 질병 정보 추출 및 저장
-            healthInfoService.extractAndSaveDiseasesFromImage(userId, tempFile);
+            healthInfoService.extractAndSaveDiseasesFromImage(finalUserId, tempFile);
             
             // 업데이트된 질병 목록 반환
-            com.capstone.backend.domain.HealthInfo updatedInfo = healthInfoService.getHealthInfoByUserId(userId);
+            com.capstone.backend.domain.HealthInfo updatedInfo = healthInfoService.getHealthInfoByUserId(finalUserId);
             List<String> diseases = updatedInfo != null ? updatedInfo.getDiseases() : List.of();
             
             return ResponseEntity.ok(new ApiResponse<>(true, "건강검진 결과서 분석 완료", diseases));
         } catch (Exception e) {
-            log.error("[건강검진 결과서 분석 실패] userId: {}, 오류: {}", userId, e.getMessage());
+            log.error("[건강검진 결과서 분석 실패] userId: {}, 오류: {}", finalUserId, e.getMessage());
             // 기본 질병 목록 반환 (분석 실패 시)
             try {
-                com.capstone.backend.domain.HealthInfo existingInfo = healthInfoService.getHealthInfoByUserId(userId);
+                com.capstone.backend.domain.HealthInfo existingInfo = healthInfoService.getHealthInfoByUserId(finalUserId);
                 List<String> diseases = existingInfo != null ? existingInfo.getDiseases() : List.of();
                 return ResponseEntity.ok(new ApiResponse<>(false, "건강검진 결과서 분석 실패, 기존 정보 반환", diseases));
             } catch (Exception ex) {
