@@ -93,6 +93,7 @@ public class HealthInfoService {
             healthInfo.setDislikes(request.getDislikes());
             
             logger.info("[StatusList 설정 전] 기존 StatusList: {}", healthInfo.getStatusList());
+            // 중복 계산 제거: 이미 위에서 statusList를 계산함
             healthInfo.setStatusList(statusList);
             logger.info("[StatusList 설정 후] 새 StatusList: {}", healthInfo.getStatusList());
             
@@ -130,7 +131,9 @@ public class HealthInfoService {
         
         // 저장
         HealthInfo savedHealthInfo = healthInfoRepository.save(healthInfo);
-        userRepository.save(user);
+        logger.info("[저장 후 HealthInfo] {}", savedHealthInfo);
+        HealthInfo reloaded = healthInfoRepository.findByUserid(userId).orElse(null);
+        logger.info("[MongoDB에서 재조회] {}", reloaded);
         
         // 저장 후 확인
         logger.info("[저장 후 StatusList] {}", savedHealthInfo.getStatusList());

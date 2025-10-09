@@ -29,14 +29,14 @@ public class HealthInfoAnalyzer {
         // aggregateNutrientStatuses 호출하여 실제 분석 수행
         List<NutrientStatusMapping> statusList = aggregateNutrientStatuses(diseases);
         
-        log.info("[HealthInfoAnalyzer] 분석 완료 - StatusList 개수: {}", statusList.size());
-        for (NutrientStatusMapping status : statusList) {
-            log.info("[HealthInfoAnalyzer] 매핑 결과: {} -> {}, 가중치: {}, 수정자: {}", 
-                    status.getNutrient(), status.getStatus(), status.getWeight(), status.getModifier());
-        }
+        // log.info("[HealthInfoAnalyzer] 분석 완료 - StatusList 개수: {}", statusList.size());
+        // for (NutrientStatusMapping status : statusList) {
+        //     log.info("[HealthInfoAnalyzer] 매핑 결과: {} -> {}, 가중치: {}, 수정자: {}", 
+        //             status.getNutrient(), status.getStatus(), status.getWeight(), status.getModifier());
+        
         
         return statusList;
-    }
+        }
 
     public List<NutrientStatusMapping> aggregateNutrientStatuses(List<String> diseases) {
         if (diseases == null || diseases.isEmpty()) {
@@ -44,12 +44,12 @@ public class HealthInfoAnalyzer {
             return new ArrayList<>();
         }
 
-        // 모든 질병에 대한 관계를 수집
         List<DiseaseNutrientRelation> allRelations = new ArrayList<>();
         for (String disease : diseases) {
-            List<DiseaseNutrientRelation> diseaseRelations = relationRepo.findByDisease(disease);
+            String normalized = normalizeDiseaseName(disease);
+            List<DiseaseNutrientRelation> diseaseRelations = relationRepo.findByDisease(normalized);
             allRelations.addAll(diseaseRelations);
-            log.info("[HealthInfoAnalyzer] 질병 '{}' 관련 영양소 관계 개수: {}", disease, diseaseRelations.size());
+            log.info("[HealthInfoAnalyzer] 질병 '{}'({}) 관련 영양소 관계 개수: {}", disease, normalized, diseaseRelations.size());
         }
 
         // 영양소별로 그룹화
@@ -92,6 +92,19 @@ public class HealthInfoAnalyzer {
             case CAUTION -> 2;
             case RESTRICTED -> 3;
             case NEUTRAL -> 0;
+        };
+    }
+
+    private String normalizeDiseaseName(String disease) {
+        // 예시: DB에 저장된 질병명과 매핑
+        return switch (disease.trim()) {
+            case "당뇨", "당뇨병" -> "당뇨병";
+            case "고혈압", "고혈압증" -> "고혈압";
+            case "고지혈증" -> "고지혈증";
+            case "빈혈" -> "빈혈";
+            case "골다공증" -> "골다공증";
+            // 필요시 추가
+            default -> disease.trim();
         };
     }
 }
