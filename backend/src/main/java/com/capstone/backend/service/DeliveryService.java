@@ -65,15 +65,15 @@ public class DeliveryService {
                 switch (slot) {
                     case "breakfast" -> {
                         u.set("delivery_breakfast", true);
-                        u.set("delivery_breakfast_status", DeliveryStatus.IN_TRANSIT);
+                        u.set("delivery_breakfast_status", DeliveryStatus.PREPARING);
                     }
                     case "lunch" -> {
                         u.set("delivery_lunch", true);
-                        u.set("delivery_lunch_status", DeliveryStatus.IN_TRANSIT);
+                        u.set("delivery_lunch_status", DeliveryStatus.PREPARING);
                     }
                     case "dinner" -> {
                         u.set("delivery_dinner", true);
-                        u.set("delivery_dinner_status", DeliveryStatus.IN_TRANSIT);
+                        u.set("delivery_dinner_status", DeliveryStatus.PREPARING);
                     }
                 }
             }

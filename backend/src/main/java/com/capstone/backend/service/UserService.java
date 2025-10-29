@@ -11,9 +11,13 @@ import com.capstone.backend.repository.AddressRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -58,52 +62,70 @@ public class UserService {
 
     @Transactional
     public User addAddress(String userid, AddressRequest req) {
-        User user = userRepository.findByUserid(userid)
-            .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        logger.info("[주소 추가] 시작 userId={}, req={}", userid, req);
+        try {
+            User user = userRepository.findByUserid(userid)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
-        Address addr = Address.builder()
-            .addressRoad(req.getAddressRoad())
-            .addressJibun(emptyToNull(req.getAddressJibun()))
-            .postCode(emptyToNull(req.getPostCode()))
-            .addressDetail(emptyToNull(req.getAddressDetail()))   // ✅
-            .isDefault(false)
-            .build();
+            Address addr = Address.builder()
+                .addressRoad(req.getAddressRoad())
+                .addressJibun(emptyToNull(req.getAddressJibun()))
+                .postCode(emptyToNull(req.getPostCode()))
+                .addressDetail(emptyToNull(req.getAddressDetail()))
+                .isDefault(false)
+                .build();
 
-        user.getAddresses().add(addr);
-        return userRepository.save(user);
+            user.getAddresses().add(addr);
+            User saved = userRepository.save(user);
+            logger.info("[주소 추가] 완료 userId={}, addedAddress={}", userid, addr);
+            return saved;
+        } catch (Exception e) {
+            logger.error("[주소 추가] 실패 userId={}, error={}", userid, e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Transactional
     public User changeCurrentAddress(String userid, AddressRequest req) {
-        User user = userRepository.findByUserid(userid)
-            .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        logger.info("[대표 주소 변경] 시작 userId={}, req={}", userid, req);
+        try {
+            User user = userRepository.findByUserid(userid)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
-        user.getAddresses().forEach(a -> a.setDefault(false));
+            user.getAddresses().forEach(a -> a.setDefault(false));
+            logger.info("[대표 주소 변경] 기존 주소 전부 isDefault=false 처리 완료 userId={}", userid);
 
-        Address target = user.getAddresses().stream()
-            .filter(a -> equalsAddr(a, req))
-            .findFirst()
-            .orElseGet(() -> {
-                Address na = Address.builder()
-                    .addressRoad(req.getAddressRoad())
-                    .addressJibun(emptyToNull(req.getAddressJibun()))
-                    .postCode(emptyToNull(req.getPostCode()))
-                    .addressDetail(emptyToNull(req.getAddressDetail())) // ✅
-                    .isDefault(false)
-                    .build();
-                user.getAddresses().add(na);
-                return na;
-            });
+            Address target = user.getAddresses().stream()
+                .filter(a -> equalsAddr(a, req))
+                .findFirst()
+                .orElseGet(() -> {
+                    Address na = Address.builder()
+                        .addressRoad(req.getAddressRoad())
+                        .addressJibun(emptyToNull(req.getAddressJibun()))
+                        .postCode(emptyToNull(req.getPostCode()))
+                        .addressDetail(emptyToNull(req.getAddressDetail()))
+                        .isDefault(false)
+                        .build();
+                    user.getAddresses().add(na);
+                    logger.info("[대표 주소 변경] 새로운 주소 생성 및 추가 userId={}, newAddr={}", userid, na);
+                    return na;
+                });
 
-        target.setDefault(true);
+            target.setDefault(true);
 
-        // 대표 주소 캐시 동기화
-        user.setAddressRoad(target.getAddressRoad());
-        user.setAddressJibun(target.getAddressJibun());
-        user.setPostCode(target.getPostCode());
-        user.setAddressDetail(target.getAddressDetail());          // ✅
+            // 대표 주소 캐시 동기화
+            user.setAddressRoad(target.getAddressRoad());
+            user.setAddressJibun(target.getAddressJibun());
+            user.setPostCode(target.getPostCode());
+            user.setAddressDetail(target.getAddressDetail());
 
-        return userRepository.save(user);
+            User saved = userRepository.save(user);
+            logger.info("[대표 주소 변경] 완료 userId={}, currentAddr={}", userid, target);
+            return saved;
+        } catch (Exception e) {
+            logger.error("[대표 주소 변경] 실패 userId={}, error={}", userid, e.getMessage(), e);
+            throw e;
+        }
     }
 
 

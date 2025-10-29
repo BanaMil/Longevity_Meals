@@ -148,10 +148,10 @@ public class HealthInfoService {
     public void extractAndSaveDiseasesFromImage(String userId, File imageFile) throws IOException {
         logger.info("[건강검진 결과서 분석] userId: {}, 파일: {}", userId, imageFile.getName());
         try {
-            String extractedText = googleDocumentService.extractTextFromImage(imageFile);
-            logger.info("[텍스트 추출 완료] 추출된 텍스트 길이: {}", extractedText.length());
-            List<String> diseases = googleDocumentService.extractDiseases(extractedText);
-            logger.info("[질병 추출 완료] 발견된 질병: {}", diseases);
+            // use new scan data extractor (text + parsed attributes)
+            var scan = googleDocumentService.extractScanData(imageFile);
+            List<String> diseases = scan.diseases();
+            logger.info("[텍스트 및 속성 추출 완료] 질병: {}, height(cm): {}, weight(kg): {}, gender: {}", diseases, scan.heightCm(), scan.weightKg(), scan.gender());
 
             HealthInfo healthInfo = null;
             try {
@@ -170,6 +170,20 @@ public class HealthInfoService {
                 }
                 healthInfo.setDiseases(existingDiseases);
 
+                // merge physical attributes: only set if parsed value exists and existing field is null
+                if (scan.heightCm() != null && (healthInfo.getHeight() == null || healthInfo.getHeight() <= 0.0)) {
+                    healthInfo.setHeight(scan.heightCm());
+                    logger.info("[사진 기반] 키 설정: {}", scan.heightCm());
+                }
+                if (scan.weightKg() != null && (healthInfo.getWeight() == null || healthInfo.getWeight() <= 0.0)) {
+                    healthInfo.setWeight(scan.weightKg());
+                    logger.info("[사진 기반] 몸무게 설정: {}", scan.weightKg());
+                }
+                if (scan.gender() != null && (healthInfo.getGender() == null || healthInfo.getGender().isBlank())) {
+                    healthInfo.setGender(scan.gender());
+                    logger.info("[사진 기반] 성별 설정: {}", scan.gender());
+                }
+
                 // ✅ 기존 질병 + 사진 분석 질병 통합 후 재계산
                 List<NutrientStatusMapping> statusList = analyzer.analyze(existingDiseases);
                 healthInfo.setStatusList(statusList);
@@ -182,14 +196,17 @@ public class HealthInfoService {
 
                 healthInfoRepository.save(healthInfo);
             } else {
-                // 새 HealthInfo 생성
+                // 새 HealthInfo 생성 — use parsed attributes when available
                 List<NutrientStatusMapping> statusList = analyzer.analyze(diseases);
-                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, "male"); // 기본값
+                String gender = scan.gender() != null ? scan.gender() : "male";
+                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, gender);
 
                 HealthInfo newHealthInfo = new HealthInfo();
                 newHealthInfo.setUserid(userId);
                 newHealthInfo.setDiseases(diseases);
-                newHealthInfo.setGender("male");
+                newHealthInfo.setGender(gender);
+                if (scan.heightCm() != null) newHealthInfo.setHeight(scan.heightCm());
+                if (scan.weightKg() != null) newHealthInfo.setWeight(scan.weightKg());
                 newHealthInfo.setStatusList(statusList);
                 newHealthInfo.setPersonalizedIntake(personalizedIntake);
                 newHealthInfo.setAllergies(new ArrayList<>());

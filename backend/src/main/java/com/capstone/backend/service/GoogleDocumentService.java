@@ -126,4 +126,63 @@ public class GoogleDocumentService {
 
         return diseases;
     }
+
+    // New: container for scan results (diseases + basic attributes)
+    public static record HealthScanResult(List<String> diseases, Double heightCm, Double weightKg, String gender) {}
+
+    /**
+     * Extract text, diseases and try to parse height(cm), weight(kg), gender from the document text.
+     */
+    public HealthScanResult extractScanData(File imageFile) throws IOException {
+        String text = extractTextFromImage(imageFile);
+        if (text == null || text.isBlank()) {
+            return new HealthScanResult(List.of(), null, null, null);
+        }
+
+        // existing disease extraction
+        List<String> diseases = extractDiseases(text);
+
+        // conservative parsing for height (cm) and weight (kg) and gender
+        Double height = null;
+        Double weight = null;
+        String gender = null;
+
+        // Normalize text spacing
+        String t = text.replaceAll("[,\\n\\r]+", " ").trim();
+
+        // height patterns: "키: 170 cm", "키 170cm", "170 cm", "신장 170cm"
+        java.util.regex.Matcher h1 = java.util.regex.Pattern.compile("(?:키|신장)[:\\s]*?(\\d{2,3}(?:\\.\\d+)?)\\s*cm", java.util.regex.Pattern.CASE_INSENSITIVE).matcher(t);
+        if (h1.find()) {
+            try { height = Double.parseDouble(h1.group(1)); } catch (Exception ignored) {}
+        } else {
+            java.util.regex.Matcher h2 = java.util.regex.Pattern.compile("(\\d{2,3})\\s*cm").matcher(t);
+            if (h2.find()) {
+                try { height = Double.parseDouble(h2.group(1)); } catch (Exception ignored) {}
+            }
+        }
+
+        // weight patterns: "몸무게: 70 kg", "체중 70kg", "70 kg"
+        java.util.regex.Matcher w1 = java.util.regex.Pattern.compile("(?:몸무게|체중)[:\\s]*?(\\d{2,3}(?:\\.\\d+)?)\\s*kg", java.util.regex.Pattern.CASE_INSENSITIVE).matcher(t);
+        if (w1.find()) {
+            try { weight = Double.parseDouble(w1.group(1)); } catch (Exception ignored) {}
+        } else {
+            java.util.regex.Matcher w2 = java.util.regex.Pattern.compile("(\\d{2,3}(?:\\.\\d+)?)\\s*kg").matcher(t);
+            if (w2.find()) {
+                try { weight = Double.parseDouble(w2.group(1)); } catch (Exception ignored) {}
+            }
+        }
+
+        // gender patterns: "남", "여", "male", "female"
+        java.util.regex.Matcher g1 = java.util.regex.Pattern.compile("\\b(남자|남|M|Male|male)\\b", java.util.regex.Pattern.CASE_INSENSITIVE).matcher(t);
+        if (g1.find()) {
+            gender = "male";
+        } else {
+            java.util.regex.Matcher g2 = java.util.regex.Pattern.compile("\\b(여자|여|F|Female|female)\\b", java.util.regex.Pattern.CASE_INSENSITIVE).matcher(t);
+            if (g2.find()) {
+                gender = "female";
+            }
+        }
+
+        return new HealthScanResult(diseases, height, weight, gender);
+    }
 }
