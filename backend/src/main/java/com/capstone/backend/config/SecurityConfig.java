@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.http.HttpMethod; // <-- added
+import org.springframework.http.HttpMethod; // added
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,10 +24,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/check-id").permitAll() // 인증 관련만 허용
-            .requestMatchers("/api/auth/users/*/addresses").permitAll() // 주소 목록 조회/추가 허용
-            .requestMatchers(HttpMethod.PUT, "/api/auth/users/*/addresses/current").permitAll() // 대표주소 변경 허용 (추가)
-            .requestMatchers("/api/auth/users/**").authenticated() // 사용자 정보 관련은 인증 필요
+            // auth-related open endpoints
+            .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/check-id").permitAll()
+            // permit address-related endpoints (list/add/current/changeCurrent) without auth
+            .requestMatchers("/api/auth/users/*/addresses/**").permitAll() // <-- broadened to include /current and other address subpaths
+            // allow CORS preflight
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            // other user endpoints require auth
+            .requestMatchers("/api/auth/users/**").authenticated()
             .requestMatchers("/api/health/health_info").permitAll()
             .requestMatchers("/api/health/analysis/**").permitAll()
             .requestMatchers("/api/health/upload").permitAll()

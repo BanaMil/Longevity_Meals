@@ -46,18 +46,18 @@ public class AuthController {
         }
     }
     
-    @GetMapping("/users/{userid}/addresses")
-    public ResponseEntity<?> list(@PathVariable String userid) {
-        var user = userRepository.findByUserid(userid)
-            .orElseThrow(() -> new IllegalArgumentException("user not found"));
+    // @GetMapping("/users/{userid}/addresses")
+    // public ResponseEntity<?> list(@PathVariable String userid) {
+    //     var user = userRepository.findByUserid(userid)
+    //         .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
-        var list = user.getAddresses().stream()
-            .sorted((a, b) -> Boolean.compare(!a.isDefault(), !b.isDefault())) // 기본주소 먼저
-            .map(AddressResponse::from)
-            .toList();
+    //     var list = user.getAddresses().stream()
+    //         .sorted((a, b) -> Boolean.compare(!a.isDefault(), !b.isDefault())) // 기본주소 먼저
+    //         .map(AddressResponse::from)
+    //         .toList();
 
-        return ResponseEntity.ok(list);
-    }
+    //     return ResponseEntity.ok(list);
+    // }
 
 
     @PostMapping("/users/{userid}/addresses")
@@ -71,20 +71,20 @@ public class AuthController {
         return ResponseEntity.status(201).body(list);
     }
 
-    @GetMapping("/users/{userid}/addresses/current")
-    public ResponseEntity<?> current(@PathVariable String userid) {
-        log.info("[대표 주소 조회 요청] userId={}", userid);
-        var user = userRepository.findByUserid(userid)
-            .orElseThrow(() -> new IllegalArgumentException("user not found"));
+    // @GetMapping("/users/{userid}/addresses/current")
+    // public ResponseEntity<?> current(@PathVariable String userid) {
+    //     log.info("[대표 주소 조회 요청] userId={}", userid);
+    //     var user = userRepository.findByUserid(userid)
+    //         .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
-        var cur = user.getAddresses().stream()
-            .filter(Address::isDefault)
-            .findFirst()
-            .orElse(null);
+    //     var cur = user.getAddresses().stream()
+    //         .filter(Address::isDefault)
+    //         .findFirst()
+    //         .orElse(null);
 
-        log.info("[대표 주소 조회 응답] userId={}, currentAddress={}", userid, cur == null ? "없음" : cur);
-        return ResponseEntity.ok(cur == null ? null : AddressResponse.from(cur));
-    }
+    //     log.info("[대표 주소 조회 응답] userId={}, currentAddress={}", userid, cur == null ? "없음" : cur);
+    //     return ResponseEntity.ok(cur == null ? null : AddressResponse.from(cur));
+    // }
 
     @PutMapping("/users/{userid}/addresses/current")
     public ResponseEntity<?> changeCurrent(@PathVariable String userid,
@@ -111,6 +111,11 @@ public class AuthController {
             LoginResponse responseData = new LoginResponse(
                 user.getUserid(),
                 user.getUsername(),
+                user.getAddress(),
+                user.getAddressJibun(),
+                user.getAddressRoad(),
+                user.getAddressDetail(),
+                user.getAddresses(),
                 token,
                 user.isHealthInfoSubmitted()
             );
