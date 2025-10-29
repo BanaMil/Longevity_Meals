@@ -4,6 +4,7 @@ package com.capstone.backend.dto;
 
 import com.capstone.backend.domain.Address;
 import lombok.Getter;
+import java.util.List;
 
 @Getter
 public class LoginResponse {
