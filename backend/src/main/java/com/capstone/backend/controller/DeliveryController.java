@@ -46,11 +46,11 @@ public class DeliveryController {
 	}
 
 	// 배송 중인 식단 조회 (여러 날짜)
-	@GetMapping("/in-transit/{userId}")
-	public Map<String, DailyMeals> getInTransitMeals(
+	@GetMapping("/preparing/{userId}")
+	public Map<String, DailyMeals> getPreparingMeals(
 		@PathVariable String userId
 	) {
-		return deliveryService.getInTransitMeals(userId);
+		return deliveryService.getPreparingMeals(userId);
 	}
 
 	// // 배송 상태 변경 (관리자/시스템용)

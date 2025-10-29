@@ -101,16 +101,16 @@ public class DeliveryService {
 		return statusMap;
 	}
 
-	// 배송 중인 식단 조회 (userId의 IN_TRANSIT 상태인 날짜별 식단 반환)
-	public Map<String, DailyMeals> getInTransitMeals(String userId) {
+	// 배송 중인 식단 조회 (userId의 PREPARING 상태인 날짜별 식단 반환)
+	public Map<String, DailyMeals> getPreparingMeals(String userId) {
 		List<MealRecommendationLog> logs = mealRecommendationLogRepository.findByUserIdAndDateAfter(userId, LocalDate.now().minusDays(7));
 		Map<String, DailyMeals> result = new java.util.HashMap<>();
 		for (MealRecommendationLog log : logs) {
-			boolean hasInTransit =
+			boolean hasPreparing =
 				log.getDeliveryBreakfastStatus() == DeliveryStatus.PREPARING ||
 				log.getDeliveryLunchStatus() == DeliveryStatus.PREPARING ||
 				log.getDeliveryDinnerStatus() == DeliveryStatus.PREPARING;
-			if (hasInTransit) {
+			if (hasPreparing) {
 				DailyMeals daily = new DailyMeals();
 				daily.setBreakfast(
 					log.getDeliveryBreakfastStatus() == DeliveryStatus.PREPARING ? log.getBreakfast() : List.of()
