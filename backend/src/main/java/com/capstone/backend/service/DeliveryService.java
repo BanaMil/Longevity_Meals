@@ -107,19 +107,19 @@ public class DeliveryService {
 		Map<String, DailyMeals> result = new java.util.HashMap<>();
 		for (MealRecommendationLog log : logs) {
 			boolean hasInTransit =
-				log.getDeliveryBreakfastStatus() == DeliveryStatus.IN_TRANSIT ||
-				log.getDeliveryLunchStatus() == DeliveryStatus.IN_TRANSIT ||
-				log.getDeliveryDinnerStatus() == DeliveryStatus.IN_TRANSIT;
+				log.getDeliveryBreakfastStatus() == DeliveryStatus.PREPARING ||
+				log.getDeliveryLunchStatus() == DeliveryStatus.PREPARING ||
+				log.getDeliveryDinnerStatus() == DeliveryStatus.PREPARING;
 			if (hasInTransit) {
 				DailyMeals daily = new DailyMeals();
 				daily.setBreakfast(
-					log.getDeliveryBreakfastStatus() == DeliveryStatus.IN_TRANSIT ? log.getBreakfast() : List.of()
+					log.getDeliveryBreakfastStatus() == DeliveryStatus.PREPARING ? log.getBreakfast() : List.of()
 				);
 				daily.setLunch(
-					log.getDeliveryLunchStatus() == DeliveryStatus.IN_TRANSIT ? log.getLunch() : List.of()
+					log.getDeliveryLunchStatus() == DeliveryStatus.PREPARING ? log.getLunch() : List.of()
 				);
 				daily.setDinner(
-					log.getDeliveryDinnerStatus() == DeliveryStatus.IN_TRANSIT ? log.getDinner() : List.of()
+					log.getDeliveryDinnerStatus() == DeliveryStatus.PREPARING ? log.getDinner() : List.of()
 				);
 				daily.setDate(log.getDate().toString());
 				result.put(log.getDate().toString(), daily);
