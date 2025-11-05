@@ -1,4 +1,4 @@
-from pprint import pprint
+from pprint import pformat as pp, pprint
 from typing import List
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, SearchRequest, FieldCondition, MatchValue
@@ -51,11 +51,11 @@ def search_similar_foods(
 
     # raw payload 예시(처음 2개)
     if recommended_results:
-        logging.info(f"[search_similar_foods] recommended raw payload sample: {pprint.pformat(recommended_results[0].payload)}")
+        logging.info(f"[search_similar_foods] recommended raw payload sample: {pp.pformat(recommended_results[0].payload)}")
         if len(recommended_results) > 1:
-            logging.info(f"[search_similar_foods] recommended raw payload sample2: {pprint.pformat(recommended_results[1].payload)}")
+            logging.info(f"[search_similar_foods] recommended raw payload sample2: {pp.pformat(recommended_results[1].payload)}")
     if restricted_results:
-        logging.info(f"[search_similar_foods] restricted raw payload sample: {pprint.pformat(restricted_results[0].payload)}")
+        logging.info(f"[search_similar_foods] restricted raw payload sample: {pp.pformat(restricted_results[0].payload)}")
 
     logging.info(f"[search_similar_foods] recommended_results: {len(recommended_results)}개, restricted_results: {len(restricted_results)}개")
     logging.info(f"[search_similar_foods] recommended 음식명: {[res.payload.get('name') for res in recommended_results]}")
