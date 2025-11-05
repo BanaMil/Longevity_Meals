@@ -118,6 +118,7 @@ public class AuthController {
                 user.getAddress(),
                 user.getAddressJibun(),
                 user.getAddressRoad(),
+                user.getPostCode(),
                 user.getAddressDetail(),
                 user.getAddresses(),
                 token,
