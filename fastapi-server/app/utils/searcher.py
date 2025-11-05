@@ -38,13 +38,15 @@ def search_similar_foods(
     """
     import logging
     filters = build_qdrant_filter(request.allergies, request.dislikes)
-    import pprint
     logging.info(f"[search_similar_foods] build_qdrant_filter must_not: {getattr(filters, 'must_not', None)}")
 
-    # Qdrant에서 두 벡터 각각으로 검색
+    # Increase limits so more candidates are considered
+    FETCH_LIMIT = 100   # <- increased from 30
+    logging.info(f"[search_similar_foods] using FETCH_LIMIT={FETCH_LIMIT} for Qdrant searches")
 
-    recommended_results = search(client, recommended_vector, filters, limit=30)
-    restricted_results = search(client, restricted_vector, filters, limit=30)
+    # Qdrant에서 두 벡터 각각으로 검색
+    recommended_results = search(client, recommended_vector, filters, limit=FETCH_LIMIT)
+    restricted_results = search(client, restricted_vector, filters, limit=FETCH_LIMIT)
 
     # raw payload 예시(처음 2개)
     if recommended_results:
@@ -108,7 +110,8 @@ def search_similar_foods(
 
     # 점수순 정렬 후 반환
     sorted_foods = sorted(food_map.values(), key=lambda x: x.score, reverse=True)
-    logging.info(f"[search_similar_foods] 최종 후보 개수: {len(sorted_foods)} / 상위 30개 반환")
-    for f in sorted_foods[:30]:
+    FINAL_LIMIT = 100  # <- return top 100 candidates to caller (increase as needed)
+    logging.info(f"[search_similar_foods] 최종 후보 개수 (정렬후): {len(sorted_foods)} / 상위 {FINAL_LIMIT}개 반환")
+    for f in sorted_foods[:FINAL_LIMIT]:
         logging.info(f"[search_similar_foods] 최종 후보: name={f.name}, score={f.score}, ingredients={f.ingredients}")
-    return sorted_foods[:30]  # 최대 30개 반환
+    return sorted_foods[:FINAL_LIMIT]  # 반환 수량을 늘림
