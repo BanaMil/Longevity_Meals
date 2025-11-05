@@ -32,7 +32,10 @@ public class HealthInfoController {
     @PostMapping("/health_info")
     public ResponseEntity<ApiResponse<Object>> submitHealthInfo(@Valid @RequestBody HealthInfoRequest request) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("[건강정보 제출 요청] userId={}, diseases={}, height={}, weight={}, gender={}", 
+                 userId, request.getDiseases(), request.getHeight(), request.getWeight(), request.getGender());
         healthInfoService.saveHealthInfo(userId, request);
+        log.info("[건강정보 저장 완료] userId={}", userId);
         return ResponseEntity.ok(new ApiResponse<>(true, "건강 정보 저장 완료", null));
     }
     

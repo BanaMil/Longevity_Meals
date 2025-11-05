@@ -100,11 +100,15 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest request) {
         MediaType mediaTypeUtf8 = new MediaType("application", "json", StandardCharsets.UTF_8);
+        log.info("[로그인 요청] userid={}", request.getUserid());
         try {
             User user = userService.login(
                 request.getUserid(),
                 request.getPassword()
             );
+
+            log.info("[로그인 성공] userid={}", user.getUserid());
+            log.info("[로그인] healthInfoSubmitted (from user): {}", user.isHealthInfoSubmitted());
 
             String token = jwtTokenProvider.createToken(user.getUserid());
 
@@ -119,13 +123,16 @@ public class AuthController {
                 token,
                 user.isHealthInfoSubmitted()
             );
+
+            log.info("[로그인 응답 준비] userid={}, healthInfoSubmitted={}", user.getUserid(), responseData.isHealthInfoSubmitted());
             
             return ResponseEntity
                 .ok()
                 .contentType(mediaTypeUtf8)
                 .body(new ApiResponse<>(true, "로그인 성공", responseData));
 
-        } catch (RuntimeException e){            
+        } catch (RuntimeException e){
+            log.warn("[로그인 실패] userid={}, reason={}", request.getUserid(), e.getMessage());
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .contentType(mediaTypeUtf8)
