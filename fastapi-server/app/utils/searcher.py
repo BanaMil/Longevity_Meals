@@ -1,4 +1,3 @@
-from pprint import pformat as pp, pprint
 from typing import List
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Filter, SearchRequest, FieldCondition, MatchValue
@@ -39,23 +38,21 @@ def search_similar_foods(
     """
     import logging
     filters = build_qdrant_filter(request.allergies, request.dislikes)
+    import pprint
     logging.info(f"[search_similar_foods] build_qdrant_filter must_not: {getattr(filters, 'must_not', None)}")
 
-    # Increase limits so more candidates are considered
-    FETCH_LIMIT = 100   # <- increased from 30
-    logging.info(f"[search_similar_foods] using FETCH_LIMIT={FETCH_LIMIT} for Qdrant searches")
-
     # Qdrant에서 두 벡터 각각으로 검색
-    recommended_results = search(client, recommended_vector, filters, limit=FETCH_LIMIT)
-    restricted_results = search(client, restricted_vector, filters, limit=FETCH_LIMIT)
+
+    recommended_results = search(client, recommended_vector, filters, limit=100)
+    restricted_results = search(client, restricted_vector, filters, limit=100)
 
     # raw payload 예시(처음 2개)
     if recommended_results:
-        logging.info(f"[search_similar_foods] recommended raw payload sample: {pp.pformat(recommended_results[0].payload)}")
+        logging.info(f"[search_similar_foods] recommended raw payload sample: {pprint.pformat(recommended_results[0].payload)}")
         if len(recommended_results) > 1:
-            logging.info(f"[search_similar_foods] recommended raw payload sample2: {pp.pformat(recommended_results[1].payload)}")
+            logging.info(f"[search_similar_foods] recommended raw payload sample2: {pprint.pformat(recommended_results[1].payload)}")
     if restricted_results:
-        logging.info(f"[search_similar_foods] restricted raw payload sample: {pp.pformat(restricted_results[0].payload)}")
+        logging.info(f"[search_similar_foods] restricted raw payload sample: {pprint.pformat(restricted_results[0].payload)}")
 
     logging.info(f"[search_similar_foods] recommended_results: {len(recommended_results)}개, restricted_results: {len(restricted_results)}개")
     logging.info(f"[search_similar_foods] recommended 음식명: {[res.payload.get('name') for res in recommended_results]}")
@@ -111,8 +108,7 @@ def search_similar_foods(
 
     # 점수순 정렬 후 반환
     sorted_foods = sorted(food_map.values(), key=lambda x: x.score, reverse=True)
-    FINAL_LIMIT = 100  # <- return top 100 candidates to caller (increase as needed)
-    logging.info(f"[search_similar_foods] 최종 후보 개수 (정렬후): {len(sorted_foods)} / 상위 {FINAL_LIMIT}개 반환")
-    for f in sorted_foods[:FINAL_LIMIT]:
+    logging.info(f"[search_similar_foods] 최종 후보 개수: {len(sorted_foods)} / 상위 30개 반환")
+    for f in sorted_foods[:100]:
         logging.info(f"[search_similar_foods] 최종 후보: name={f.name}, score={f.score}, ingredients={f.ingredients}")
-    return sorted_foods[:FINAL_LIMIT]  # 반환 수량을 늘림
+    return sorted_foods[:100]  # 최대 100개 반환
