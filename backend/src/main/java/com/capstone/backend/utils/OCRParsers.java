@@ -1,5 +1,10 @@
 package com.capstone.backend.utils;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+
+
 // 1) OCR 파싱 유틸 (예: com.capstone.backend.ocr.OcrParsers)
 public final class OcrParsers {
     private static final Pattern HEIGHT = Pattern.compile("키\\s*\\(cm\\)\\s*(\\d{2,3}(?:[.,]\\d)?)");
