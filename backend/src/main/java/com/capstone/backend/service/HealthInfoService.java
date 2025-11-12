@@ -82,14 +82,20 @@ public class HealthInfoService {
         HealthInfo healthInfo;
 
         if (existingHealthInfo != null) {
-            // 기존 정보 업데이트
             logger.info("[기존 건강정보 업데이트] userId: {}", userId);
             healthInfo = existingHealthInfo;
 
-            // 정보 업데이트
-            healthInfo.setGender(request.getGender());
-            healthInfo.setHeight(request.getHeight());
-            healthInfo.setWeight(request.getWeight());
+            // ✅ 값이 있을 때만 덮어씀
+            if (request.getGender() != null && !request.getGender().isBlank()) {
+                healthInfo.setGender(request.getGender());
+            }
+            if (request.getHeight() != null && request.getHeight() > 0) {
+                healthInfo.setHeight(request.getHeight());
+            }
+            if (request.getWeight() != null && request.getWeight() > 0) {
+                healthInfo.setWeight(request.getWeight());
+            }
+
             healthInfo.setDiseases(mergedDiseases);
             healthInfo.setAllergies(request.getAllergies());
             healthInfo.setDislikes(request.getDislikes());

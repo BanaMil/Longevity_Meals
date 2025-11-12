@@ -17,11 +17,9 @@ public class HealthInfoRequest {
 
     private String gender;
 
-    @Positive
-    private double height;
+    private Double height;
 
-    @Positive
-    private double weight;
+    private Double weight;
 
     private List<String> diseases;
     private List<String> allergies;
