@@ -41,11 +41,11 @@ public class HealthInfoController {
     
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<List<String>>> uploadHealthImage(
-        @RequestParam("userId") String userId,
+        @RequestParam("userId") String userid,
         @RequestParam("image") MultipartFile image) throws IOException {
-        
-        log.info("[건강검진 결과서 업로드] userId: {}, 파일명: {}", userId, image.getOriginalFilename());
-        
+
+        log.info("[건강검진 결과서 업로드] userId: {}, 파일명: {}", userid, image.getOriginalFilename());
+        String userId = userid;
         // 임시 파일 생성
         File tempFile = File.createTempFile("healthscan", ".png");
         image.transferTo(tempFile);
