@@ -32,7 +32,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             // other user endpoints require auth
             .requestMatchers("/api/auth/users/**").authenticated()
-            .requestMatchers("/api/health/health_info").permitAll()
+            .requestMatchers("/api/health/health_info").authenticated()
             .requestMatchers("/api/health/analysis/**").permitAll()
             .requestMatchers("/api/health/upload").permitAll()
             .requestMatchers("/api/health/upload-complete").permitAll()

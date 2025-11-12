@@ -41,7 +41,7 @@ public class HealthInfoController {
     
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<List<String>>> uploadHealthImage(
-        @RequestParam("userId") String userid,
+        @RequestParam("userid") String userid,
         @RequestParam("image") MultipartFile image) throws IOException {
 
         log.info("[건강검진 결과서 업로드] userId: {}, 파일명: {}", userid, image.getOriginalFilename());
