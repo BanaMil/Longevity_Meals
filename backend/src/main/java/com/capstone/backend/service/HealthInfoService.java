@@ -9,6 +9,7 @@ import com.capstone.backend.repository.HealthInfoRepository;
 import com.capstone.backend.repository.UserRepository;
 import com.capstone.backend.analysis.HealthInfoAnalyzer;
 import com.capstone.backend.analysis.NutrientTargetCalculator;
+import com.capstone.backend.utils.OcrParsers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,9 +33,6 @@ public class HealthInfoService {
     private final HealthInfoAnalyzer analyzer;
     private final NutrientTargetCalculator nutrientTargetCalculator;
     private final OCRService ocrService;
-
-    @Value("${tesseract.datapath}")
-    private String tessDataPath;
 
     @Autowired
     private GoogleDocumentService googleDocumentService;
@@ -147,64 +145,57 @@ public class HealthInfoService {
 
     public void extractAndSaveDiseasesFromImage(String userId, File imageFile) throws IOException {
         logger.info("[건강검진 결과서 분석] userId: {}, 파일: {}", userId, imageFile.getName());
+        String extractedText = googleDocumentService.extractTextFromImage(imageFile);
+        logger.info("[텍스트 추출 완료] 추출된 텍스트 길이: {}", extractedText.length());
+
+           // (A) 수치 파싱
+        Double heightCm = OcrParsers.extractHeightCm(extractedText);     // 기대: 170
+        Double weightKg = OcrParsers.extractWeightKg(extractedText);     // 기대: 72
+        int[] bp        = OcrParsers.extractBloodPressure(extractedText); // 기대: [150,95]
+        Double hba1c    = OcrParsers.extractHbA1c(extractedText);        // 기대: 7.8
+
+        // (B) 질병 추출(룰/사전 보강 필요)
+        List<String> diseases = googleDocumentService.extractDiseases(extractedText);
+        logger.info("[질병 추출] {}", diseases);
+
+        HealthInfo healthInfo = null;
         try {
-            String extractedText = googleDocumentService.extractTextFromImage(imageFile);
-            logger.info("[텍스트 추출 완료] 추출된 텍스트 길이: {}", extractedText.length());
-            List<String> diseases = googleDocumentService.extractDiseases(extractedText);
-            logger.info("[질병 추출 완료] 발견된 질병: {}", diseases);
-
-            HealthInfo healthInfo = null;
-            try {
-                healthInfo = getHealthInfoByUserId(userId);
-                logger.info("[건강정보 조회 성공] userId: {}, 기존 질병 개수: {}", userId, healthInfo.getDiseases().size());
-            } catch (Exception e) {
-                logger.warn("[건강정보 조회 실패] userId: {}, 오류: {}", userId, e.getMessage());
-            }
-
-            if (healthInfo != null) {
-                List<String> existingDiseases = new ArrayList<>(healthInfo.getDiseases());
-                for (String disease : diseases) {
-                    if (!existingDiseases.contains(disease)) {
-                        existingDiseases.add(disease);
-                    }
-                }
-                healthInfo.setDiseases(existingDiseases);
-
-                // ✅ 기존 질병 + 사진 분석 질병 통합 후 재계산
-                List<NutrientStatusMapping> statusList = analyzer.analyze(existingDiseases);
-                healthInfo.setStatusList(statusList);
-
-                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, healthInfo.getGender());
-                healthInfo.setPersonalizedIntake(personalizedIntake);
-
-                logger.info("[저장 전 StatusList] {}", healthInfo.getStatusList());
-                logger.info("[저장 전 PersonalizedIntake] {}", healthInfo.getPersonalizedIntake());
-
-                healthInfoRepository.save(healthInfo);
-            } else {
-                // 새 HealthInfo 생성
-                List<NutrientStatusMapping> statusList = analyzer.analyze(diseases);
-                List<PersonalizedIntake> personalizedIntake = nutrientTargetCalculator.calculateTargets(statusList, "male"); // 기본값
-
-                HealthInfo newHealthInfo = new HealthInfo();
-                newHealthInfo.setUserid(userId);
-                newHealthInfo.setDiseases(diseases);
-                newHealthInfo.setGender("male");
-                newHealthInfo.setStatusList(statusList);
-                newHealthInfo.setPersonalizedIntake(personalizedIntake);
-                newHealthInfo.setAllergies(new ArrayList<>());
-                newHealthInfo.setDislikes(new ArrayList<>());
-
-                logger.info("[저장 전 StatusList] {}", newHealthInfo.getStatusList());
-                logger.info("[저장 전 PersonalizedIntake] {}", newHealthInfo.getPersonalizedIntake());
-
-                healthInfoRepository.save(newHealthInfo);
-            }
-            logger.info("[건강검진 결과서 분석 전체 완료] userId: {}", userId);
+            healthInfo = getHealthInfoByUserId(userId);
+            logger.info("[건강정보 조회 성공] userId: {}, 기존 질병 개수: {}", userId, healthInfo.getDiseases().size());
         } catch (Exception e) {
-            logger.error("[건강검진 결과서 분석 실패] userId: {}, 오류: {}", userId, e.getMessage());
-            throw e;
+            logger.warn("[건강정보 조회 실패] userId: {}, 오류: {}", userId, e.getMessage());
+            healthInfo = new HealthInfo();
+            healthInfo.setUserid(userId);
+            healthInfo.setAllergies(new ArrayList<>());
+            healthInfo.setDislikes(new ArrayList<>());
+            // gender는 사용자 프로필에서 가져오는 것이 바람직
+            if (healthInfo.getGender() == null) healthInfo.setGender("male");
         }
+
+        // (D) 키/몸무게 등 업데이트: 값이 있을 때만 덮어쓰기
+        if (heightCm != null && heightCm > 0) healthInfo.setHeight(heightCm);
+        if (weightKg != null && weightKg > 0) healthInfo.setWeight(weightKg);
+        if (bp != null) { healthInfo.setSystolic(bp[0]); healthInfo.setDiastolic(bp[1]); }
+        if (hba1c != null) healthInfo.setHba1c(hba1c);
+
+        // (E) 질병 병합(중복 제거, null-safe)
+        List<String> merged = new ArrayList<>();
+        if (healthInfo.getDiseases() != null) merged.addAll(healthInfo.getDiseases());
+        for (String d : diseases) if (d != null && !merged.contains(d)) merged.add(d);
+        healthInfo.setDiseases(merged);
+
+        // (F) 영양 분석/개인화 재계산
+        List<NutrientStatusMapping> statusList = analyzer.analyze(merged);
+        healthInfo.setStatusList(statusList);
+        List<PersonalizedIntake> targets =
+            nutrientTargetCalculator.calculateTargets(statusList, healthInfo.getGender());
+        healthInfo.setPersonalizedIntake(targets);
+
+        logger.info("[저장 전 StatusList] {}", healthInfo.getStatusList());
+        logger.info("[저장 전 PersonalizedIntake] {}", healthInfo.getPersonalizedIntake());
+        healthInfoRepository.save(healthInfo);
+
+        logger.info("[건강검진 결과서 분석 완료] userId: {}", userId);
     }
 
     public HealthInfo extractAndSaveCompleteHealthInfo(String userId, File imageFile, 
