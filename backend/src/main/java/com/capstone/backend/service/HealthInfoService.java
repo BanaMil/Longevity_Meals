@@ -154,9 +154,9 @@ public class HealthInfoService {
         List<String> extracted = DiseaseExtractor.extractDiseases(text);
 
         // ② 키/몸무게/성별 추출
-        Double heightCm = extractHeightCm(text);   // ex: 170
-        Double weightKg = extractWeightKg(text);   // ex: 72
-        String genderStd = extractGenderStd(text); // ex: "male" / "female"
+        Double heightCm = OcrParsers.extractHeightCm(text);   // ex: 170
+        Double weightKg = OcrParsers.extractWeightKg(text);   // ex: 72
+        String genderStd = OcrParsers.extractGenderStd(text); // ex: "male" / "female"
 
         // ③ 기존 HealthInfo upsert
         HealthInfo hi;
