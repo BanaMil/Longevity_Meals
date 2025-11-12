@@ -10,6 +10,7 @@ import com.capstone.backend.repository.UserRepository;
 import com.capstone.backend.analysis.HealthInfoAnalyzer;
 import com.capstone.backend.analysis.NutrientTargetCalculator;
 import com.capstone.backend.utils.OcrParsers;
+import com.capstone.backend.ocr.DiseaseExtractor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
