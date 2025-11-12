@@ -1,33 +1,41 @@
 package com.capstone.backend.utils;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.util.Locale;
+import java.util.regex.*;
 
-
-
-// 1) OCR 파싱 유틸 (예: com.capstone.backend.ocr.OcrParsers)
 public final class OcrParsers {
-    private static final Pattern HEIGHT = Pattern.compile("키\\s*\\(cm\\)\\s*(\\d{2,3}(?:[.,]\\d)?)");
-    private static final Pattern WEIGHT = Pattern.compile("몸무게\\s*\\(kg\\)\\s*(\\d{1,3}(?:[.,]\\d)?)");
-    private static final Pattern BP     = Pattern.compile("혈압\\s*\\(mmHg\\)\\s*(\\d{2,3})\\s*/\\s*(\\d{2,3})");
-    private static final Pattern HBA1C  = Pattern.compile("HbA1c\\s*(\\d{1,2}(?:[.,]\\d)?)");
-    // 필요 시 추가: 총콜레스테롤, HDL, LDL, AST, ALT 등
+    // 대표 표기 + 대안 키워드(신장/체중)
+    private static final Pattern HEIGHT_CM = Pattern.compile("(키\\s*\\(cm\\)|신장)\\s*[:：]?'?\\s*(\\d{2,3}(?:[.,]\\d)?)");
+    private static final Pattern WEIGHT_KG = Pattern.compile("(몸무게\\s*\\(kg\\)|체중)\\s*[:：]?'?\\s*(\\d{1,3}(?:[.,]\\d)?)");
 
-    private static Double parseNumber(String s) {
+    // 성별: 남/여/男/女/남자/여자
+    private static final Pattern GENDER = Pattern.compile("성별\\s*[:：]?\\s*([남여男女]|남자|여자)");
+
+    private static Double toDouble(String s) {
         if (s == null) return null;
         try { return Double.valueOf(s.replace(',', '.')); } catch (Exception e) { return null; }
     }
 
     public static Double extractHeightCm(String text) {
-        var m = HEIGHT.matcher(text); return m.find() ? parseNumber(m.group(1)) : null;
+        if (text == null) return null;
+        Matcher m = HEIGHT_CM.matcher(text);
+        return m.find() ? toDouble(m.group(2)) : null;
     }
+
     public static Double extractWeightKg(String text) {
-        var m = WEIGHT.matcher(text); return m.find() ? parseNumber(m.group(1)) : null;
+        if (text == null) return null;
+        Matcher m = WEIGHT_KG.matcher(text);
+        return m.find() ? toDouble(m.group(2)) : null;
     }
-    public static int[] extractBloodPressure(String text) {
-        var m = BP.matcher(text); return m.find() ? new int[]{Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))} : null;
-    }
-    public static Double extractHbA1c(String text) {
-        var m = HBA1C.matcher(text); return m.find() ? parseNumber(m.group(1)) : null;
+
+    /** 내부 표준: "male" / "female" 반환 */
+    public static String extractGenderStd(String text) {
+        if (text == null) return null;
+        Matcher m = GENDER.matcher(text);
+        if (!m.find()) return null;
+        String g = m.group(1).toLowerCase(Locale.ROOT);
+        if (g.contains("남") || g.equals("男")) return "male";
+        if (g.contains("여") || g.equals("女")) return "female";
+        return null;
     }
 }
