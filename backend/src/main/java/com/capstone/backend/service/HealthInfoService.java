@@ -73,32 +73,75 @@ public class HealthInfoService {
 
         HealthInfo healthInfo;
         if (existingHealthInfo != null) {
-            // 업데이트
+            // 기존 정보 업데이트
+            logger.info("[기존 건강정보 업데이트] userId: {}", userId);
             healthInfo = existingHealthInfo;
-            if (request.getGender() != null && !request.getGender().isBlank()) healthInfo.setGender(request.getGender());
-            if (request.getHeight() != null && request.getHeight() > 0) healthInfo.setHeight(request.getHeight());
-            if (request.getWeight() != null && request.getWeight() > 0) healthInfo.setWeight(request.getWeight());
+            
+            // 기존 질병과 새 질병 병합 (중복 제거)
+            List<String> mergedDiseases = new ArrayList<>(existingHealthInfo.getDiseases() != null ? existingHealthInfo.getDiseases() : List.of());
+            if (request.getDiseases() != null) {
+                for (String disease : request.getDiseases()) {
+                    if (!mergedDiseases.contains(disease)) {
+                        mergedDiseases.add(disease);
+                        logger.info("[질병 추가] {}", disease);
+                    }
+                }
+            }
+            
+            // 정보 업데이트: 요청에 값이 있을 때만 덮어쓰기(없으면 기존값 유지)
+            if (request.getGender() != null && !request.getGender().isBlank()) {
+                healthInfo.setGender(request.getGender());
+            }
+            if (request.getHeight() != null && request.getHeight() > 0) {
+                healthInfo.setHeight(request.getHeight());
+            }
+            if (request.getWeight() != null && request.getWeight() > 0) {
+                healthInfo.setWeight(request.getWeight());
+            }
 
+            // allergies / dislikes : null 요청이면 기존값 유지
+            if (request.getAllergies() != null) {
+                healthInfo.setAllergies(request.getAllergies());
+            } else if (healthInfo.getAllergies() == null) {
+                healthInfo.setAllergies(new ArrayList<>());
+            }
+
+            if (request.getDislikes() != null) {
+                healthInfo.setDislikes(request.getDislikes());
+            } else if (healthInfo.getDislikes() == null) {
+                healthInfo.setDislikes(new ArrayList<>());
+            }
+
+            // 질병은 통합된 mergedDiseases로 설정
             healthInfo.setDiseases(mergedDiseases);
-            healthInfo.setAllergies(request.getAllergies());
-            healthInfo.setDislikes(request.getDislikes());
-            healthInfo.setStatusList(statusList);
-            healthInfo.setPersonalizedIntake(personalizedIntake);
-            logger.info("[건강정보 업데이트 완료] userId: {}", userId);
+            
+            // 통합 질병 기준으로 StatusList / PersonalizedIntake 재계산
+            List<NutrientStatusMapping> recalculatedStatus = analyzer.analyze(mergedDiseases);
+            List<PersonalizedIntake> recalculatedIntake = nutrientTargetCalculator.calculateTargets(recalculatedStatus, healthInfo.getGender());
+            healthInfo.setStatusList(recalculatedStatus);
+            healthInfo.setPersonalizedIntake(recalculatedIntake);
+            
+            logger.info("[건강정보 업데이트 완료] 최종 질병 목록: {}", mergedDiseases);
         } else {
-            // 생성
+            // 새 건강정보 생성 — 요청에 없는 리스트 필드는 빈 리스트로 초기화
+            logger.info("[새 건강정보 생성] userId: {}", userId);
+            List<String> diseasesForNew = request.getDiseases() != null ? request.getDiseases() : new ArrayList<>();
+            List<NutrientStatusMapping> statusListForNew = analyzer.analyze(diseasesForNew);
+            List<PersonalizedIntake> intakeForNew = nutrientTargetCalculator.calculateTargets(statusListForNew, request.getGender());
+            
             healthInfo = HealthInfo.builder()
                     .userid(userId)
                     .gender(request.getGender())
                     .height(request.getHeight())
                     .weight(request.getWeight())
-                    .diseases(mergedDiseases)
-                    .allergies(request.getAllergies())
-                    .dislikes(request.getDislikes())
-                    .statusList(statusList)
-                    .personalizedIntake(personalizedIntake)
+                    .diseases(diseasesForNew)
+                    .allergies(request.getAllergies() != null ? request.getAllergies() : new ArrayList<>())
+                    .dislikes(request.getDislikes() != null ? request.getDislikes() : new ArrayList<>())
+                    .statusList(statusListForNew)
+                    .personalizedIntake(intakeForNew)
                     .build();
-            logger.info("[새 건강정보 생성 완료] userId: {}", userId);
+            
+            logger.info("[Builder 생성 후 StatusList] {}", healthInfo.getStatusList());
         }
 
         // 사용자 상태 업데이트 및 저장 (single save)
