@@ -7,6 +7,7 @@ import lombok.Builder;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import lombok.*;
 
 import java.util.List;
@@ -20,6 +21,8 @@ import java.util.Map;
 public class HealthInfo {
     @Id
     private String id;
+
+    @Indexed(unique = true) // ensure only one HealthInfo per userid in MongoDB
     private String userid;
     private String gender;
     private Double height;
