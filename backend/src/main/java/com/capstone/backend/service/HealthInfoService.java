@@ -78,7 +78,7 @@ public class HealthInfoService {
             healthInfo = existingHealthInfo;
             
             // 기존 질병과 새 질병 병합 (중복 제거)
-            List<String> mergedDiseases = new ArrayList<>(existingHealthInfo.getDiseases() != null ? existingHealthInfo.getDiseases() : List.of());
+            mergedDiseases = new ArrayList<>(existingHealthInfo.getDiseases() != null ? existingHealthInfo.getDiseases() : List.of());
             if (request.getDiseases() != null) {
                 for (String disease : request.getDiseases()) {
                     if (!mergedDiseases.contains(disease)) {
