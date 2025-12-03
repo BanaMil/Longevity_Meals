@@ -30,13 +30,8 @@ class FirstScreen extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-<<<<<<< HEAD
                 minimumSize: const Size(200, 60),            
                 textStyle: const TextStyle(fontSize: 20),   
-=======
-                minimumSize: const Size(200, 60),           // 버튼 높이 
-                textStyle: const TextStyle(fontSize: 20),   // 폰트 크기
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
               ),
               child: Text('로그인', style: TextStyle(color: Colors.black)),
             ),
@@ -47,13 +42,8 @@ class FirstScreen extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromARGB(156, 137, 177, 95), 
-<<<<<<< HEAD
                 minimumSize: const Size(200, 60),           
                 textStyle: const TextStyle(fontSize: 20),   
-=======
-                minimumSize: const Size(200, 60),           // 버튼 높이 
-                textStyle: const TextStyle(fontSize: 20),   // 폰트 크기
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                 ),
               child: Text('회원가입', style: TextStyle(color: Colors.black)),
             ),

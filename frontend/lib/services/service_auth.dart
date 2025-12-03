@@ -199,24 +199,4 @@ static Future<User> loginUser({
       body: jsonEncode(body),
     );
   }
-
-  // 비밀번호 변경 API
-  static Future<http.Response> changePassword({
-    required String userid,
-    required String currentPassword,
-    required String newPassword,
-  }) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/api/auth/change-password');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'userid': userid,
-        'currentPassword': currentPassword,
-        'newPassword': newPassword,
-      }),
-    );
-    return response;
-  }
 }
-

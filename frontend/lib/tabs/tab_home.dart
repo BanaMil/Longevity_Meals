@@ -5,13 +5,7 @@ import 'package:frontend/services/user_storage.dart';
 import 'package:frontend/services/service_meal.dart';
 import 'package:frontend/models/meal.dart';
 import 'package:frontend/widgets/custom_button.dart';
-<<<<<<< HEAD
 import 'package:frontend/screens/home/home.dart';
-=======
-
-import 'package:frontend/screens/home/home.dart';
-
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -24,17 +18,13 @@ class _HomeTabState extends State<HomeTab> {
   String? username;
   String? userid;
   Meal? todayMeal;
-<<<<<<< HEAD
   bool? healthInfoSubmitted;
-=======
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 
   @override
   void initState() {
     super.initState();
     _loadUsername();
     _loadTodayMeal();
-<<<<<<< HEAD
     _loadFlags();
   }
 
@@ -45,8 +35,6 @@ class _HomeTabState extends State<HomeTab> {
     setState(() {
       healthInfoSubmitted = flag;
     });
-=======
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
   }
 
   void _loadUsername() async {
@@ -58,7 +46,6 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
-<<<<<<< HEAD
   Future<void> _loadTodayMeal() async {
     final userInfo = await UserStorage.loadUserInfo();
     final userId = userInfo['userid'];
@@ -144,24 +131,6 @@ class _HomeTabState extends State<HomeTab> {
       return result;
     } finally {
       if (mounted) Navigator.of(context, rootNavigator: true).pop();
-=======
-  void _loadTodayMeal() async {
-    final userInfo = await UserStorage.loadUserInfo();
-    final userId = userInfo['userid'];
-
-    if (userId != null && userId.isNotEmpty) {
-      try {
-        final meal = await MealService.fetchTodayMeal(userId);
-        setState(() {
-          userid = userId;
-          todayMeal = meal;
-        });
-      } catch (e) {
-        debugPrint('오늘의 밥상 불러오기 실패: $e');
-      }
-    } else {
-      debugPrint('사용자 ID 없음: 다시 로그인 필요');
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
     }
   }
 
@@ -198,26 +167,17 @@ class _HomeTabState extends State<HomeTab> {
                 Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-<<<<<<< HEAD
                       horizontal: 10,
-=======
-                      horizontal: 12,
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 196, 215, 108),
                       border: Border.all(
-<<<<<<< HEAD
                         color: const Color.fromARGB(255, 100, 80, 47),
-=======
-                        color: const Color.fromARGB(255, 66, 105, 50),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-<<<<<<< HEAD
                     child: Image.asset(
                       'assets/images/Logo.png',
                       height: 30,
@@ -226,19 +186,6 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                 ),
                 const SizedBox(height: 12),
-=======
-                    child: const Text(
-                      '장수밥상',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color.fromARGB(255, 66, 105, 50),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -252,15 +199,6 @@ class _HomeTabState extends State<HomeTab> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
-<<<<<<< HEAD
-
-=======
-                        /*
-                      Navigator.push(
-                        context, MaterialPageRoute(builder: (_) => const PointScreen()),
-                      );
-                      */
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -292,10 +230,6 @@ class _HomeTabState extends State<HomeTab> {
             ),
           ),
 
-<<<<<<< HEAD
-=======
-          // 흰색 컨테이너
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
           Expanded(
             child: Container(
               width: double.infinity,
@@ -305,11 +239,7 @@ class _HomeTabState extends State<HomeTab> {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
               ),
               child: Scrollbar(
-<<<<<<< HEAD
                 thumbVisibility: false, 
-=======
-                thumbVisibility: false, // 항상 스크롤바 보이게 하려면 true
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,18 +253,13 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-<<<<<<< HEAD
                         '${getFormattedDate()} ${getMealPeriodLabel()}',
-=======
-                        '${getFormmattedDate()} ${getMealPeriodLabel()}',
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 12),
-<<<<<<< HEAD
                       if (todayMeal == null)
                         Column(
                           children: [
@@ -468,84 +393,6 @@ class _HomeTabState extends State<HomeTab> {
                                               ),
                                             ),
                                     ),
-=======
-
-                      if (todayMeal == null)
-                        const Center(child: Text('오늘의 밥상 정보 없음'))
-                      else
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: todayMeal!.sideDishes.map((dish) {
-                                    return Column(
-                                      children: [
-                                        ClipRRect(
-                                        child: Image.network(
-                                          dish.imageUrl,
-                                          width: 90,
-                                          height: 90,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        ),
-                                        /*
-                                          Text(
-                                            dish.name,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          */
-                                      ],
-                                    );
-                                  }).toList(),
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  children: [
-                                    ClipRRect(
-                                    child: Image.network(
-                                      todayMeal!.rice.imageUrl,
-                                      width: 130,
-                                      height: 130,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    ),
-                                    /*
-                                      Text(
-                                        meal.rice.name,
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                      */
-                                  ],
-                                ),
-                                Column(
-
-                                  children: [
-                                    ClipRRect(
-                                    child: todayMeal!.soup != null
-                                      ? Image.network(
-                                        todayMeal!.soup!.imageUrl,
-                                        width: 130,
-                                        height: 130,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const SizedBox(
-                                        width: 130,
-                                        height: 130,
-                                      ),
-                                    ),
-                                     // soup없으면 빈 박스 표시                               
-                                    /*
-                                      Text(
-                                        meal.soup.name,
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                      */
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                                   ],
                                 ),
                               ],
@@ -559,7 +406,6 @@ class _HomeTabState extends State<HomeTab> {
                                   child: CustomButton(
                                     text: '음식 정보',
                                     icon: Icons.restaurant_menu,
-<<<<<<< HEAD
                                     onPressed: todayMeal == null
                                         ? null
                                         : () {
@@ -572,22 +418,6 @@ class _HomeTabState extends State<HomeTab> {
                                               ),
                                             );
                                           },
-=======
-                                    onPressed:
-                                        todayMeal == null
-                                            ? null // 데이터 없으면 비활성화
-                                            : () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (_) => FoodInfoScreen(
-                                                        meal: todayMeal!,
-                                                      ),
-                                                ),
-                                              );
-                                            },
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -599,22 +429,12 @@ class _HomeTabState extends State<HomeTab> {
                                       if (userid == null || userid!.isEmpty) {
                                         showDialog(
                                           context: context,
-<<<<<<< HEAD
                                           builder: (_) => const AlertDialog(
                                             title: Text("오류"),
                                             content: Text(
                                               "사용자 정보를 불러올 수 없습니다.",
                                             ),
                                           ),
-=======
-                                          builder:
-                                              (_) => const AlertDialog(
-                                                title: Text("오류"),
-                                                content: Text(
-                                                  "사용자 정보를 불러올 수 없습니다.",
-                                                ),
-                                              ),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                                         );
                                         return;
                                       }
@@ -622,16 +442,9 @@ class _HomeTabState extends State<HomeTab> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-<<<<<<< HEAD
                                           builder: (_) => WeeklyMealsScreen(
                                             userid: userid!,
                                           ),
-=======
-                                          builder:
-                                              (_) => WeeklyMealsScreen(
-                                                userid: userid!,
-                                              ),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                                         ),
                                       );
                                     },
@@ -643,81 +456,6 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                       const SizedBox(height: 6),
                       const Divider(thickness: 1),
-<<<<<<< HEAD
-=======
-                      const Text(
-                        '오늘의 밥상 체크하기',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: 160,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                // 먹었습니다. 클릭 시
-                              },
-                              icon: const Icon(
-                                Icons.circle_outlined,
-                                color: Colors.black45,
-                              ),
-                              label: const Text(
-                                '먹었습니다.',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue[300],
-                                minimumSize: const Size(120, 45), // 버튼 높이
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 12,
-                                ),
-                                textStyle: const TextStyle(
-                                  fontSize: 15,
-                                ), // 폰트 크기
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(width: 12),
-
-                          SizedBox(
-                            width: 160,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                // 먹지 않았습니다. 클릭 시
-                              },
-                              icon: const Icon(
-                                Icons.close,
-                                color: Colors.black45,
-                              ),
-                              label: const Text(
-                                '먹지 않았습니다.',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red[300],
-                                minimumSize: const Size(120, 45), // 버튼 높이
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 14,
-                                ),
-                                textStyle: const TextStyle(
-                                  fontSize: 15,
-                                ), // 폰트 크기
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      const Divider(thickness: 1),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                       Center(
                         child: CustomButton(
                           text: '밥상 기록',

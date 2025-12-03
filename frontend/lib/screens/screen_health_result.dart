@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/health_result.dart';
 import 'package:frontend/services/service_health_result.dart';
 import 'package:frontend/services/user_storage.dart';
-<<<<<<< HEAD
-=======
-// import 'package:frontend/screens/screen_index.dart';
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 import 'package:frontend/services/service_meal.dart';
 import 'package:frontend/screens/home/screen_weekly_meals.dart';
 
@@ -21,8 +17,6 @@ class HealthResultScreen extends StatefulWidget {
 class _HealthResultScreenState extends State<HealthResultScreen> {
   late Future<HealthResult>? analysisFuture;
   
-  String? username;
-
   String? username;
 
   @override
@@ -104,16 +98,6 @@ class _HealthResultScreenState extends State<HealthResultScreen> {
                       title: '제한영양소',
                       nutrients: data.restrictedNutrients,
                     ),
-<<<<<<< HEAD
-=======
-                  /*
-                  if (data.cautionNutrients.isNotEmpty)
-                    _InfoCard(
-                      title: '주의해야할 영양소',
-                      nutrients: data.cautionNutrients,
-                    ),
-                  */
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                   if (data.personalizedIntake.isNotEmpty)
                     _InfoCard(
                       title: '개인 맞춤 영양소 섭취량',
@@ -127,7 +111,6 @@ class _HealthResultScreenState extends State<HealthResultScreen> {
                     ),
                   const SizedBox(height: 5),
 
-<<<<<<< HEAD
                   Center(
                     child: ElevatedButton(
                       onPressed: () async {
@@ -260,56 +243,8 @@ class _HealthResultScreenState extends State<HealthResultScreen> {
                         ),
                       ),
                     ),
-=======
-                  // 추천 음식, 비추천 음식 사진
-                  /*
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text("추천 음식", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      Text("비추천 음식", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    ],
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _FoodImageBox(data.recommendedFood),
-                      _FoodImageBox(data.notRecommendedFood),
-                    ],
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
-                  ),
-                  */
                   Center(
-                    /*
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const IndexScreen(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(
-                            255,
-                            196,
-                            215,
-                            110,
-                          ),
-                          minimumSize: const Size(150, 50), // 버튼 높이
-                          textStyle: const TextStyle(fontSize: 20), // 폰트 크기
-                        ),
-                        child: Text(
-                          '홈 화면으로 이동',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      */
                     child: ElevatedButton(
                       onPressed: () async {
                         final userInfo = await UserStorage.loadUserInfo();
@@ -400,11 +335,6 @@ class _HealthResultScreenState extends State<HealthResultScreen> {
                   ),
                 ],
               ),
-<<<<<<< HEAD
-=======
-
-              // 버튼 추가
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
             ),
           );
         } else {
@@ -451,13 +381,9 @@ class _InfoCardState extends State<_InfoCard> {
 
           if (!showAll)
             Text(
-<<<<<<< HEAD
               widget.title == '개인 맞춤 영양소 섭취량'
                   ? '개인 맞춤 영양소 섭취량은 ${summary.join(', ')} 등 입니다.'
                   : '${widget.title}는 ${summary.join(', ')} 등 입니다.',
-=======
-              '${widget.title}는 ${summary.join(', ')} 등 입니다.',
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
               style: const TextStyle(fontSize: 18),
             )
           else
@@ -485,26 +411,3 @@ class _InfoCardState extends State<_InfoCard> {
   }
 }
 
-<<<<<<< HEAD
-=======
-
-/*
-class _FoodImageBox extends StatelessWidget {
-  final String imagePath;
-  const _FoodImageBox(this.imagePath);
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.asset(
-        imagePath,
-        width: 120,
-        height: 100,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-}
-*/
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db

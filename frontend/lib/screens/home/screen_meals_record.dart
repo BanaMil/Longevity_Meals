@@ -127,10 +127,6 @@ class MealsRecordScreen extends StatelessWidget {
                                                 Icons.add_circle_outline,
                                               ),
                                               onPressed: () {
-<<<<<<< HEAD
-=======
-                                                // 식단 추가 누르면 나오는 거 ~~
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                                               },
                                             ),
                                           )
@@ -142,10 +138,6 @@ class MealsRecordScreen extends StatelessWidget {
                                                 meals.map((meal) {
                                                   return GestureDetector(
                                                     onTap: () {
-<<<<<<< HEAD
-=======
-                                                      // 항목 클릭 시 동작
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                                                     },
                                                     child: Container(
                                                       padding:

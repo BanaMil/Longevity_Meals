@@ -1,19 +1,10 @@
 // screen_login.dart
 
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/service_auth.dart';
-<<<<<<< HEAD
 import 'package:frontend/models/user.dart';
 import 'package:frontend/screens/screen_health_info/choice_info.dart';
 import 'package:frontend/screens/screen_index.dart';
-=======
-import 'package:frontend/services/user_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:frontend/screens/screen_health_info/choice_info.dart';
-import 'package:frontend/screens/screen_index.dart';
-import 'dart:convert';
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,21 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final enteredId = useridController.text.trim();
     final password = passwordController.text.trim();
 
-<<<<<<< HEAD
     debugPrint("🔐 Trying login with ID: '$enteredId', PW: '$password'");
-=======
-    log("🔐 Trying login with ID: '$enteredId', PW: '$password'");
-
-    final response = await AuthService.loginUser(
-      userid: enteredId,
-      password: password,
-    );
-
-    if (!mounted) return;
-
-    log('응답 statusCode: ${response.statusCode}');
-    log('응답 body: ${response.body}'); // ← 여기서 JSON 전체 확인 가능
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 
     try {
     final User user = await AuthService.loginUser(
@@ -54,7 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
       password: password,
     );
 
-<<<<<<< HEAD
     if (!mounted) return;
     debugPrint("✅ 로그인 성공: ${user.userid}, healthInfoSubmitted=${user.healthInfoSubmitted}");
 
@@ -64,79 +40,16 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(builder: (_) => IndexScreen(userid: user.userid)),
       );
-      debugPrint("🏠 건강정보 입력됨 → IndexScreen 이동");
+      debugPrint("건강정보 입력됨 → IndexScreen 이동");
     } else {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const ChoiceInfoScreen()),
       );
-      debugPrint("📋 건강정보 미입력 → ChoiceInfoScreen 이동");
-=======
-      if (response.statusCode == 200 &&
-          result['success'] == true &&
-          result['data'] != null) {
-        final data = result['data'];
-        final userId = data['userid'];
-        final username = data['username'];
-        final address = data['address'];
-        final token = data['token'];
-        final healthInfoSubmitted = data['healthInfoSubmitted'];
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('jwt_token', token);
-
-        await UserStorage.saveUserInfo(
-          username: username,
-          userid: userId,
-          address: address,
-        );
-        
-        if (!mounted) return;
-
-        // ScaffoldMessenger.of(
-        //   context,
-        // ).showSnackBar(SnackBar(content: Text("로그인 성공: ${result['message']}")));
-
-        log("✅ 로그인 성공");
-
-        // healthInfoSubmitted에 따라 화면 분기
-        if (token != null && healthInfoSubmitted == true) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const IndexScreen()),
-          );
-          log("🏠 건강정보 입력됨 → IndexScreen 이동");
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => ChoiceInfoScreen()),
-          );
-          log("📋 건강정보 미입력 → ChoiceInfoScreen 이동");
-        }
-      } else {
-        final msg = result['message'] ?? "로그인 실패 (원인 불명)";
-
-        if (response.statusCode == 401) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("아이디나 비밀번호가 잘못 입력되었습니다.")),
-          );
-        } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("❌ 로그인 실패: $msg")));
-        }
-        log("❌ 로그인 실패: $msg");
-      }
-    } catch (e) {
-      log("🚨 로그인 중 JSON 파싱 또는 예외 발생: $e");
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("로그인 중 문제가 발생했습니다.")));
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
+      debugPrint("건강정보 미입력 → ChoiceInfoScreen 이동");
     }
   } catch (e) {
     if (!mounted) return;
-    debugPrint("🚨 로그인 실패: $e");
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("로그인 실패: $e")),
     );
@@ -148,10 +61,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 251, 255, 228),
       appBar: AppBar(
-<<<<<<< HEAD
-=======
-        // title: Text("로그인", style: TextStyle(fontWeight: FontWeight.bold)),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
         backgroundColor: const Color.fromARGB(255, 251, 255, 228),
       ),
       body: SafeArea(

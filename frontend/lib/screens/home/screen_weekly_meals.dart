@@ -5,11 +5,8 @@ import 'package:intl/intl.dart'; // 날짜 포맷용
 import 'package:frontend/models/daily_meals.dart';
 import 'package:frontend/services/service_meal.dart';
 import 'package:frontend/screens/screen_index.dart';
-<<<<<<< HEAD
 import 'package:frontend/models/food_with_intake.dart';
 import 'package:frontend/screens/Delivery/screen_delivery_request.dart';
-=======
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 
 class WeeklyMealsScreen extends StatelessWidget {
   final String userid;
@@ -76,7 +73,6 @@ class WeeklyMealsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-<<<<<<< HEAD
                   // 배송 요청 버튼
                   Row(
                     children: [
@@ -124,30 +120,6 @@ class WeeklyMealsScreen extends StatelessWidget {
                         ), 
                       ),
                     ],
-=======
-                  // 홈 화면으로 이동
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const IndexScreen(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 196, 215, 110),
-                      minimumSize: const Size(150, 50), // 버튼 높이
-                      textStyle: const TextStyle(fontSize: 20), // 폰트 크기
-                    ),
-                    child: Text(
-                      '홈 화면으로 이동',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                   ),
                 ],
               ),
@@ -158,7 +130,6 @@ class WeeklyMealsScreen extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
 
   Future<void> _showDeliveryConfirm(
     BuildContext context,
@@ -210,8 +181,6 @@ class WeeklyMealsScreen extends StatelessWidget {
   }
 
 
-=======
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
   Widget _buildDateSection(String formattedDate, DailyMeals dailymeals) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,11 +196,7 @@ class WeeklyMealsScreen extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
   Widget _buildMealCard(String title, List<FoodWithIntake> items) {
-=======
-  Widget _buildMealCard(String title, List<String> items) {
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       padding: const EdgeInsets.all(8),
@@ -256,15 +221,10 @@ class WeeklyMealsScreen extends StatelessWidget {
               children:
                   items
                       .map(
-<<<<<<< HEAD
                         (item) => Text(
                           item.name,
                           style: const TextStyle(fontSize: 16),
                         ),
-=======
-                        (item) =>
-                            Text(item, style: const TextStyle(fontSize: 16)),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                       )
                       .toList(),
             ),

@@ -50,7 +50,6 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                 builder:(context, setState) => AlertDialog(
                   titlePadding: const EdgeInsets.only(
                     left: 16, top: 16, right: 0,
-<<<<<<< HEAD
                   ),
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,119 +133,6 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                     controller: _controller,
                     decoration: const InputDecoration(hintText: '예시: 버섯, 브로콜리'),
                   ),
-=======
-                  ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('건강정보 분석 중'),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          showDialog(
-                            context: context, builder:(_) => AlertDialog(
-                              title: const Text('건강정보 분석을 중단하시겠습니까?'),
-                              actions: [
-                                TextButton(
-                                  onPressed:() => Navigator.of(context,).pop(),
-                                  child: const Text('아니오'),
-                                ),
-                                TextButton(
-                                  onPressed: () { Navigator.of(context,).pop(); // 확인 다이얼로그 닫기
-                                    Navigator.of(context,).pop(); // 로딩 다이얼로그 닫기
-                                  },
-                                  child: const Text('네'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircularProgressIndicator(),
-                                SizedBox(height: 14),
-                                Text(
-                                  "입력 받은 건강정보를\n분석하는 중입니다.\n잠시만 기다려주세요.",
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                    ),
-              );
-
-              // 건강정보 분석과정 중 닫기 버튼 없음!
-              /*
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.check),
-                        onPressed: () async {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (_) => const AlertDialog(
-                              content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircularProgressIndicator(),
-                                SizedBox(height: 16),
-                                Text("입력 받은 건강정보를\n분석하는 중입니다.\n잠시만 기다려주세요."),
-                              ],
-                            ),
-                          )
-                        );
-                    */
-
-              try {
-                await context.read<HealthInfoProvider>().submitToServer();
-
-                if (context.mounted) {
-                  Navigator.of(context).pop; // 로딩 다이얼로그 닫기
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('건강정보가 저장되었습니다.')),
-                  );
-                  // 건강정보 분석 결과 화면으로 이동
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HealthResultScreen()),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  Navigator.of(context).pop(); // 로딩 다이얼로그 닫기
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('저장 중 오류 발생: $e')));
-                }
-              }
-            },
-          ),
-        ],
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('비선호 음식을 입력하고 추가 버튼을 눌러주세요.'),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(hintText: '예시: 버섯, 브로콜리'),
-                  ),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -260,16 +146,11 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                     side: const BorderSide(
                       color: Colors.black38,
                       width: 1,
-<<<<<<< HEAD
                     ), 
-=======
-                    ), // 태두리
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                   ),
                   child: const Text('추가'),
                 ),
               ],
-<<<<<<< HEAD
             ),
             const SizedBox(height: 16),
             const Text('입력된 비선호 음식:'),
@@ -284,8 +165,6 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                   ),
                 )
               .toList(),
-=======
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
             ),
             const SizedBox(height: 16),
             const Text('입력된 비선호 음식:'),

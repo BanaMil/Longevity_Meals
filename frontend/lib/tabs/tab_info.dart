@@ -18,10 +18,6 @@ class _InfoTabState extends State<InfoTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 235, 239, 165),
-<<<<<<< HEAD
-=======
-      // appBar: AppBar(title: const Text('내정보'), centerTitle: true,),
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
@@ -84,11 +80,6 @@ class _InfoTabState extends State<InfoTab> {
                   context,
                   title: '설정',
                   onTap: () {
-<<<<<<< HEAD
-
-=======
-                    // 설정 페이지로 이동
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                   },
                 ),
 
@@ -115,11 +106,7 @@ class _InfoTabState extends State<InfoTab> {
                                   MaterialPageRoute(
                                     builder: (_) => const FirstScreen(),
                                   ),
-<<<<<<< HEAD
                                   (route) => false, 
-=======
-                                  (route) => false, // 모든 route 제거
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                                 );
                               },
                               child: const Text('네'),

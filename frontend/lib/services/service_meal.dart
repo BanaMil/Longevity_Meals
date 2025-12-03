@@ -7,11 +7,8 @@ import 'package:frontend/services/api_constants.dart';
 import 'package:frontend/models/meal.dart';
 import 'package:frontend/models/daily_meals.dart';
 
-<<<<<<< HEAD
 enum RecommendResult { success, alreadyExists }
 
-=======
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 class MealService {
   // 오늘의 밥상(홈화면 및 음식 정보 보기)
   static Future<Meal> fetchTodayMeal(String userid) async {
@@ -37,11 +34,7 @@ class MealService {
   }
 
   // 일주일 밥상 요청 API
-<<<<<<< HEAD
   static Future<RecommendResult> requestMealRecommendation(String userid) async {
-=======
-  static Future<void> requestMealRecommendation(String userid) async {
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
     final url = Uri.parse('${ApiConstants.baseUrl}/api/meals/recommend');
     final response = await http.post(
       url,
@@ -49,7 +42,6 @@ class MealService {
       body: jsonEncode({"userid": userid}),
     );
 
-<<<<<<< HEAD
     if (response.statusCode == 200) {
       return RecommendResult.success;
     } else if (response.statusCode == 409) {
@@ -57,10 +49,6 @@ class MealService {
     } else {
       final body = utf8.decode(response.bodyBytes);
       throw Exception("식단 추천 요청 실패: ${response.statusCode} ${body.isNotEmpty} ? ' -$body' : ''}");
-=======
-    if (response.statusCode != 200) {
-      throw Exception("식단 추천 요청 실패: ${response.statusCode}");
->>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
     }
   }
 
