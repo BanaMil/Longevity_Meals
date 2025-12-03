@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/services/service_ocr.dart';
-// import 'package:frontend/screens/screen_health_info/input_diseases.dart';
-import 'package:frontend/screens/screen_health_info/input_height_weight.dart';
+import 'package:frontend/screens/screen_health_info/input_diseases.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -23,7 +22,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserId(); // 먼저 ID를 로드한 후 사진 촬영 실행 
+    _loadUserId();
   }
 
   Future<void> _loadUserId() async {
@@ -65,7 +64,7 @@ class _CameraScreenState extends State<CameraScreen> {
           const SnackBar(content: Text('업로드 완료')),
         );
 
-        Navigator.push(context, MaterialPageRoute(builder: (_) =>  InputHeightWeightScreen())); 
+        Navigator.push(context, MaterialPageRoute(builder: (_) =>  InputDiseasesScreen())); 
       } catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -81,7 +80,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('촬영 및 업로드드')),
+      appBar: AppBar(title: const Text('촬영 및 업로드')),
       body: Center(
         child: _capturedImage != null
           ? Image.file(_capturedImage!)

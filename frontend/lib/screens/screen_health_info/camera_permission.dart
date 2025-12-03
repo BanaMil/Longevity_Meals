@@ -20,7 +20,7 @@ class _CameraPermissionScreenState extends State<CameraPermissionScreen> {
     if (status.isGranted) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const CameraScreen()), //카메라 화면 생성하기
+        MaterialPageRoute(builder: (context) => const CameraScreen()), //카메라 화면 생성
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

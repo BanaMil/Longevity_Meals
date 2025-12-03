@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:frontend/services/service_ocr.dart';
-// import 'package:frontend/screens/screen_health_info/input_diseases.dart';
-import 'package:frontend/screens/screen_health_info/input_height_weight.dart';
+import 'package:frontend/screens/screen_health_info/input_diseases.dart';
 
 class GalleryScreen extends StatefulWidget {
   const GalleryScreen({super.key});
@@ -69,12 +68,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         imageFile: _selectedImage!,
       );
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("업로드 완료")),
-      );
-
-      Navigator.push(context, MaterialPageRoute(builder: (_) => InputHeightWeightScreen()),
+      Navigator.push(context, MaterialPageRoute(builder: (_) => InputDiseasesScreen()),
       );
     } catch (e) {
       if (!mounted) return;

@@ -1,6 +1,6 @@
 // gallery_permission.dart
 
-import 'dart:io'; // Platform 구분을 위해 필요 
+import 'dart:io'; 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:frontend/widgets/custom_button.dart';

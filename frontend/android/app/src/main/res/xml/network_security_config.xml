@@ -1,0 +1,11 @@
+<network-security-config>
+    <!-- localhost/127.0.0.1/에뮬레이터 호스트(10.0.2.2)만 HTTP 허용 -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+
+    <!-- 나머지 HTTP 금지 -->
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

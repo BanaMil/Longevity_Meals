@@ -2,6 +2,8 @@
 // 건강정보를 앱 전체에서 기억하고 어느 화면에서든 이 값을 읽거나 수정할 수 있도록 하는 클래스
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; 
+import 'package:frontend/services/user_storage.dart';
 import 'package:frontend/models/health_info.dart';
 import 'package:frontend/services/service_health_info.dart';
 
@@ -9,16 +11,15 @@ class HealthInfoProvider with ChangeNotifier {
   final HealthInfo _info = HealthInfo();
   HealthInfo get info => _info;
 
+  void setUserId(String userid) { _info.userid = userid; notifyListeners(); }
+  void setGender(String gender) { _info.gender = gender; notifyListeners(); }
   void setHeight(double h) { _info.height = h; notifyListeners(); }
   void setWeight(double w) { _info.weight = w; notifyListeners(); }
   void toggleDislike(String v) => _toggleList(_info.dislikes, v);
 
-  void setUserId(String userid) {
-    _info.userid = userid;
-    notifyListeners();
-  }
+  
 
-  // 비선호 음식은 정해진 리스트에서 선택하는 것이 아닌 사용자가 입력하는 것이기 때문에 중복확인을 따로 해야한다.
+  // 비선호 음식은 정해진 리스트에서 선택하는 것이 아닌 사용자가 입력하는 것이기 때문에 중복확인을 따로 해야함 
   void addDislike(String v) {
     if (!_info.dislikes.contains(v)) {
       _info.dislikes.add(v);
@@ -52,11 +53,21 @@ class HealthInfoProvider with ChangeNotifier {
   }
 
   Future<void> submitToServer() async {
+
+    if (_info.userid == null || _info.userid!.trim().isEmpty) {
+      final stored = await UserStorage.loadUserInfo();
+      final storedUserId = stored['userid'];
+      if (storedUserId != null && storedUserId.trim().isNotEmpty) {
+        _info.userid = storedUserId.trim();
+        debugPrint('🔁 [HealthInfoProvider] userid: $_info.userid');
+      }
+    }
     await HealthInfoService.uploadHealthInfo(_info);
   } 
 
   // 건강정보 입력 초기화
   void reset() {
+    _info.gender = null;
     _info.height = null;
     _info.weight = null;
     _info.diseases.clear();

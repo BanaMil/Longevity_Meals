@@ -3,15 +3,28 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
-// import 'package:frontend/screens/screen_first.dart';
+import 'package:frontend/providers/register_provider.dart';
+import 'package:frontend/screens/screen_first.dart';
 
-import 'package:frontend/screens/screen_health_info/choice_info.dart';
-// import 'package:frontend/screens/screen_index.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 
-void main() {
+void main() async {
+   WidgetsFlutterBinding.ensureInitialized(); // 비동기 초기화
+
+  // 디버그 모드에서만 SharedPreferences 초기화
+  if (kDebugMode) {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    debugPrint('🧹 [main] kDebugMode → SharedPreferences 전체 초기화 완료');
+  }
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => HealthInfoProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HealthInfoProvider()),
+        ChangeNotifierProvider(create: (_) => RegisterProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -26,16 +39,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '장수밥상',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 196, 215, 108)),
       ),
-      home: ChoiceInfoScreen(), //앱 시작 시 가장 먼저 보여줄 화면
+      debugShowCheckedModeBanner: false,  // flutter 디버그 배너 false 
+      home: FirstScreen(), 
+      
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [
-        Locale('ko'), // 한국어 
+        Locale('ko'), 
         Locale('en'),
       ],
     );
