@@ -17,6 +17,7 @@ class IndexScreen extends StatefulWidget {
 
 class IndexScreenState extends State<IndexScreen> {
   int _currentIndex = 1;
+<<<<<<< HEAD
   late final List<Widget> _tabs;
 
    @override
@@ -30,6 +31,10 @@ class IndexScreenState extends State<IndexScreen> {
     ];
   }
   
+=======
+  final List<Widget> _tabs = [SearchTab(), HomeTab(), DeliveryTab(), InfoTab()];
+
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
   @override
   Widget build(BuildContext context) {
     return Scaffold(

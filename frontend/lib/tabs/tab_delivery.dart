@@ -1,6 +1,7 @@
 // tab_delivery.dart
 
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:frontend/models/daily_meals.dart';
 import 'package:frontend/screens/Delivery/screen_delivery_meals.dart';
 import 'package:frontend/widgets/gradient_background.dart';
@@ -24,6 +25,19 @@ class _DeliveryTabState extends State<DeliveryTab> {
 
   // 배송 진행 단계 
   static const List<String> _steps = ['주문 접수', '준비 중', '배송 중', '배송 완료'];
+=======
+import 'package:frontend/widgets/gradient_background.dart';
+
+class DeliveryTab extends StatefulWidget {
+  const DeliveryTab({super.key});
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
+
+  @override
+  State<DeliveryTab> createState() => _DeliveryTabState();
+}
+
+class _DeliveryTabState extends State<DeliveryTab> {
+  final double progressValue = 0.7;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +68,7 @@ class _DeliveryTabState extends State<DeliveryTab> {
                   ),
                   const SizedBox(height: 40),
 
+<<<<<<< HEAD
                   DeliveryProgressBar(
                     progress: progressValue, 
                     steps: _steps,           
@@ -100,6 +115,56 @@ class _DeliveryTabState extends State<DeliveryTab> {
                       );
                     },
                     ),
+=======
+                  SizedBox(
+                    height: 45,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final double iconX =
+                            constraints.maxWidth * progressValue;
+
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            Container(
+                              height: 10,
+                              width: iconX,
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 196, 215, 110),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            Positioned(
+                              left: iconX - 16, // 아이콘 중앙 정렬 보정
+                              top: -25,
+                              child: const Icon(
+                                Icons.local_shipping,
+                                size: 32,
+                                color: Color.fromARGB(255, 66, 105, 50),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+
+                  const Text(
+                    "밥상이 배송 중입니다.",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  ),
+                  const Divider(height: 40),
+                  buildButton("배송 조회하기"),
+                  buildButton("배송 날짜 변경하기"),
+                  buildButton("배송 주소 변경하기"),
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                 ],
               ),
             ),
@@ -109,6 +174,7 @@ class _DeliveryTabState extends State<DeliveryTab> {
     );
   }
 
+<<<<<<< HEAD
   // 일주일 식단 불러온 후 배송 요청 화면으로 이동
   Future<void> _openDeliveryRequestWithMeals() async {
     showDialog(
@@ -143,11 +209,18 @@ class _DeliveryTabState extends State<DeliveryTab> {
   }
 
   Widget buildButton(String text, {VoidCallback? onPressed}) {
+=======
+  Widget buildButton(String text) {
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 12),
       child: ElevatedButton(
+<<<<<<< HEAD
         onPressed: onPressed,
+=======
+        onPressed: () {},
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromARGB(255, 196, 215, 110),
           foregroundColor: Colors.black,
@@ -162,6 +235,7 @@ class _DeliveryTabState extends State<DeliveryTab> {
     );
   }
 }
+<<<<<<< HEAD
 
 // 배송 상태 진행 바 위젯
 class DeliveryProgressBar extends StatelessWidget {
@@ -262,3 +336,5 @@ class DeliveryProgressBar extends StatelessWidget {
 }
 
 
+=======
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db

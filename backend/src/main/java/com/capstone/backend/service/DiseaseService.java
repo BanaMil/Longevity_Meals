@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import java.util.Optional;
-import java.util.regex.*;
 @Service
 @RequiredArgsConstructor
 public class DiseaseService {

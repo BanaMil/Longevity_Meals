@@ -23,7 +23,11 @@ class SelectableButton extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+<<<<<<< HEAD
         constraints: const BoxConstraints(minHeight: 46), 
+=======
+        constraints: const BoxConstraints(minHeight: 46), // 버튼의 최소 높이 
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
         decoration: BoxDecoration(
           color: isSelected ? const Color.fromARGB(255, 179, 216, 168) 
                             : Colors.grey[300],

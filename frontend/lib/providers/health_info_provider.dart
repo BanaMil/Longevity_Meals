@@ -1,6 +1,7 @@
 // health_info_provider.dart
 // 건강정보를 앱 전체에서 기억하고 어느 화면에서든 이 값을 읽거나 수정할 수 있도록 하는 클래스
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; 
 import 'package:frontend/services/user_storage.dart';
@@ -53,6 +54,7 @@ class HealthInfoProvider with ChangeNotifier {
   }
 
   Future<void> submitToServer() async {
+<<<<<<< HEAD
 
     if (_info.userid == null || _info.userid!.trim().isEmpty) {
       final stored = await UserStorage.loadUserInfo();
@@ -62,6 +64,9 @@ class HealthInfoProvider with ChangeNotifier {
         debugPrint('🔁 [HealthInfoProvider] userid: $_info.userid');
       }
     }
+=======
+    log('🔄 서버로 전송할 userid: ${_info.userid}');
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
     await HealthInfoService.uploadHealthInfo(_info);
   } 
 

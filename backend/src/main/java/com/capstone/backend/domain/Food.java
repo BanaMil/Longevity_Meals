@@ -1,0 +1,49 @@
+package com.capstone.backend.domain;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Map;
+import java.util.List;
+
+import com.capstone.backend.domain.Ingredient;
+
+
+@Document(collection = "foodDB")  // ← 컬렉션 이름도 정확히 확인s
+@Getter
+@Setter
+public class Food {
+    @Id
+    private String id;
+
+    @Field("식품명")
+    private String name;
+
+    @Field("식품기원명")
+    private String origin;
+
+    @Field("식품대분류명")
+    private String category;
+
+    @Field("영양성분함량기준량")
+    private String baseAmountRaw;
+
+    @Transient  // DB에 저장하지 않음
+    private double baseAmount;
+
+    private Map<String, Double> nutrients;
+
+    private List<Ingredient> ingredients;
+    @Field("image_url")
+    private String imageUrl;
+
+    private int servingCount;
+
+    @Field("recipe")
+    private List<String> recipe;
+
+}

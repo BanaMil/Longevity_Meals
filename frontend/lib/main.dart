@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:provider/provider.dart';
 import 'package:frontend/providers/health_info_provider.dart';
+<<<<<<< HEAD
 import 'package:frontend/providers/register_provider.dart';
 import 'package:frontend/screens/screen_first.dart';
 
@@ -18,6 +19,14 @@ void main() async {
     await prefs.clear();
     debugPrint('🧹 [main] kDebugMode → SharedPreferences 전체 초기화 완료');
   }
+=======
+import 'package:frontend/screens/screen_first.dart';
+
+// import 'package:frontend/screens/screen_health_info/choice_info.dart';
+// import 'package:frontend/screens/screen_index.dart';
+// import 'package:frontend/screens/screen_health_result.dart';
+// import 'package:frontend/screens/screen_health_info/input_height_weight.dart';
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
 
   runApp(
     MultiProvider(
@@ -42,8 +51,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 196, 215, 108)),
       ),
       debugShowCheckedModeBanner: false,  // flutter 디버그 배너 false 
+<<<<<<< HEAD
       home: FirstScreen(), 
       
+=======
+      home: FirstScreen(), //앱 시작 시 가장 먼저 보여줄 화면
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

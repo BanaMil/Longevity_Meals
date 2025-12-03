@@ -44,7 +44,11 @@ class _ChoiceInfoScreenState extends State<ChoiceInfoScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+<<<<<<< HEAD
                 // o버튼: 카메라 or 갤러리 선택 다이얼로그
+=======
+                // o버튼을 누르면 카메라 or 갤러리 선택 다이얼로그 띄우기
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
                 ElevatedButton(
                   onPressed: () => showImageSourceDialog(context),
                   style: ElevatedButton.styleFrom(

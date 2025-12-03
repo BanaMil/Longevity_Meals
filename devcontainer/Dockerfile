@@ -40,6 +40,14 @@ RUN wget https://services.gradle.org/distributions/gradle-8.13-bin.zip -P /tmp &
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
 ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:$PATH"
 
+# Python + pip 설치
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    && apt-get clean
+
+
 # MongoDB 서버 및 mongosh 설치
 RUN curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg && \
     echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list && \
@@ -69,6 +77,13 @@ RUN apt-get update && apt-get install -y openssh-server && \
     echo 'root:csd25-1qwe' | chpasswd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
     echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+
+# 한국시간 설정
+ENV TZ=Asia/Seoul
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone
+
 
 # 컨테이너 시작 시 sshd 실행
 CMD ["/usr/sbin/sshd", "-D"]

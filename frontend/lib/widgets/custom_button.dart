@@ -24,8 +24,14 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
+<<<<<<< HEAD
           backgroundColor: Color.fromARGB(255, 235, 239, 165),
           foregroundColor: Colors.grey[800],
+=======
+          backgroundColor: Color.fromARGB(255, 235, 239, 165), // 고정 배경색
+          foregroundColor: Colors.grey[800], // 텍스트 색
+          // side: const BorderSide(color: Colors.black, width: 0.5), // 태두리
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -33,7 +39,11 @@ class CustomButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
+<<<<<<< HEAD
           ), 
+=======
+          ), // 버튼 내부 공간
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
         ),
         child: icon == null
           ? Text(text, style: TextStyle(fontSize: fontSize))

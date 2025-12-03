@@ -10,7 +10,11 @@ import 'input_allergies.dart';
 class InputDiseasesScreen extends StatelessWidget {
   const InputDiseasesScreen({super.key});
 
+<<<<<<< HEAD
   static const List<String> _diseases = [
+=======
+  final List<String> diseaseList = const [
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
     '간경변증',
     '갑상선 기능저하증',
     '갑상선 기능항진증',
@@ -161,6 +165,7 @@ class InputDiseasesScreen extends StatelessWidget {
           ),
         ],
       ),
+<<<<<<< HEAD
       body: ListView(
         padding: const EdgeInsets.only(bottom: 20),
         children: [
@@ -198,11 +203,47 @@ class InputDiseasesScreen extends StatelessWidget {
               ),
             ),
           ),         
+=======
+
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('질병을 선택해주세요.'),
+          ),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: GridView.count(
+                crossAxisCount: 3, // 3열 고정
+                mainAxisSpacing: 12, // 세로 간격
+                crossAxisSpacing: 8, //가로 간격
+                childAspectRatio: 2.8, // 버튼 가로/세로 비율 조정
+                children:
+                    diseaseList.map((d) {
+                      final selected = provider.info.diseases.contains(d);
+                      return SelectableButton(
+                        text: d,
+                        isSelected: selected,
+                        onTap:
+                            () => provider.toggleDiseaseAllergy(
+                              d,
+                              provider.info.diseases,
+                            ),
+                      );
+                    }).toList(),
+              ),
+            ),
+          ),
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db
         ],
       ),
     );
   }
 }
+<<<<<<< HEAD
 
 class _ChoseongSection extends StatelessWidget {
   final String title;
@@ -265,3 +306,5 @@ class _ChoseongSection extends StatelessWidget {
     );
   }
 }
+=======
+>>>>>>> 2ce09920618cf71c178c4f72fdbb3a69ba8eb7db

@@ -3,66 +3,113 @@ package com.capstone.backend.controller;
 import java.util.Map;
 
 import com.capstone.backend.domain.User;
+import com.capstone.backend.domain.Address;
 import com.capstone.backend.dto.LoginResponse;
 import com.capstone.backend.dto.RegisterRequest;
 import com.capstone.backend.dto.LoginRequest;
+import com.capstone.backend.dto.AddressRequest;
+import com.capstone.backend.dto.AddressResponse;
+import com.capstone.backend.repository.UserRepository;
 import com.capstone.backend.dto.ApiResponse;
 import com.capstone.backend.service.UserService;
 import com.capstone.backend.config.JwtTokenProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import java.nio.charset.StandardCharsets;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<Object>> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<ApiResponse<Object>> register(@RequestBody RegisterRequest req){
           try {
-            userService.register(
-                request.getUsername(),
-                request.getUserid(),
-                request.getPassword(),
-                request.getBirthdate(),
-                request.getPhone(),
-                request.getAddress()
-            );
+            userService.register(req);
             return ResponseEntity.ok(new ApiResponse<>(true, "회원가입 성공", null));
         } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
+    
+
+    @PostMapping("/users/{userid}/addresses")
+    public ResponseEntity<?> add(@PathVariable String userid,
+                                @RequestBody AddressRequest req) {
+        log.info("[주소 추가 요청] userId={}, req={}", userid, req);
+        var saved = userService.addAddress(userid, req);
+        // 목록 반환 or 생성 리소스 반환
+        var list = saved.getAddresses().stream().map(AddressResponse::from).toList();
+        log.info("[주소 추가 완료] userId={}, totalAddresses={}", userid, list.size());
+        return ResponseEntity.status(201).body(list);
+    }
+
+    @PutMapping("/users/{userid}/addresses/current")
+    public ResponseEntity<?> changeCurrent(@PathVariable String userid,
+                                        @RequestBody AddressRequest req) {
+        log.info("[대표 주소 변경 요청] userId={}, req={}", userid, req);
+        var saved = userService.changeCurrentAddress(userid, req);
+        var cur = saved.getAddresses().stream().filter(Address::isDefault).findFirst().orElse(null);
+        log.info("[대표 주소 변경 완료] userId={}, newCurrent={}", userid, cur == null ? "없음" : cur);
+        return ResponseEntity.ok(cur == null ? null : AddressResponse.from(cur));
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(@RequestBody LoginRequest request) {
+        MediaType mediaTypeUtf8 = new MediaType("application", "json", StandardCharsets.UTF_8);
+        log.info("[로그인 요청] userid={}", request.getUserid());
         try {
             User user = userService.login(
                 request.getUserid(),
                 request.getPassword()
             );
 
-            String token = jwtTokenProvider.createToken(user.getId());
+            log.info("[로그인 성공] userid={}", user.getUserid());
+            log.info("[로그인] healthInfoSubmitted (from user): {}", user.isHealthInfoSubmitted());
+
+            String token = jwtTokenProvider.createToken(user.getUserid());
 
             LoginResponse responseData = new LoginResponse(
                 user.getUserid(),
                 user.getUsername(),
                 user.getAddress(),
+                user.getAddressJibun(),
+                user.getAddressRoad(),
+                user.getPostCode(),
+                user.getAddressDetail(),
+                user.getAddresses(),
                 token,
                 user.isHealthInfoSubmitted()
             );
+
+            log.info("[로그인 응답 준비] userid={}, healthInfoSubmitted={}", user.getUserid(), responseData.isHealthInfoSubmitted());
             
-            return ResponseEntity.ok(new ApiResponse<>(true, "로그인 성공", responseData));
+            return ResponseEntity
+                .ok()
+                .contentType(mediaTypeUtf8)
+                .body(new ApiResponse<>(true, "로그인 성공", responseData));
+
         } catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false, e.getMessage(), null));
+            log.warn("[로그인 실패] userid={}, reason={}", request.getUserid(), e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(mediaTypeUtf8)
+                .body(new ApiResponse<>(false, e.getMessage(), null));
         }
     }
 
