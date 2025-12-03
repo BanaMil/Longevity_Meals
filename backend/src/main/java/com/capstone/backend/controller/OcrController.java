@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -65,6 +67,19 @@ public class OcrController {
         } finally {
             // 임시 파일 삭제
             tempFile.delete();
+        }
+    }
+
+    // Global exception handler for multipart size exceeded
+    @ControllerAdvice
+    static class GlobalMultipartExceptionHandler {
+        @ExceptionHandler(MaxUploadSizeExceededException.class)
+        public ResponseEntity<ApiResponse<List<String>>> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
+            // concise error payload
+            ApiResponse<List<String>> resp = new ApiResponse<>(false,
+                "파일 크기가 허용 한도를 초과했습니다. 업로드 가능한 최대 크기를 줄이거나 서버 설정을 늘려주세요.",
+                List.of());
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(resp);
         }
     }
 }

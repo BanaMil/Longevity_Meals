@@ -7,13 +7,25 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.http.HttpMethod; // added
+import org.springframework.http.HttpMethod;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.util.unit.DataSize;
+import jakarta.servlet.MultipartConfigElement;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        // increase limits as required (example: 20MB per file, 50MB per request)
+        factory.setMaxFileSize(DataSize.ofMegabytes(20));
+        factory.setMaxRequestSize(DataSize.ofMegabytes(50));
+        return factory.createMultipartConfig();
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
