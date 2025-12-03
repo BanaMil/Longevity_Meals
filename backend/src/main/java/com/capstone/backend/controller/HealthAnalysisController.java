@@ -25,19 +25,6 @@ public class HealthAnalysisController {
     private final NutrientReferenceRepository referenceRepo;
     private final HealthAnalysisMapper healthAnalysisMapper;
 
-    // @GetMapping("/analysis/{userid}")
-    // public ResponseEntity<HealthAnalysisResponse> getAnalysis(@PathVariable String userid) {
-    //     HealthInfo info = healthInfoRepository.findByUserid(userid)
-    //             .orElseThrow(() -> new IllegalArgumentException("사용자 건강 정보 없음: " + userid));
-
-    //     Map<String, NutrientReference> referenceMap = referenceRepo.findAll().stream()
-    //             .collect(Collectors.toMap(NutrientReference::getNutrient, r -> r));
-
-    //     HealthAnalysisResponse response = healthAnalysisMapper.buildHealthAnalysisResponse(info, referenceMap);
-
-    //     return ResponseEntity.ok(response);
-    // }
-
     @GetMapping("/analysis/{userid}")
     public ResponseEntity<HealthAnalysisResponse> getHealthAnalysis(@PathVariable String userid) {
         HealthInfo info = healthInfoRepository.findByUserid(userid)

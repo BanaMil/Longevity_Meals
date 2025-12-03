@@ -11,9 +11,12 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/api/foods")
 @RequiredArgsConstructor
+@Slf4j
 public class RecipeSearch {
 
     private final FoodService foodService;
@@ -65,8 +68,8 @@ public class RecipeSearch {
             }
 
             for (Food food : foods) {
-                System.out.println("[LOG] " + food.getName() + " 재료: " + food.getIngredients());
-                System.out.println("[LOG] " + food.getName() + " 레시피: " + food.getRecipe());
+                log.info("[음식 조회] name='{}' ingredients={} recipeStepsCount={}", food.getName(),
+                         food.getIngredients(), food.getRecipe() == null ? 0 : food.getRecipe().size());
             }
 
             List<FoodItemResponse> result = foods.stream()
@@ -75,7 +78,7 @@ public class RecipeSearch {
 
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            System.out.println("[ERROR] /api/foods/search: " + e.getMessage());
+            log.error("[ERROR] /api/foods/search: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(java.util.Map.of("message", "서버 오류가 발생했습니다."));
         }
@@ -87,7 +90,7 @@ public class RecipeSearch {
             Food food = foodService.findByName(name);
             return ResponseEntity.ok(food);
         } catch (Exception e) {
-            System.out.println("[ERROR] /api/foods/" + name + ": " + e.getMessage());
+            log.error("[ERROR] /api/foods/{}: {}", name, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

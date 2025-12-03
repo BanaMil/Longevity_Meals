@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class FoodService {
 
     private final MongoTemplate mongoTemplate;
+    private final FoodRepository foodRepository;
 
 
     // MongoDB Document → Food 객체 변환
@@ -79,72 +80,6 @@ public class FoodService {
         return food;
     }
 
-    private final FoodRepository foodRepository;
-
-    // private Food convertDocumentToFood(Document doc) {
-    //     Map<String, Double> nutrientMap = new HashMap<>();
-    //     for (String nutrient : NutrientConstants.TARGET_NUTRIENTS) {
-    //         Object val = doc.get(nutrient);
-    //         if (val instanceof Number number) {
-    //             nutrientMap.put(nutrient, number.doubleValue());
-    //         } else if (val instanceof String str) {
-    //             try {
-    //                 String numeric = str.replaceAll("[^\\d.]+", "");
-    //                 if (!numeric.isBlank()) {
-    //                     nutrientMap.put(nutrient, Double.parseDouble(numeric));
-    //                 }
-    //             } catch (NumberFormatException ignored) {}
-    //         }
-    //     }
-
-    //     double parsedBaseAmount = 0.0;
-    //     Object baseVal = doc.get("영양성분함량기준량");
-    //     if (baseVal instanceof Number num) {
-    //         parsedBaseAmount = num.doubleValue();
-    //     } else if (baseVal instanceof String str) {
-    //         String numeric = str.replaceAll("[^\\d.]+", "").trim();
-    //         if (!numeric.isEmpty()) {
-    //             parsedBaseAmount = Double.parseDouble(numeric);
-    //         }
-    //     }
-
-    //     Food food = new Food();
-    //     food.setName(doc.getString("식품명"));
-    //     food.setOrigin(doc.getString("식품기원명"));
-    //     food.setCategory(doc.getString("식품대분류명"));
-    //     food.setBaseAmount(parsedBaseAmount);
-    //     food.setNutrients(nutrientMap);
-    //     food.setImageUrl(doc.getString("image_url"));
-    //     food.setIngredients(doc.getList("ingredients", String.class));
-    //     food.setRecipe(doc.getString("recipe"));
-    //     return food;
-    // }
-
-
-    // public List<Food> fetchFilteredFoods() {
-    //     Query query = new Query();
-
-    //     // 기본 필드
-    //     query.fields()
-    //         .include("식품명")
-    //         .include("식품기원명")
-    //         .include("식품대분류명")
-    //         .include("영양성분함량기준량");
-
-    //     // 주요 영양소 필드 포함
-    //     for (String nutrient : NutrientConstants.TARGET_NUTRIENTS) {
-    //         query.fields().include(nutrient);
-    //     }
-
-    //     List<Document> docs = mongoTemplate.find(query, Document.class, "foodDB");
-
-    //     return docs.stream()
-    //         .map(this::convertDocumentToFood)
-    //         .toList();
-    // }
-
-
-
     // public Food findByName(String name) {
     //     Query query = new Query(Criteria.where("식품명").is(name));
     //     Document doc = mongoTemplate.findOne(query, Document.class, "foodDB");
@@ -170,13 +105,9 @@ public class FoodService {
             food.setIngredients(new ArrayList<>());
             food.setServingCount(0);
             food.setRecipe(java.util.List.of());
-            // org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소/재료/레시피 정보 없음 (빈 Food 반환)", name);
             return food;
         }
         Food food = convertDocumentToFood(doc);
-        // org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 영양소 매핑 결과: {}", food.getName(), food.getNutrients());
-        // org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 재료: {}", food.getName(), food.getIngredients());
-        // org.slf4j.LoggerFactory.getLogger(FoodService.class).info("[findByName] '{}'의 레시피: {}", food.getName(), food.getRecipe());
         return food;
     }
 

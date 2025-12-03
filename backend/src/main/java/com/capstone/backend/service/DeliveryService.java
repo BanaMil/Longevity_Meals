@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import com.capstone.backend.dto.DeliveryRequest;
 import com.capstone.backend.dto.FoodWithIntake;
 import com.capstone.backend.domain.DailyMeals;
-import com.capstone.backend.domain.enums.DeliveryStatus;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;

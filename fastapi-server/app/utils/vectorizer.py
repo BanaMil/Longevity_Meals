@@ -2,7 +2,7 @@
 
 from typing import List
 from sentence_transformers import SentenceTransformer
-from app.models import StatusMapping, HealthInfoRequest, StatusMapping
+from app.models import StatusMapping, HealthInfoRequest
 
 # 모델 초기화 (한 번만 로드됨)
 model = SentenceTransformer("intfloat/e5-small-v2")
@@ -27,6 +27,7 @@ def vectorize_query(status_list: List[StatusMapping]) -> List[float]:
     """
     query_text = build_query_text(status_list)
     return model.encode(query_text).tolist()
+
 
 def vectorize_query_from_health_info(request: HealthInfoRequest) -> tuple[List[float], List[float]]:
     recommended_statuses = []
