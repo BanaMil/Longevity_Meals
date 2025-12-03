@@ -43,8 +43,8 @@ def search_similar_foods(
 
     # Qdrant에서 두 벡터 각각으로 검색
 
-    recommended_results = search(client, recommended_vector, filters, limit=100)
-    restricted_results = search(client, restricted_vector, filters, limit=100)
+    recommended_results = search(client, recommended_vector, filters, limit=75)
+    restricted_results = search(client, restricted_vector, filters, limit=75)
 
     # raw payload 예시(처음 2개)
     if recommended_results:
