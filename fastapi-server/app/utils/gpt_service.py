@@ -60,6 +60,19 @@ def build_gpt_prompt_for_day(user: dict, foods: list, date: str) -> str:
 - 아래 JSON 형식과 완전히 일치해야 하며, 설명 없이 JSON 객체만 출력하세요.
 - [추천 가능한 음식 리스트]에 있는 음식만을 가지고 식단을 구성해주세요.
 
+[식단 구성 규칙]
+- 각 식사는 `밥` 1개, `국` 1개, `반찬` 3개로 총 5개 음식으로만 구성해야 합니다.
+
+- 이름에 '국', '탕', '찌개', '국밥'이 들어가는 음식은 반드시 `국`으로만 사용할 수 있습니다.
+  - 이 음식들은 절대 반찬에 넣으면 안 됩니다.
+
+- 이름에 '밥', '덮밥'이 들어가는 음식은 반드시 `밥`으로만 사용할 수 있습니다.
+  - 이 음식들은 절대 국이나 반찬에 넣으면 안 됩니다.
+
+- 예를 들어 한 끼에 아구탕, 황태해장국 두 개를 넣는 경우,
+  또는 아구탕을 반찬에 넣는 경우는 잘못된 답으로 간주되므로 절대로 생성하지 마세요.
+
+
 형식:
 {{
   "userid": "{user.get("userid", "unknown")}",
@@ -90,13 +103,13 @@ def ask_chatgpt_for_day(user: dict, foods: list, date: str) -> dict:
     prompt = build_gpt_prompt_for_day(user, foods, date)
     try:
         response = client.chat.completions.create(
-            model="gpt-4.1",
+            model="gpt-5.1",
             messages=[
                 {"role": "system", "content": "당신은 건강 식단 전문가입니다."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            max_tokens=1200
+            max_completion_tokens=1200
         )
         content = response.choices[0].message.content.strip()
         logging.info(f"✅ GPT 응답 ({date}):\n{content}")
