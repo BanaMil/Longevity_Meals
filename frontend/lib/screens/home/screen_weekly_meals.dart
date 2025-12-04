@@ -110,7 +110,8 @@ class WeeklyMealsScreen extends StatelessWidget {
                             textStyle: const TextStyle(fontSize: 18),
                           ),
                           child: Text(
-                            '홈 화면으로 이동',
+                            '홈 화면으로\n이동',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,

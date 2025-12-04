@@ -158,7 +158,7 @@ class _RegisterWizardScreenState extends State<RegisterWizardScreen> {
         title:
             const Text('회원가입', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: const Color.fromARGB(255, 251, 255, 228),
-        automaticallyImplyLeading: p.step == 0, 
+        automaticallyImplyLeading: p.step == 0,
       ),
       body: SafeArea(
         child: Padding(
@@ -232,12 +232,13 @@ class _RegisterWizardScreenState extends State<RegisterWizardScreen> {
                             onPressed: () async {
                               final ok = await p.checkIdDuplicate();
                               if (!mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text(ok
-                                        ? '사용 가능한 아이디입니다.'
-                                        : '이미 존재하는 아이디입니다.')),
-                              );
+
+                              if (!ok) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('이미 존재하는 아이디입니다.')),
+                                );
+                              }
                             },
                             child: const Text('아이디 중복 확인'),
                           ),

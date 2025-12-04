@@ -397,6 +397,7 @@ class _HomeTabState extends State<HomeTab> {
                                 ),
                               ],
                             ),
+                            const SizedBox(height: 8),
                             const Divider(thickness: 1),
                             const SizedBox(height: 10),
                             Row(
@@ -420,7 +421,7 @@ class _HomeTabState extends State<HomeTab> {
                                           },
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 6),
                                 Expanded(
                                   child: CustomButton(
                                     text: '일주일 밥상',

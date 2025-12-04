@@ -205,10 +205,6 @@ class _DeliveryRequestScreenState extends State<DeliveryRequestScreen> {
 
     if (!mounted) return;
     if (ok) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('배송 요청이 전송되었습니다.')));
-      // debugPrint("선택된 배송 요청: $requestPayload");
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

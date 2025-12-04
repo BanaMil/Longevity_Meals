@@ -178,7 +178,7 @@ class _SearchResultsViewState extends State<SearchResultsView> {
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(left: 10),
+                                padding: const EdgeInsets.only(left: 8),
                                 child: item.imageUrl != null &&
                                         item.imageUrl!.isNotEmpty
                                     ? ClipRRect(

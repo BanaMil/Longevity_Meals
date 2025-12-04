@@ -69,7 +69,7 @@ class InputAllergiesScreen extends StatelessWidget {
                 crossAxisCount: 3, // 3열 고정
                 mainAxisSpacing: 12, // 세로 간격
                 crossAxisSpacing: 8, //가로 간격
-                childAspectRatio: 2.8, // 버튼 가로/세로 비율 조정
+                childAspectRatio: 2.2, // 버튼 가로/세로 비율 조정
                 children:
                     allergyList.map((a) {
                       final selected = provider.info.allergies.contains(a);
