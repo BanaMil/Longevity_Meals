@@ -59,7 +59,6 @@ class HealthInfoProvider with ChangeNotifier {
       final storedUserId = stored['userid'];
       if (storedUserId != null && storedUserId.trim().isNotEmpty) {
         _info.userid = storedUserId.trim();
-        debugPrint('🔁 [HealthInfoProvider] userid: $_info.userid');
       }
     }
     await HealthInfoService.uploadHealthInfo(_info);

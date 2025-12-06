@@ -27,6 +27,17 @@ class _RegisterWizardScreenState extends State<RegisterWizardScreen> {
   final _form3 = GlobalKey<FormState>();
   final _form4 = GlobalKey<FormState>();
 
+   @override
+  void initState() {
+    super.initState();
+
+    // 화면 진입 시 등록 정보 초기화
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<RegisterProvider>().reset();
+    });
+  }
+
   Future<void> _pickBirthdate(BuildContext context) async {
     final p = context.read<RegisterProvider>();
     final now = DateTime.now();
@@ -101,6 +112,9 @@ class _RegisterWizardScreenState extends State<RegisterWizardScreen> {
         postCode: p.postCode,
         addressDetail: p.addressDetail,
       );
+
+      p.reset();
+      
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => const LoginScreen()));
     } else {

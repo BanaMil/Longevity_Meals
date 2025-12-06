@@ -118,7 +118,6 @@ class _ChangeAddressScreenState extends State<ChangeAddressScreen> {
     );
 
     if (result == null) {
-      logi('🚫 Kpostal 닫힘: 선택된 주소 없음');
       return;
     }
 
@@ -151,22 +150,15 @@ class _ChangeAddressScreenState extends State<ChangeAddressScreen> {
 
     final target = _address[_selectedIndex!];
 
-    // 🔎 변경 대상 로그
-    logi('📝 변경할 주소 선택: idx=$_selectedIndex, data=${target.toJson()}');
-
     setState(() => _loading = true);
     try {
       // (백엔드) 주소 변경 API
-      logi('🌐 PUT 주소 변경 요청 시작: userid=${widget.userid}');
       final response = await AuthService.changeAddress(
         userid: widget.userid,
-        addressRoad: target.addressRoad, // 화면 텍스트가 프리뷰라도 서버는 그대로 받아도 무해
+        addressRoad: target.addressRoad,
         addressJibun: target.addressJibun,
         postCode: target.postCode,
         addressDetail: target.addressDetail,
-      );
-      logi(
-          '🌐 주소 변경 응답: status=${response.statusCode} body=${response.body}',
       );
 
       if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -185,8 +177,6 @@ class _ChangeAddressScreenState extends State<ChangeAddressScreen> {
         _current = target;
         _loading = false;
       });
-
-      logi('✅ 주소 변경 완료: current=${_current?.toJson()}');
 
       if (mounted) {
         ScaffoldMessenger.of(context)

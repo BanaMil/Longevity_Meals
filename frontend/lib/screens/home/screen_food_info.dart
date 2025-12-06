@@ -60,14 +60,6 @@ class FoodInfoScreen extends StatelessWidget {
       BuildContext context, String? categoryLabel, FoodItem food) {
     final titleColor = const Color(0xFF2E2E2E);
 
-    /*
-    debugPrint("🍴 [FoodInfoScreen] 음식명: ${food.name}");
-    debugPrint("   영양소: ${food.nutrients}");
-    debugPrint("   재료: ${food.ingredients}");
-    debugPrint("   레시피: ${food.recipeSteps}");
-    debugPrint("   인분: ${food.servingCount}");
-    */    
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

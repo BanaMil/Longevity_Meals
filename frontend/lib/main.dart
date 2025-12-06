@@ -16,7 +16,7 @@ void main() async {
   if (kDebugMode) {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    debugPrint('🧹 [main] kDebugMode → SharedPreferences 전체 초기화 완료');
+    debugPrint('[main] kDebugMode → SharedPreferences 전체 초기화 완료');
   }
 
   runApp(

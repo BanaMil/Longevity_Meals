@@ -13,7 +13,7 @@ class SelectableButton extends StatelessWidget {
     required this.text,
     required this.isSelected,
     required this.onTap,
-    this.fontSize = 14,
+    this.fontSize = 13,
   });
 
   @override

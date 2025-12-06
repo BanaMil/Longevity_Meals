@@ -168,4 +168,28 @@ class RegisterProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void reset() {
+    _step = 0;
+
+    username = null;
+    birthdate = null;
+
+    userid = null;
+    idAvailable = null;
+
+    password = null;
+    confirmPassword = null;
+
+    phone = null;
+
+    addressRoad = null;
+    addressJibun = null;
+    postCode = null;
+    addressDetail = null;
+
+    isSubmitting = false;
+
+    notifyListeners();
+  }
 }

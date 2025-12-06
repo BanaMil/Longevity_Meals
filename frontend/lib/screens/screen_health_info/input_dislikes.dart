@@ -166,20 +166,6 @@ class _InputDislikesScreenState extends State<InputDislikesScreen> {
                 )
               .toList(),
             ),
-            const SizedBox(height: 16),
-            const Text('입력된 비선호 음식:'),
-            Wrap(
-              children:
-              dislikes
-                .map(
-                  (item) => Chip(
-                    label: Text(item),
-                    deleteIcon: const Icon(Icons.close),
-                    onDeleted: () => provider.removeDislike(item),
-                  ),
-                )
-              .toList(),
-            ),
           ],
         ),
       ),

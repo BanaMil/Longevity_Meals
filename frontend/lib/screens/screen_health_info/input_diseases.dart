@@ -12,8 +12,8 @@ class InputDiseasesScreen extends StatelessWidget {
 
   static const List<String> _diseases = [
     '간경변증',
-    '갑상선 기능저하증',
-    '갑상선 기능항진증',
+    '갑상선\n기능저하증',
+    '갑상선\n기능항진증',
     '고지혈증',
     '고혈압',
     '골다공증',
@@ -25,9 +25,9 @@ class InputDiseasesScreen extends StatelessWidget {
     '동맥경화증',
     '대장암',
     '만성 신부전',
-    '만성 폐쇄성 폐질환',
+    '만성 폐쇄성\n폐질환',
     '말초신경병증',
-    '부신기능저하증',
+    '부신기능\n저하증',
     '부정맥',
     '비만',
     '신증후군',
@@ -36,7 +36,7 @@ class InputDiseasesScreen extends StatelessWidget {
     '요로결석',
     '요통',
     '유방암',
-    '위식도역류질환',
+    '위식도\n역류질환',
     '위암',
     '위염',
     '저혈당',
@@ -174,7 +174,7 @@ class InputDiseasesScreen extends StatelessWidget {
 
           if (hasNoDisease)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: SelectableButton(
                 text: '해당없음',
                 isSelected: provider.info.diseases.contains('해당없음'),
@@ -182,7 +182,7 @@ class InputDiseasesScreen extends StatelessWidget {
                   '해당없음',
                   provider.info.diseases,
                 ),
-                fontSize: 15,
+                fontSize: 14,
               ),
             ),
 
@@ -246,7 +246,7 @@ class _ChoseongSection extends StatelessWidget {
                 crossAxisCount: 3, // 3열 고정
                 crossAxisSpacing: 8, //가로 간격
                 mainAxisSpacing: 12, // 세로 간격
-                childAspectRatio: 2.8, // 버튼 가로/세로 비율 조정
+                childAspectRatio: 1.6, // 버튼 가로/세로 비율 조정
               ),
               itemBuilder: (context, i) {
                 final d = diseases[i];
@@ -258,7 +258,7 @@ class _ChoseongSection extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           const Divider(thickness: 1),
         ],
       ),

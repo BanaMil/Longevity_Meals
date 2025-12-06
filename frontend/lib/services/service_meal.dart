@@ -7,6 +7,7 @@ import 'package:frontend/services/api_constants.dart';
 import 'package:frontend/models/meal.dart';
 import 'package:frontend/models/daily_meals.dart';
 
+
 enum RecommendResult { success, alreadyExists }
 
 class MealService {
